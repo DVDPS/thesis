@@ -85,4 +85,6 @@ class PPOAgent(nn.Module):
         return policy_logits, value
 
     def update_exploration(self, progress: float) -> None:
-        self.exploration_noise = max(self.min_exploration_noise, 1.0 * (1 - progress)) 
+    # For example, decay noise linearly over 70% of training instead of 100%
+        effective_progress = min(progress / 0.7, 1.0)
+        self.exploration_noise = max(self.min_exploration_noise, 1.0 * (1 - effective_progress))

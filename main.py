@@ -20,7 +20,7 @@ def main():
     optimizer = optim.Adam(agent.parameters(), lr=3e-4, eps=1e-5, weight_decay=1e-4)
     
     train(agent, env, optimizer,
-          epochs=15000,
+          epochs=2500,
           mini_batch_size=128,
           ppo_epochs=8,
           clip_param=0.2,
@@ -28,7 +28,7 @@ def main():
           lam=0.95,
           entropy_coef=0.8,
           max_grad_norm=0.5,
-          steps_per_update=500)
+          steps_per_update=1000)
 
 if __name__ == "__main__":
     main() 

@@ -13,7 +13,7 @@ class Game2048:
         self.reset()
         self.previous_max_tile = 0
         # Factor for the corner heuristic bonus.
-        self.corner_factor = 0.01
+        self.corner_factor = 0.05
         # Parameterize the corner heuristic with a weight matrix;
         # you might later experiment with alternative corners or normalization.
         self.corner_weights = np.array([
@@ -111,7 +111,7 @@ class Game2048:
         new_max_tile = int(np.max(self.board))
         
         # Base reward components.
-        merge_reward = score_gain / 50.0
+        merge_reward = score_gain / 30.0
         max_tile_reward = 0.0
         if new_max_tile > self.previous_max_tile:
             max_tile_reward = np.log2(new_max_tile) * 40
