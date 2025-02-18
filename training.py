@@ -82,13 +82,20 @@ def collect_trajectories(agent: PPOAgent, env: Game2048, min_steps: int = 500) -
     }
 
 def save_checkpoint(agent: PPOAgent, optimizer, epoch: int, running_reward: float, max_tile: int, filename: str) -> None:
+    # Ensure the directory exists (using the directory portion of the filename)
+    checkpoint_dir = os.path.dirname(filename)
+    os.makedirs(checkpoint_dir, exist_ok=True)
+    
+    # Resolve an absolute path to avoid path issues on Windows.
+    abs_filename = os.path.abspath(filename)
+    
     torch.save({
         'epoch': epoch,
         'model_state_dict': agent.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
         'running_reward': running_reward,
         'max_tile': max_tile,
-    }, filename)
+    }, abs_filename)
     # Removed logging for checkpoint save.
 
 def train(agent: PPOAgent, env: Game2048, optimizer, epochs: int = 1000, mini_batch_size: int = 64, ppo_epochs: int = 8,
