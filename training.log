@@ -1,102 +1,67 @@
-2025-02-18 17:44:22,359 - INFO - Starting training...
-2025-02-18 17:44:22,360 - INFO - Training for 2500 epochs
-2025-02-18 17:49:45,023 - INFO - 
+2025-02-20 15:29:46,852 - INFO - Starting training...
+2025-02-20 15:29:46,852 - INFO - Training for 2500 epochs
+2025-02-20 15:31:12,367 - INFO - Starting training...
+2025-02-20 15:31:12,368 - INFO - Training for 2500 epochs
+2025-02-20 15:32:37,290 - INFO - Starting training...
+2025-02-20 15:32:37,290 - INFO - Training for 2500 epochs
+2025-02-20 15:37:11,172 - INFO - 
 Computed epochs 1 to 50.
-2025-02-18 17:49:45,023 - INFO - Best Epoch Info for this block:
-2025-02-18 17:49:45,023 - INFO - Epoch 49 with Running Reward: 9152.51, Episode Reward: 9588.32, Max Tile: 256, Episode Length: 1060, Policy Loss: -0.143362, Value Loss: 1.223399, Entropy: 1.380188, Learning Rate: 0.000300
-2025-02-18 17:49:45,023 - INFO - ------------------------------
-2025-02-18 17:55:32,404 - INFO - 
+2025-02-20 15:37:11,172 - INFO - Best Epoch Info for this block:
+2025-02-20 15:37:11,172 - INFO - Epoch 49 with Running Reward: 4701.30, Episode Reward: 5185.79, Max Tile: 128, Episode Length: 533, Policy Loss: 0.238608, Value Loss: 0.390727, Entropy: 1.386281, Learning Rate: 0.000300
+2025-02-20 15:37:11,173 - INFO - ------------------------------
+2025-02-20 15:40:16,789 - INFO - Starting training...
+2025-02-20 15:40:16,789 - INFO - Training for 2500 epochs
+2025-02-20 15:44:54,343 - INFO - 
+Computed epochs 1 to 50.
+2025-02-20 15:44:54,344 - INFO - Best Epoch Info for this block:
+2025-02-20 15:44:54,344 - INFO - Epoch 49 with Running Reward: 4701.30, Episode Reward: 5185.79, Max Tile: 128, Episode Length: 533, Policy Loss: 0.238608, Value Loss: 0.390727, Entropy: 1.386281, Learning Rate: 0.000300
+2025-02-20 15:44:54,344 - INFO - ------------------------------
+2025-02-20 15:49:29,821 - INFO - 
 Computed epochs 51 to 100.
-2025-02-18 17:55:32,405 - INFO - Best Epoch Info for this block:
-2025-02-18 17:55:32,405 - INFO - Epoch 96 with Running Reward: 10004.61, Episode Reward: 11424.48, Max Tile: 256, Episode Length: 1120, Policy Loss: -0.069350, Value Loss: 1.062476, Entropy: 1.380439, Learning Rate: 0.000299
-2025-02-18 17:55:32,411 - INFO - ------------------------------
-2025-02-18 18:01:05,161 - INFO - 
+2025-02-20 15:49:29,821 - INFO - Best Epoch Info for this block:
+2025-02-20 15:49:29,821 - INFO - Epoch 87 with Running Reward: 5295.72, Episode Reward: 6114.41, Max Tile: 256, Episode Length: 580, Policy Loss: 0.080249, Value Loss: 0.539056, Entropy: 1.386294, Learning Rate: 0.000299
+2025-02-20 15:49:29,822 - INFO - ------------------------------
+2025-02-20 15:54:03,732 - INFO - 
 Computed epochs 101 to 150.
-2025-02-18 18:01:05,162 - INFO - Best Epoch Info for this block:
-2025-02-18 18:01:05,162 - INFO - Epoch 110 with Running Reward: 10056.32, Episode Reward: 10241.76, Max Tile: 128, Episode Length: 1107, Policy Loss: -0.038159, Value Loss: 0.904725, Entropy: 1.385086, Learning Rate: 0.000299
-2025-02-18 18:01:05,162 - INFO - ------------------------------
-2025-02-18 18:06:26,358 - INFO - 
+2025-02-20 15:54:03,733 - INFO - Best Epoch Info for this block:
+2025-02-20 15:54:03,733 - INFO - Epoch 113 with Running Reward: 5404.08, Episode Reward: 5662.98, Max Tile: 256, Episode Length: 580, Policy Loss: -0.233758, Value Loss: 1.174399, Entropy: 1.386287, Learning Rate: 0.000299
+2025-02-20 15:54:03,733 - INFO - ------------------------------
+2025-02-20 15:58:38,400 - INFO - 
 Computed epochs 151 to 200.
-2025-02-18 18:06:26,359 - INFO - Best Epoch Info for this block:
-2025-02-18 18:06:26,359 - INFO - Epoch 169 with Running Reward: 10173.30, Episode Reward: 10511.63, Max Tile: 128, Episode Length: 1053, Policy Loss: -0.164067, Value Loss: 0.977746, Entropy: 1.378840, Learning Rate: 0.000298
-2025-02-18 18:06:26,359 - INFO - ------------------------------
-2025-02-18 18:11:48,353 - INFO - 
+2025-02-20 15:58:38,400 - INFO - Best Epoch Info for this block:
+2025-02-20 15:58:38,400 - INFO - Epoch 184 with Running Reward: 5207.26, Episode Reward: 6296.53, Max Tile: 256, Episode Length: 637, Policy Loss: 0.005120, Value Loss: 1.146456, Entropy: 1.386218, Learning Rate: 0.000297
+2025-02-20 15:58:38,401 - INFO - ------------------------------
+2025-02-20 16:03:20,280 - INFO - 
 Computed epochs 201 to 250.
-2025-02-18 18:11:48,354 - INFO - Best Epoch Info for this block:
-2025-02-18 18:11:48,354 - INFO - Epoch 219 with Running Reward: 10130.81, Episode Reward: 10596.04, Max Tile: 128, Episode Length: 1116, Policy Loss: 0.141783, Value Loss: 0.560759, Entropy: 1.384446, Learning Rate: 0.000296
-2025-02-18 18:11:48,354 - INFO - ------------------------------
-2025-02-18 18:17:08,926 - INFO - 
+2025-02-20 16:03:20,280 - INFO - Best Epoch Info for this block:
+2025-02-20 16:03:20,280 - INFO - Epoch 246 with Running Reward: 5249.09, Episode Reward: 7525.10, Max Tile: 256, Episode Length: 694, Policy Loss: -0.160257, Value Loss: 0.855179, Entropy: 1.386290, Learning Rate: 0.000295
+2025-02-20 16:03:20,281 - INFO - ------------------------------
+2025-02-20 16:07:54,725 - INFO - 
 Computed epochs 251 to 300.
-2025-02-18 18:17:08,927 - INFO - Best Epoch Info for this block:
-2025-02-18 18:17:08,927 - INFO - Epoch 297 with Running Reward: 10156.15, Episode Reward: 11065.92, Max Tile: 256, Episode Length: 1062, Policy Loss: -0.024547, Value Loss: 1.140397, Entropy: 1.379599, Learning Rate: 0.000293
-2025-02-18 18:17:08,927 - INFO - ------------------------------
-2025-02-18 18:22:29,849 - INFO - 
-Computed epochs 301 to 350.
-2025-02-18 18:22:29,849 - INFO - Best Epoch Info for this block:
-2025-02-18 18:22:29,850 - INFO - Epoch 301 with Running Reward: 10139.66, Episode Reward: 10303.55, Max Tile: 128, Episode Length: 1068, Policy Loss: 0.018637, Value Loss: 0.691611, Entropy: 1.378406, Learning Rate: 0.000293
-2025-02-18 18:22:29,850 - INFO - ------------------------------
-2025-02-18 18:27:49,597 - INFO - 
-Computed epochs 351 to 400.
-2025-02-18 18:27:49,597 - INFO - Best Epoch Info for this block:
-2025-02-18 18:27:49,597 - INFO - Epoch 396 with Running Reward: 10054.91, Episode Reward: 10249.11, Max Tile: 256, Episode Length: 1032, Policy Loss: 0.059412, Value Loss: 1.211140, Entropy: 1.381428, Learning Rate: 0.000288
-2025-02-18 18:27:49,598 - INFO - ------------------------------
-2025-02-18 18:33:10,569 - INFO - 
-Computed epochs 401 to 450.
-2025-02-18 18:33:10,569 - INFO - Best Epoch Info for this block:
-2025-02-18 18:33:10,569 - INFO - Epoch 409 with Running Reward: 10227.96, Episode Reward: 10268.30, Max Tile: 128, Episode Length: 1069, Policy Loss: -0.079884, Value Loss: 0.894882, Entropy: 1.383832, Learning Rate: 0.000287
-2025-02-18 18:33:10,569 - INFO - ------------------------------
-2025-02-18 18:38:31,299 - INFO - 
-Computed epochs 451 to 500.
-2025-02-18 18:38:31,300 - INFO - Best Epoch Info for this block:
-2025-02-18 18:38:31,300 - INFO - Epoch 466 with Running Reward: 10212.14, Episode Reward: 10405.12, Max Tile: 256, Episode Length: 1160, Policy Loss: 0.170769, Value Loss: 0.349759, Entropy: 1.385368, Learning Rate: 0.000283
-2025-02-18 18:38:31,300 - INFO - ------------------------------
-2025-02-18 18:43:49,813 - INFO - 
-Computed epochs 501 to 550.
-2025-02-18 18:43:49,814 - INFO - Best Epoch Info for this block:
-2025-02-18 18:43:49,814 - INFO - Epoch 510 with Running Reward: 10058.59, Episode Reward: 10312.87, Max Tile: 128, Episode Length: 1070, Policy Loss: 0.002345, Value Loss: 0.386701, Entropy: 1.381953, Learning Rate: 0.000280
-2025-02-18 18:43:49,815 - INFO - ------------------------------
-2025-02-18 18:49:10,645 - INFO - 
-Computed epochs 551 to 600.
-2025-02-18 18:49:10,645 - INFO - Best Epoch Info for this block:
-2025-02-18 18:49:10,645 - INFO - Epoch 591 with Running Reward: 10140.70, Episode Reward: 11018.61, Max Tile: 128, Episode Length: 1094, Policy Loss: -0.007499, Value Loss: 0.248131, Entropy: 1.384662, Learning Rate: 0.000274
-2025-02-18 18:49:10,646 - INFO - ------------------------------
-2025-02-18 18:54:29,088 - INFO - 
-Computed epochs 601 to 650.
-2025-02-18 18:54:29,089 - INFO - Best Epoch Info for this block:
-2025-02-18 18:54:29,089 - INFO - Epoch 635 with Running Reward: 10020.75, Episode Reward: 10894.58, Max Tile: 128, Episode Length: 1119, Policy Loss: 0.000169, Value Loss: 0.282863, Entropy: 1.386052, Learning Rate: 0.000270
-2025-02-18 18:54:29,089 - INFO - ------------------------------
-2025-02-18 18:59:51,037 - INFO - 
-Computed epochs 651 to 700.
-2025-02-18 18:59:51,037 - INFO - Best Epoch Info for this block:
-2025-02-18 18:59:51,037 - INFO - Epoch 686 with Running Reward: 10151.00, Episode Reward: 10250.72, Max Tile: 128, Episode Length: 1041, Policy Loss: 0.124480, Value Loss: 0.406897, Entropy: 1.386236, Learning Rate: 0.000265
-2025-02-18 18:59:51,038 - INFO - ------------------------------
-2025-02-18 19:05:13,146 - INFO - 
-Computed epochs 701 to 750.
-2025-02-18 19:05:13,147 - INFO - Best Epoch Info for this block:
-2025-02-18 19:05:13,147 - INFO - Epoch 723 with Running Reward: 10139.97, Episode Reward: 10590.94, Max Tile: 256, Episode Length: 1110, Policy Loss: -0.072582, Value Loss: 0.209157, Entropy: 1.385913, Learning Rate: 0.000261
-2025-02-18 19:05:13,147 - INFO - ------------------------------
-2025-02-18 19:10:30,360 - INFO - 
-Computed epochs 751 to 800.
-2025-02-18 19:10:30,360 - INFO - Best Epoch Info for this block:
-2025-02-18 19:10:30,360 - INFO - Epoch 786 with Running Reward: 10070.33, Episode Reward: 10682.42, Max Tile: 256, Episode Length: 1143, Policy Loss: 0.019866, Value Loss: 0.228015, Entropy: 1.384591, Learning Rate: 0.000255
-2025-02-18 19:10:30,361 - INFO - ------------------------------
-2025-02-18 19:15:52,000 - INFO - 
-Computed epochs 801 to 850.
-2025-02-18 19:15:52,001 - INFO - Best Epoch Info for this block:
-2025-02-18 19:15:52,001 - INFO - Epoch 843 with Running Reward: 10169.77, Episode Reward: 10876.78, Max Tile: 256, Episode Length: 1102, Policy Loss: -0.064742, Value Loss: 0.123581, Entropy: 1.382367, Learning Rate: 0.000249
-2025-02-18 19:15:52,001 - INFO - ------------------------------
-2025-02-18 19:21:10,207 - INFO - 
-Computed epochs 851 to 900.
-2025-02-18 19:21:10,207 - INFO - Best Epoch Info for this block:
-2025-02-18 19:21:10,207 - INFO - Epoch 853 with Running Reward: 10206.24, Episode Reward: 10729.41, Max Tile: 256, Episode Length: 1156, Policy Loss: -0.015595, Value Loss: 0.187121, Entropy: 1.384877, Learning Rate: 0.000248
-2025-02-18 19:21:10,208 - INFO - ------------------------------
-2025-02-18 19:26:28,299 - INFO - 
-Computed epochs 901 to 950.
-2025-02-18 19:26:28,300 - INFO - Best Epoch Info for this block:
-2025-02-18 19:26:28,300 - INFO - Epoch 940 with Running Reward: 10074.63, Episode Reward: 11399.79, Max Tile: 128, Episode Length: 1143, Policy Loss: -0.017935, Value Loss: 0.199156, Entropy: 1.384282, Learning Rate: 0.000238
-2025-02-18 19:26:28,300 - INFO - ------------------------------
-2025-02-18 19:31:46,791 - INFO - 
-Computed epochs 951 to 1000.
-2025-02-18 19:31:46,791 - INFO - Best Epoch Info for this block:
-2025-02-18 19:31:46,791 - INFO - Epoch 990 with Running Reward: 10157.00, Episode Reward: 10424.73, Max Tile: 128, Episode Length: 1095, Policy Loss: 0.144506, Value Loss: 0.223675, Entropy: 1.385264, Learning Rate: 0.000232
-2025-02-18 19:31:46,791 - INFO - ------------------------------
+2025-02-20 16:07:54,726 - INFO - Best Epoch Info for this block:
+2025-02-20 16:07:54,726 - INFO - Epoch 276 with Running Reward: 5251.20, Episode Reward: 5596.84, Max Tile: 128, Episode Length: 588, Policy Loss: 0.129972, Value Loss: 0.982689, Entropy: 1.386291, Learning Rate: 0.000294
+2025-02-20 16:07:54,726 - INFO - ------------------------------
+2025-02-20 16:19:40,717 - INFO - Starting training...
+2025-02-20 16:19:40,717 - INFO - Training for 2500 epochs
+2025-02-20 16:20:21,148 - INFO - Starting training...
+2025-02-20 16:20:21,149 - INFO - Training for 2500 epochs
+2025-02-20 16:25:06,668 - INFO - 
+Computed epochs 1 to 50.
+2025-02-20 16:25:06,668 - INFO - Best Epoch Info for this block:
+2025-02-20 16:25:06,669 - INFO - Epoch 45 with Running Reward: 4786.06, Episode Reward: 5202.62, Max Tile: 128, Episode Length: 554, Policy Loss: -0.105459, Value Loss: nan, Entropy: 0.923059, Learning Rate: 0.000300
+2025-02-20 16:25:06,669 - INFO - ------------------------------
+2025-02-20 16:29:53,165 - INFO - 
+Computed epochs 51 to 100.
+2025-02-20 16:29:53,165 - INFO - Best Epoch Info for this block:
+2025-02-20 16:29:53,165 - INFO - Epoch 92 with Running Reward: 5214.17, Episode Reward: 5658.27, Max Tile: 256, Episode Length: 602, Policy Loss: 0.140821, Value Loss: nan, Entropy: 0.835091, Learning Rate: 0.000299
+2025-02-20 16:29:53,166 - INFO - ------------------------------
+2025-02-20 16:34:44,005 - INFO - 
+Computed epochs 101 to 150.
+2025-02-20 16:34:44,005 - INFO - Best Epoch Info for this block:
+2025-02-20 16:34:44,005 - INFO - Epoch 137 with Running Reward: 5370.21, Episode Reward: 6117.69, Max Tile: 256, Episode Length: 589, Policy Loss: -0.226933, Value Loss: nan, Entropy: 0.677924, Learning Rate: 0.000299
+2025-02-20 16:34:44,006 - INFO - ------------------------------
+2025-02-20 16:39:27,779 - INFO - 
+Computed epochs 151 to 200.
+2025-02-20 16:39:27,780 - INFO - Best Epoch Info for this block:
+2025-02-20 16:39:27,780 - INFO - Epoch 166 with Running Reward: 5246.10, Episode Reward: 5562.68, Max Tile: 128, Episode Length: 543, Policy Loss: 0.264254, Value Loss: nan, Entropy: 0.830388, Learning Rate: 0.000298
+2025-02-20 16:39:27,780 - INFO - ------------------------------

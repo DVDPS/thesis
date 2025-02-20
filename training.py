@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import logging
 from config import device
 from training_stats import TrainingStats
-from game2048 import preprocess_state, Game2048
+from game2048 import preprocess_state, preprocess_state_onehot, Game2048
 from agent import PPOAgent
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap, BoundaryNorm
@@ -38,7 +38,7 @@ def collect_trajectories(agent: PPOAgent, env: Game2048, min_steps: int = 500) -
         state = env.reset()
         done = False
         while not done:
-            state_proc = preprocess_state(state)
+            state_proc = preprocess_state_onehot(state)
             state_tensor = torch.tensor(state_proc, dtype=torch.float, device=device).unsqueeze(0)
             valid_moves = env.get_possible_moves()
             if not valid_moves:
@@ -64,7 +64,7 @@ def collect_trajectories(agent: PPOAgent, env: Game2048, min_steps: int = 500) -
             state = next_state
             max_tile_overall = max(max_tile_overall, int(np.max(state)))
             if done:
-                final_state_proc = preprocess_state(state)
+                final_state_proc = preprocess_state_onehot(state)
                 # Append the final state if it is not already the last state in the trajectory
                 if len(traj_states) == 0 or not np.array_equal(traj_states[-1], final_state_proc):
                     traj_states.append(final_state_proc)
@@ -96,7 +96,6 @@ def save_checkpoint(agent: PPOAgent, optimizer, epoch: int, running_reward: floa
         'running_reward': running_reward,
         'max_tile': max_tile,
     }, abs_filename)
-    # Removed logging for checkpoint save.
 
 def train(agent: PPOAgent, env: Game2048, optimizer, epochs: int = 1000, mini_batch_size: int = 64, ppo_epochs: int = 8,
           clip_param: float = 0.2, gamma: float = 0.99, lam: float = 0.95, entropy_coef: float = 0.8, max_grad_norm: float = 0.5,
@@ -120,6 +119,8 @@ def train(agent: PPOAgent, env: Game2048, optimizer, epochs: int = 1000, mini_ba
     # Initialize a cosine annealing scheduler for learning rate.
     from torch.optim.lr_scheduler import CosineAnnealingLR
     scheduler = CosineAnnealingLR(optimizer, T_max=epochs, eta_min=final_lr)
+    # Initialize GradScaler with the new API
+    scaler = torch.amp.GradScaler(device='cuda')
 
     for epoch in range(epochs):
         progress = epoch / epochs
@@ -166,22 +167,26 @@ def train(agent: PPOAgent, env: Game2048, optimizer, epochs: int = 1000, mini_ba
                 batch_advantages = advantages_tensor[batch_idx]
                 batch_returns = returns_tensor[batch_idx]
                 
-                policy_logits, value_preds = agent(batch_states, training=True)
-                dist = torch.distributions.Categorical(logits=policy_logits)
-                new_log_probs = dist.log_prob(batch_actions)
-                entropy = dist.entropy().mean()
-                
-                ratio = torch.exp(new_log_probs - batch_old_log_probs)
-                surr1 = ratio * batch_advantages
-                surr2 = torch.clamp(ratio, 1.0 - clip_param, 1.0 + clip_param) * batch_advantages
-                policy_loss = -torch.min(surr1, surr2).mean()
-                value_loss = F.mse_loss(value_preds.view(-1), batch_returns)
-                loss = policy_loss + 0.5 * value_loss - current_entropy_coef * entropy
+                # Mixed precision forward pass and loss computation using new autocast API
+                with torch.amp.autocast(device_type='cuda'):
+                    policy_logits, value_preds = agent(batch_states, training=True)
+                    dist = torch.distributions.Categorical(logits=policy_logits)
+                    new_log_probs = dist.log_prob(batch_actions)
+                    entropy = dist.entropy().mean()
+                    
+                    ratio = torch.exp(new_log_probs - batch_old_log_probs)
+                    surr1 = ratio * batch_advantages
+                    surr2 = torch.clamp(ratio, 1.0 - clip_param, 1.0 + clip_param) * batch_advantages
+                    policy_loss = -torch.min(surr1, surr2).mean()
+                    value_loss = F.mse_loss(value_preds.view(-1), batch_returns)
+                    loss = policy_loss + 0.5 * value_loss - current_entropy_coef * entropy
                 
                 optimizer.zero_grad()
-                loss.backward()
+                # Scale the loss, perform backward pass, and update parameters using the scaler.
+                scaler.scale(loss).backward()
                 torch.nn.utils.clip_grad_norm_(agent.parameters(), max_grad_norm)
-                optimizer.step()
+                scaler.step(optimizer)
+                scaler.update()
         
         episode_reward = np.sum(rewards)
         episode_length = len(trajectory['states'])
@@ -231,30 +236,42 @@ def train(agent: PPOAgent, env: Game2048, optimizer, epochs: int = 1000, mini_ba
     logging.info("Training completed! Final model saved as 'checkpoints/best_model.pt'")
     logging.info("Training progress plot saved as 'training_progress.png'")
 
+def onehot_to_board(onehot_state):
+    """Convert a one-hot encoded state back to regular board format."""
+    board = np.zeros((4, 4), dtype=np.int32)
+    for i in range(onehot_state.shape[0]):  # iterate through channels
+        if i == 0:  # skip the empty tile channel
+            continue
+        # Where this channel has 1s, put 2^i in the board
+        board += (onehot_state[i] * (2 ** i)).astype(np.int32)
+    return board
+
 def plot_board_trajectory(boards, filename):
     """
     Plots a series of 2048 board states from an episode.
     If the episode has more than 10 moves, 10 states are sampled uniformly.
     Each board is displayed using imshow with annotated cell values.
     """
-    # Filter out boards that look like initial boards (e.g., those with less than 3 nonzero entries)
-    filtered_boards = [board for board in boards if np.count_nonzero(board) >= 3]
+    # Convert one-hot boards back to regular format
+    regular_boards = [onehot_to_board(board) for board in boards]
+    
+    # Filter out boards that look like initial boards
+    filtered_boards = [board for board in regular_boards if np.count_nonzero(board) >= 3]
     if len(filtered_boards) == 0:
-        filtered_boards = boards
+        filtered_boards = regular_boards
+        
     num_boards = len(filtered_boards)
     sample_count = min(10, num_boards)
     sample_indices = np.linspace(0, num_boards - 1, sample_count, dtype=int)
     boards_to_plot = [filtered_boards[i] for i in sample_indices]
+    
     n = len(boards_to_plot)
     fig, axs = plt.subplots(1, n, figsize=(n * 3, 3))
     if n == 1:
         axs = [axs]
+        
     for ax, board in zip(axs, boards_to_plot):
-        # Convert board values to integers since they are log2 scaled (e.g., 2->1, 4->2, etc.)
-        int_board = board.astype(int)
-
-        # Define discrete colors: index 0 (empty) is very light brown, 1 and 2 (tiles 2 and 4) are white,
-        # and from index 3 (tile 8) up to index 11 (tile 2048) colors gradually darken, with 2048 as yellow
+        # Define colors for the tiles
         colors = [
             "#F5DEB3",  # 0: empty cell, very light brown
             "#FFFFFF",  # 1: tile 2
@@ -269,17 +286,26 @@ def plot_board_trajectory(boards, filename):
             "#FF9800",  # 10: tile 1024
             "#FFEB3B"   # 11: tile 2048
         ]
+        
+        # Create color map
         cmap_custom = ListedColormap(colors)
         bounds = np.arange(-0.5, len(colors) + 0.5, 1)
         norm = BoundaryNorm(bounds, cmap_custom.N)
-        im = ax.imshow(int_board, cmap=cmap_custom, norm=norm, interpolation='nearest')
-
-        # Annotate each cell with its original value (convert log2 back to tile value)
+        
+        # Convert board values to log2 scale for color mapping
+        display_board = np.zeros_like(board)
+        mask = board > 0
+        display_board[mask] = np.log2(board[mask]).astype(int)
+        
+        im = ax.imshow(display_board, cmap=cmap_custom, norm=norm, interpolation='nearest')
+        
+        # Annotate each cell with its actual value
         for i in range(board.shape[0]):
             for j in range(board.shape[1]):
-                display_val = int(2 ** board[i, j]) if board[i, j] > 0 else 0
-                ax.text(j, i, str(display_val), va='center', ha='center', color='black', fontsize=12)
+                val = board[i, j]
+                ax.text(j, i, str(val), va='center', ha='center', color='black', fontsize=12)
         ax.axis('off')
+    
     plt.tight_layout()
     plt.savefig(filename)
-    plt.close() 
+    plt.close()

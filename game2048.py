@@ -3,6 +3,28 @@ import random
 import math
 from typing import Tuple, List, Optional
 
+
+
+def compute_monotonicity(board):
+    """
+    Computes a basic monotonicity score by summing the negative differences
+    between adjacent tiles (in log2 space) along rows and columns.
+    Higher scores (less negative) indicate a more monotonic board.
+    """
+    board = board.astype(np.float32)
+    # Avoid log(0) by setting zeros to a small positive value.
+    safe_board = np.where(board > 0, board, 1)
+    log_board = np.log2(safe_board)
+    mono_score = 0.0
+    # rows
+    for row in log_board:
+        mono_score -= np.sum(np.abs(np.diff(row)))
+    # columns
+    for col in log_board.T:
+        mono_score -= np.sum(np.abs(np.diff(col)))
+    return mono_score
+
+
 class Game2048:
     def __init__(self, size: int = 4, seed: Optional[int] = None):
         self.size = size
@@ -12,15 +34,14 @@ class Game2048:
             random.seed(seed)
         self.reset()
         self.previous_max_tile = 0
-        # Factor for the corner heuristic bonus.
-        self.corner_factor = 0.05
-        # Parameterize the corner heuristic with a weight matrix;
-        # you might later experiment with alternative corners or normalization.
+        # Factor for the corner and border heuristic bonus
+        self.corner_factor = 0.1  # Increased from 0.05 to give more weight to positioning
+        # Enhanced weight matrix that favors both corners and edges
         self.corner_weights = np.array([
-            [4.0, 3.0, 2.0, 1.0],
-            [3.0, 2.0, 1.0, 0.5],
-            [2.0, 1.0, 0.5, 0.25],
-            [1.0, 0.5, 0.25, 0.1]
+            [3.0, 2.0, 2.0, 3.0],
+            [2.0, 1.0, 1.0, 2.0],
+            [2.0, 1.0, 1.0, 2.0],
+            [3.0, 2.0, 2.0, 3.0]
         ])
 
     def reset(self):
@@ -87,54 +108,71 @@ class Game2048:
 
     def corner_heuristic(self) -> float:
         """
-        Compute a bonus based on the positioning of high-value tiles in the top-left corner.
+        Compute a bonus based on the positioning of high-value tiles on borders and corners.
+        Higher values on the edges and especially corners will receive larger bonuses.
         """
-        # Use the parameterized corner weights.
         board_log = self.board.astype(np.float32)
         mask = board_log > 0
         board_log[mask] = np.log2(board_log[mask])
+        
+        # Calculate the weighted sum using the enhanced corner weights
         weighted_sum = np.sum(board_log * self.corner_weights)
-        # Normalize the heuristic by the sum of the weights.
+        
+        # Additional bonus for the highest values being on borders
+        max_value = np.max(board_log)
+        if max_value > 0:
+            borders = np.concatenate([
+                board_log[0, :],    # top row
+                board_log[-1, :],   # bottom row
+                board_log[1:-1, 0], # left column (excluding corners)
+                board_log[1:-1, -1] # right column (excluding corners)
+            ])
+            border_bonus = 0.5 * np.sum(borders == max_value)  # bonus for each max value on border
+            weighted_sum += border_bonus * max_value
+        
+        # Normalize by the sum of weights plus potential border bonus
         normalization = np.sum(self.corner_weights)
         return weighted_sum / normalization
+    
+
+
+    
+    
 
     def step(self, action):
-        """Execute an action, update state and return (state, reward, done, info)."""
         old_board = self.board.copy()
-        old_empty = np.sum(old_board == 0)
         new_board, score_gain, valid_move = self._move(self.board, action)
         if valid_move:
             self.board = new_board
             self.score += score_gain
             self.add_random_tile()
-        new_empty = np.sum(self.board == 0)
         new_max_tile = int(np.max(self.board))
         
-        # Base reward components.
-        merge_reward = score_gain / 30.0
-        max_tile_reward = 0.0
-        if new_max_tile > self.previous_max_tile:
-            max_tile_reward = np.log2(new_max_tile) * 40
-            self.previous_max_tile = new_max_tile
-        empty_bonus = 0.2 * new_empty
+        # Use merged tile sum as base reward.
+        reward = score_gain  # This is the sum of merged tile values.
         
-        reward = merge_reward + max_tile_reward + empty_bonus
+        # Penalize invalid moves and game over.
         if not valid_move:
             reward -= 2
         if self.is_game_over():
             reward -= 100
-        corner_bonus = self.corner_heuristic() * self.corner_factor
-        reward += corner_bonus
+
+        # Optionally, add a bonus for having empty tiles.
+        empty_bonus = 0.2 * np.sum(self.board == 0)
         
+        # Add a bonus based on monotonicity.
+        mono_bonus = 0.01 * compute_monotonicity(self.board)
+        
+        reward += empty_bonus + mono_bonus
+
         info = {
             'score': self.score,
             'max_tile': new_max_tile,
             'valid_move': valid_move,
-            'empty_cells': new_empty,
-            'merge_reward': merge_reward,
-            'max_tile_reward': max_tile_reward,
+            'empty_cells': np.sum(self.board == 0),
+            'merge_reward': score_gain,
             'empty_bonus': empty_bonus,
-            'corner_bonus': corner_bonus
+            'monotonicity_bonus': mono_bonus
         }
         return self.board.copy(), reward, self.is_game_over(), info
 
@@ -147,3 +185,25 @@ def preprocess_state(state):
     mask = state > 0
     state[mask] = np.log2(state[mask])
     return state 
+
+
+def preprocess_state_onehot(state):
+    """
+    Converts the 4x4 board into a one-hot representation with 16 channels.
+    Channel 0 represents an empty tile (0).
+    Channels 1-15 represent tiles with values 2^1 through 2^15.
+    """
+    board = state.astype(np.int32)
+    channels = 16
+    onehot = np.zeros((channels, board.shape[0], board.shape[1]), dtype=np.float32)
+    
+    for i in range(board.shape[0]):
+        for j in range(board.shape[1]):
+            if board[i, j] > 0:
+                power = int(np.log2(board[i, j]))
+                if power < channels:
+                    onehot[power, i, j] = 1.0
+            else:
+                onehot[0, i, j] = 1.0  # Empty tiles are represented in channel 0
+    
+    return onehot
