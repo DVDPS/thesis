@@ -33,6 +33,7 @@ def collect_trajectories(agent: PPOAgent, env: Game2048, min_steps: int = 500) -
     terminal_states = []
     total_steps = 0
     max_tile_overall = 0
+    total_score = 0
 
     while total_steps < min_steps:
         state = env.reset()
@@ -63,6 +64,7 @@ def collect_trajectories(agent: PPOAgent, env: Game2048, min_steps: int = 500) -
             total_steps += 1
             state = next_state
             max_tile_overall = max(max_tile_overall, int(np.max(state)))
+            total_score += info['merge_score']
             if done:
                 final_state_proc = preprocess_state_onehot(state)
                 # Append the final state if it is not already the last state in the trajectory
@@ -78,7 +80,8 @@ def collect_trajectories(agent: PPOAgent, env: Game2048, min_steps: int = 500) -
         'log_probs': np.array(traj_log_probs),
         'values': np.array(traj_values),
         'max_tile': max_tile_overall,
-        'terminal_states': np.array(terminal_states)
+        'terminal_states': np.array(terminal_states),
+        'total_score': total_score,
     }
 
 def save_checkpoint(agent: PPOAgent, optimizer, epoch: int, running_reward: float, max_tile: int, filename: str) -> None:
@@ -97,32 +100,40 @@ def save_checkpoint(agent: PPOAgent, optimizer, epoch: int, running_reward: floa
         'max_tile': max_tile,
     }, abs_filename)
 
-def train(agent: PPOAgent, env: Game2048, optimizer, epochs: int = 1000, mini_batch_size: int = 64, ppo_epochs: int = 8,
-          clip_param: float = 0.2, gamma: float = 0.99, lam: float = 0.95, entropy_coef: float = 0.8, max_grad_norm: float = 0.5,
-          steps_per_update: int = 500) -> None:
+def train(agent: PPOAgent, env: Game2048, optimizer, epochs: int = 1000, 
+          mini_batch_size: int = 64, ppo_epochs: int = 8,
+          clip_param: float = 0.2, gamma: float = 0.99, lam: float = 0.95, 
+          entropy_coef: float = 0.8, max_grad_norm: float = 0.5,
+          steps_per_update: int = 500, 
+          start_epoch: int = 0,  # New parameter
+          best_running_reward: float = float('-inf')) -> None:  # New parameter
     
-    best_score = -float('inf')
-    running_reward = 0
+    # Initialize best_score with the loaded value
+    best_score = best_running_reward
+    running_reward = best_running_reward
     stats = TrainingStats()
     
     logging.info("Starting training...")
     logging.info(f"Training for {epochs} epochs")
     os.makedirs("checkpoints", exist_ok=True)
     
+    # Initialize training parameters
     initial_lr = 3e-4
     final_lr = 1e-4
     min_entropy = 0.05
-
+    
     block_best_running_reward = -float('inf')
     block_best_epoch_info = None
-
-    # Initialize a cosine annealing scheduler for learning rate.
+    
+    # Initialize a cosine annealing scheduler for learning rate
     from torch.optim.lr_scheduler import CosineAnnealingLR
     scheduler = CosineAnnealingLR(optimizer, T_max=epochs, eta_min=final_lr)
+    
     # Initialize GradScaler with the new API
     scaler = torch.amp.GradScaler(device='cuda')
-
-    for epoch in range(epochs):
+    
+    # Start from the loaded epoch
+    for epoch in range(start_epoch, epochs):
         progress = epoch / epochs
         # Update the learning rate via the scheduler.
         scheduler.step()
@@ -191,9 +202,16 @@ def train(agent: PPOAgent, env: Game2048, optimizer, epochs: int = 1000, mini_ba
         episode_reward = np.sum(rewards)
         episode_length = len(trajectory['states'])
         max_tile = trajectory['max_tile']
+        total_score = trajectory['total_score']
         running_reward = 0.05 * episode_reward + (1 - 0.05) * running_reward
+        
         stats.update(episode_reward, max_tile, episode_length, running_reward,
-                     policy_loss.item(), value_loss.item(), entropy.item())
+                    policy_loss.item(), value_loss.item(), entropy.item(), 
+                    total_score)  # Add total_score
+
+        if max_tile > stats.best_max_tile:
+            logging.info(f"New best max tile achieved: {max_tile} at epoch {epoch}")
+            stats.best_max_tile = max_tile
 
         if running_reward > block_best_running_reward:
             block_best_running_reward = running_reward
@@ -208,7 +226,8 @@ def train(agent: PPOAgent, env: Game2048, optimizer, epochs: int = 1000, mini_ba
                 "entropy": entropy.item(),
                 "learning_rate": current_lr,
                 "trajectory": trajectory['states'],
-                "terminal_states": trajectory['terminal_states']
+                "terminal_states": trajectory['terminal_states'],
+                "total_score": total_score,
             }
 
         if (epoch + 1) % 50 == 0:
@@ -219,6 +238,7 @@ def train(agent: PPOAgent, env: Game2048, optimizer, epochs: int = 1000, mini_ba
             info = block_best_epoch_info
             logging.info(f"Epoch {info['epoch']} with Running Reward: {info['running_reward']:.2f}, "
                          f"Episode Reward: {info['episode_reward']:.2f}, Max Tile: {info['max_tile']}, "
+                         f"Total Score: {info['total_score']}, "
                          f"Episode Length: {info['episode_length']}, Policy Loss: {info['policy_loss']:.6f}, "
                          f"Value Loss: {info['value_loss']:.6f}, Entropy: {info['entropy']:.6f}, "
                          f"Learning Rate: {info['learning_rate']:.6f}")

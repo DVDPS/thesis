@@ -15,9 +15,13 @@ class TrainingStats:
         self.window_size = window_size
         self.recent_rewards = deque(maxlen=window_size)
         self.start_time = time.time()
+        self.best_max_tile = 0
+        self.total_scores = []
+        self.best_total_score = 0
+        self.recent_total_scores = deque(maxlen=window_size)
 
     def update(self, episode_reward: float, max_tile: int, episode_length: int,
-               running_reward: float, policy_loss: float, value_loss: float, entropy: float) -> None:
+               running_reward: float, policy_loss: float, value_loss: float, entropy: float, total_score: int) -> None:
         self.rewards.append(episode_reward)
         self.max_tiles.append(max_tile)
         self.episode_lengths.append(episode_length)
@@ -26,6 +30,9 @@ class TrainingStats:
         self.value_losses.append(value_loss)
         self.entropies.append(entropy)
         self.recent_rewards.append(episode_reward)
+        self.total_scores.append(total_score)
+        self.recent_total_scores.append(total_score)
+        self.best_total_score = max(self.best_total_score, total_score)
 
     def plot_progress(self, epoch: int) -> None:
         plt.clf()
@@ -53,6 +60,8 @@ class TrainingStats:
         ax4.set_xlabel('Episode')
         ax4.set_ylabel('Episode Length')
         ax4_twin.set_ylabel('Entropy')
+        ax1.plot(self.total_scores, label='Total Score', alpha=0.4)
+        ax1.legend()
         plt.tight_layout()
         plt.savefig('training_progress.png')
         plt.close()
@@ -65,6 +74,7 @@ class TrainingStats:
         print(f"Training Duration: {int(hours)}h {int(minutes)}m {int(seconds)}s")
         print(f"Best Reward: {max(self.rewards):.2f}")
         print(f"Average Reward (last {self.window_size} episodes): {np.mean(self.recent_rewards):.2f}")
+        print(f"Best Max Tile Ever: {self.best_max_tile}")
         print(f"Best Max Tile: {max(self.max_tiles)}")
         print(f"Average Max Tile (last {self.window_size} episodes): {np.mean(self.max_tiles[-self.window_size:]):.2f}")
         print(f"Average Episode Length: {np.mean(self.episode_lengths):.2f}")
@@ -72,4 +82,6 @@ class TrainingStats:
         print(f"Final Value Loss: {self.value_losses[-1]:.6f}")
         print(f"Final Entropy: {self.entropies[-1]:.6f}")
         print(f"Final Running Reward: {self.running_rewards[-1]:.2f}")
+        print(f"Best Total Score Ever: {self.best_total_score}")
+        print(f"Average Total Score (last {self.window_size} episodes): {np.mean(self.recent_total_scores):.2f}")
         print("============================") 

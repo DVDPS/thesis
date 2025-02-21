@@ -33,7 +33,7 @@ HYPERPARAMS = {
     "learning_rate_final": 1e-4,
     "reward_penalty_invalid": -2,
     "reward_penalty_game_over": -100,
-    "corner_weight": 0.01,  # bonus weight factor for corner heuristic
+    "corner_weight": 0.01,  # bonus weight factor for corner heuristic (I set it because having the highest pieces in the corners is a good strategy based on personal experience)
     "entropy_coef_initial": 0.1,
     "entropy_coef_final": 0.05
 }

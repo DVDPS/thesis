@@ -10,6 +10,7 @@ def compute_monotonicity(board):
     Computes a basic monotonicity score by summing the negative differences
     between adjacent tiles (in log2 space) along rows and columns.
     Higher scores (less negative) indicate a more monotonic board.
+    This came from the paper 
     """
     board = board.astype(np.float32)
     # Avoid log(0) by setting zeros to a small positive value.
@@ -170,7 +171,7 @@ class Game2048:
             'max_tile': new_max_tile,
             'valid_move': valid_move,
             'empty_cells': np.sum(self.board == 0),
-            'merge_reward': score_gain,
+            'merge_score': score_gain,
             'empty_bonus': empty_bonus,
             'monotonicity_bonus': mono_bonus
         }
