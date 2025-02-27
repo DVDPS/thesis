@@ -1,0 +1,2 @@
+"# Command to run balanced exploration with dynamic batch size scheduling:"  
+"python -c \"from utils.enhanced_exploration import balanced_exploration; from enhanced_agent import EnhancedAgent; import torch.optim as optim; agent = EnhancedAgent(); optimizer = optim.AdamW(agent.parameters(), lr=8e-4); balanced_exploration(agent, optimizer, checkpoint_path='balanced_checkpoints/model_best.pt', epochs=500, use_dynamic_batch=True, min_batch_size=16, batch_size=96, output_dir='balanced_exploration_dynamic')\""  

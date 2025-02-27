@@ -1,0 +1,41 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# IDE settings
+.vscode/
+.idea/
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Model checkpoints (selectively include these if needed)
+checkpoints/
+balanced_checkpoints/
+enhanced_checkpoints/
+*_checkpoints/
+
+# Environment variables
+.env
+
+# Lock files
+uv.lock
+
+# Windows and macOS
+Thumbs.db
+.DS_Store 

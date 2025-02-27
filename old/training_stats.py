@@ -32,7 +32,10 @@ class TrainingStats:
         self.recent_rewards.append(episode_reward)
         self.total_scores.append(total_score)
         self.recent_total_scores.append(total_score)
+        
+        # Update best statistics
         self.best_total_score = max(self.best_total_score, total_score)
+        self.best_max_tile = max(self.best_max_tile, max_tile)
 
     def plot_progress(self, epoch: int) -> None:
         plt.clf()
