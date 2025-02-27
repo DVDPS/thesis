@@ -1,6 +1,6 @@
 import numpy as np
 import math
-from game2048 import Game2048, compute_monotonicity
+from .game2048 import Game2048, compute_monotonicity
 
 def analyze_snake_pattern(board):
     """

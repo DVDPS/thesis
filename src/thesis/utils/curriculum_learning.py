@@ -4,10 +4,10 @@ import random
 import os
 import logging
 from torch.utils.data import Dataset, DataLoader
-from game2048 import Game2048, preprocess_state_onehot
-from agent import PPOAgent
-from training import compute_advantages_vectorized
-from utils.visualizations import generate_board_with_high_tile, augment_board
+from ..environment.game2048 import Game2048, preprocess_state_onehot
+from ..agents.base_agent import PPOAgent
+from ..training.training import compute_advantages_vectorized
+from .visualizations import generate_board_with_high_tile, augment_board
 
 # Add safe globals for model loading
 torch.serialization.add_safe_globals([np._core.multiarray.scalar, np.dtype])
@@ -257,3 +257,14 @@ def curriculum_fine_tune(agent, optimizer,
     
     print(f"Saved curriculum-tuned model to {save_path}")
     return best_max_tile, best_score 
+
+# Add curriculum_learning function at the end of the file
+def curriculum_learning(agent, optimizer, epochs=500, target_tiles=[256, 512, 1024], output_dir="checkpoints/curriculum"):
+    """Alias for curriculum_fine_tune for backward compatibility"""
+    return curriculum_fine_tune(
+        agent=agent, 
+        optimizer=optimizer, 
+        target_tiles=target_tiles,
+        fine_tune_epochs=epochs,
+        checkpoint_dir=output_dir
+    ) 

@@ -77,28 +77,32 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-3. Install dependencies:
+3. Install dependencies and the package in development mode:
 ```bash
-pip install -r requirements.txt
-```
+# Option 1: Using the launcher script's install feature
+python run_2048.py --install
 
-4. Install in development mode:
-```bash
+# Option 2: Manual installation
+pip install -r requirements.txt
 pip install -e .
 ```
 
 ## Usage
 
-The project provides a unified command-line interface through `train.bat` (Windows) or `train.sh` (Unix):
+The project provides a unified command-line interface through either script files or the launcher script:
 
 ### Basic Usage
 
 ```bash
+# Using the convenience scripts
 # Windows
 train.bat [mode]
 
 # Unix
 ./train.sh [mode]
+
+# Or directly using the launcher script
+python run_2048.py --mode [mode] [options]
 ```
 
 Available modes:

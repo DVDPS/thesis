@@ -3,9 +3,9 @@ import torch
 import torch.optim as optim
 import numpy as np
 import logging
-from game2048 import Game2048
-from agent import PPOAgent
-from training import train
+from ..environment.game2048 import Game2048
+from ..agents.base_agent import PPOAgent
+from ..training.training import train
 
 # Add safe globals for model loading
 torch.serialization.add_safe_globals([np._core.multiarray.scalar, np.dtype])

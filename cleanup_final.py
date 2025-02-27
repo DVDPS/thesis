@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
-Cleanup script for the 2048 RL project.
-This removes duplicate/obsolete files and other unnecessary artifacts.
+Final cleanup script for the 2048 RL project.
+This removes obsolete files after the repository reorganization.
 """
 
 import os
@@ -23,7 +23,7 @@ def find_files(patterns):
     """Find files matching any of the given patterns"""
     files = []
     for pattern in patterns:
-        files.extend(glob.glob(pattern))
+        files.extend(glob.glob(pattern, recursive=True))
     return files
 
 def main():
@@ -39,13 +39,20 @@ def main():
         "simplified_main.py",
         "simplified_training.py",
         "training.py",
+        "enhanced_main.py",
         
-        # Batch/shell scripts that were replaced
+        # Old batch/shell scripts
         "balanced_exploration.bat",
         "balanced_exploration.sh",
         "dynamic_batch_training.bat",
         "dynamic_batch_training.sh",
-        "enhanced_main.py",
+        "run_training.bat",
+        
+        # Temp cleanup script
+        "cleanup.py",
+        
+        # Old README file
+        "README_OPTIMIZATION.md",
         
         # Old log files
         "enhanced_training.log",
@@ -64,7 +71,6 @@ def main():
         "utils",
         
         # Old directories with potentially useful files
-        # (will prompt before deletion)
         "old"
     ]
 
@@ -81,26 +87,39 @@ def main():
             if answer == 'y' or answer == 'yes':
                 safe_remove(directory)
     
-    # Ask about checkpoints
+    # Ask about checkpoints - keep these by default
     print("\n=== Checkpoint directories ===")
     checkpoints = glob.glob("*checkpoints")
     if checkpoints:
-        for checkpoint_dir in checkpoints:
-            if os.path.isdir(checkpoint_dir):
-                answer = input(f"Remove checkpoint directory '{checkpoint_dir}'? (y/n): ").lower()
-                if answer == 'y' or answer == 'yes':
-                    safe_remove(checkpoint_dir)
+        print("Note: It's recommended to keep your checkpoint directories to preserve trained models.")
+        answer = input(f"Do you want to review checkpoint directories? (y/n): ").lower()
+        if answer == 'y' or answer == 'yes':
+            for checkpoint_dir in checkpoints:
+                if os.path.isdir(checkpoint_dir):
+                    answer = input(f"Remove checkpoint directory '{checkpoint_dir}'? (y/n): ").lower()
+                    if answer == 'y' or answer == 'yes':
+                        safe_remove(checkpoint_dir)
     
     # Find and clean up bytecode files
     print("\n=== Finding and removing bytecode files ===")
-    bytecode_files = find_files(["*.pyc", "*.pyo", "*/__pycache__/*"])
+    bytecode_files = find_files(["**/*.pyc", "**/*.pyo", "**/__pycache__/*"])
     for file in bytecode_files:
         safe_remove(file)
     
     print("\nCleanup complete!")
+    print("\nYour repository is now organized as a proper Python package.")
+    print("You can run the code using the following methods:")
+    print("1. Using the convenience script:")
+    print("   train.bat standard")
+    print("   ./train.sh standard")
+    print("2. Using the launcher:")
+    print("   python run_2048.py --mode standard")
+    print("3. Using PYTHONPATH (direct):")
+    print("   run_direct.bat --mode standard")
 
 if __name__ == "__main__":
-    print("This script will remove obsolete and duplicate files from the project.")
+    print("This script will perform the final cleanup of obsolete files.")
+    print("It preserves the new package structure in src/thesis/.")
     print("It's recommended to have a backup before proceeding.")
     response = input("Do you want to continue? (y/n): ").lower()
     

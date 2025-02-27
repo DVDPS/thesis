@@ -5,8 +5,8 @@ import os
 import logging
 import random
 from collections import deque
-from config import device
-from game2048 import preprocess_state_onehot, Game2048
+from ..config import device
+from ..environment.game2048 import preprocess_state_onehot, Game2048
 
 def collect_experiences(agent, env, num_episodes=5):
     """

@@ -11,15 +11,15 @@ import sys
 import torch
 import torch.optim as optim
 
-from thesis.agents.base_agent import PPOAgent
-from thesis.agents.enhanced_agent import EnhancedAgent
-from thesis.environment.game2048 import Game2048, preprocess_state_onehot
-from thesis.environment.improved_reward import apply_improved_reward
-from thesis.training.training import train
-from thesis.training.simplified_training import train_agent
-from thesis.utils.enhanced_exploration import balanced_exploration
-from thesis.utils.curriculum_learning import curriculum_learning
-from thesis.config import set_seeds, device
+from .agents.base_agent import PPOAgent
+from .agents.enhanced_agent import EnhancedAgent
+from .environment.game2048 import Game2048, preprocess_state_onehot
+from .environment.improved_reward import apply_improved_reward
+from .training.training import train
+from .training.simplified_training import train_agent
+from .utils.enhanced_exploration import balanced_exploration
+from .utils.curriculum_learning import curriculum_learning
+from .config import set_seeds, device
 
 
 def setup_logging(log_file="training.log"):
@@ -34,7 +34,7 @@ def setup_logging(log_file="training.log"):
     )
 
 
-def parse_args():
+def parse_args(args=None):
     """Parse command line arguments"""
     parser = argparse.ArgumentParser(
         description="2048 Reinforcement Learning Training System"
@@ -85,7 +85,7 @@ def parse_args():
     parser.add_argument("--curriculum-epochs", type=int, default=500,
                         help="Number of curriculum learning epochs (default: 500)")
     
-    return parser.parse_args()
+    return parser.parse_args(args)
 
 
 def evaluate_agent(agent, env, num_games=20):
@@ -177,7 +177,7 @@ def main():
         agent = PPOAgent(board_size=4, hidden_dim=args.hidden_dim, input_channels=16)
         log_file = "standard_training.log"
     elif args.mode == "simplified":
-        from thesis.agents.simplified_agent import SimpleAgent
+        from .agents.simplified_agent import SimpleAgent
         agent = SimpleAgent(board_size=4, hidden_dim=args.hidden_dim, input_channels=16)
         log_file = "simplified_training.log"
     elif args.mode == "enhanced":

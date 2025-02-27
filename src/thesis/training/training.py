@@ -3,14 +3,69 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 import logging
-from config import device
-from training_stats import TrainingStats
-from game2048 import preprocess_state, preprocess_state_onehot, Game2048
-from agent import PPOAgent
+from ..config import device
+from ..environment.game2048 import preprocess_state, preprocess_state_onehot, Game2048
+from ..agents.base_agent import PPOAgent
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap, BoundaryNorm
 from collections import deque
 import random
+
+# Simple replacement for TrainingStats
+class TrainingStats:
+    def __init__(self):
+        self.epoch_rewards = []
+        self.running_rewards = []
+        self.policy_losses = []
+        self.value_losses = []
+        self.entropies = []
+        self.max_tiles = []
+    
+    def update(self, epoch_reward, running_reward, policy_loss, value_loss, entropy, max_tile):
+        self.epoch_rewards.append(epoch_reward)
+        self.running_rewards.append(running_reward)
+        self.policy_losses.append(policy_loss)
+        self.value_losses.append(value_loss)
+        self.entropies.append(entropy)
+        self.max_tiles.append(max_tile)
+    
+    def plot(self, filename="training_stats.png"):
+        if not self.epoch_rewards:
+            return  # No data to plot
+            
+        fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+        
+        # Plot rewards
+        axes[0, 0].plot(self.epoch_rewards, alpha=0.6, label="Episode Reward")
+        axes[0, 0].plot(self.running_rewards, label="Running Reward")
+        axes[0, 0].set_title("Rewards")
+        axes[0, 0].set_xlabel("Episode")
+        axes[0, 0].set_ylabel("Reward")
+        axes[0, 0].legend()
+        
+        # Plot max tiles
+        axes[0, 1].plot(self.max_tiles)
+        axes[0, 1].set_title("Max Tile Achieved")
+        axes[0, 1].set_xlabel("Episode")
+        axes[0, 1].set_ylabel("Max Tile")
+        
+        # Plot losses
+        axes[1, 0].plot(self.policy_losses, label="Policy Loss")
+        axes[1, 0].plot(self.value_losses, label="Value Loss")
+        axes[1, 0].set_title("Losses")
+        axes[1, 0].set_xlabel("Episode")
+        axes[1, 0].set_ylabel("Loss")
+        axes[1, 0].legend()
+        
+        # Plot entropy
+        axes[1, 1].plot(self.entropies)
+        axes[1, 1].set_title("Entropy")
+        axes[1, 1].set_xlabel("Episode")
+        axes[1, 1].set_ylabel("Entropy")
+        
+        plt.tight_layout()
+        plt.savefig(filename)
+        plt.close()
 
 def compute_advantages_vectorized(rewards, values, gamma: float = 0.99, lam: float = 0.95) -> np.ndarray:
     rewards = np.array(rewards, dtype=np.float32)

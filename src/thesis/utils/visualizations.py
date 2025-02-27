@@ -4,8 +4,8 @@ import torch
 import os
 from matplotlib.colors import ListedColormap, BoundaryNorm
 from matplotlib.animation import FuncAnimation
-from game2048 import Game2048, preprocess_state_onehot
-from agent import PPOAgent
+from ..environment.game2048 import Game2048, preprocess_state_onehot
+from ..agents.base_agent import PPOAgent
 
 # Add safe globals for model loading
 torch.serialization.add_safe_globals([np._core.multiarray.scalar, np.dtype])
