@@ -67,16 +67,18 @@ class EnhancedAgent(nn.Module):
         self.conv1 = nn.Conv2d(input_channels, 64, kernel_size=3, padding='same')
         self.bn1 = nn.BatchNorm2d(64)
         
-        # Reduced number of residual blocks (from 4 to 2)
+        # Increased number of residual blocks (from 2 to 3)
         self.res_blocks = nn.ModuleList([
-            ResidualBlock(64) for _ in range(2)  # Reduced from 4 to 2 blocks
+            ResidualBlock(64) for _ in range(3)  # Increased from 2 to 3 blocks
         ])
         
-        # Removed self-attention mechanism
-        
-        # Second convolutional layer 
+        # Second convolutional layer with increased channels
         self.conv2 = nn.Conv2d(64, 128, kernel_size=3, padding='same')
         self.bn2 = nn.BatchNorm2d(128)
+        
+        # Skip connection processing
+        self.skip_conv = nn.Conv2d(input_channels, 128, kernel_size=1)
+        self.skip_bn = nn.BatchNorm2d(128)
         
         # Calculate size after convolutions
         conv_output_size = 128 * board_size * board_size
@@ -84,11 +86,11 @@ class EnhancedAgent(nn.Module):
         # Fully connected layers with batch normalization
         self.fc1 = nn.Linear(conv_output_size, hidden_dim)
         self.bn_fc1 = nn.BatchNorm1d(hidden_dim)
-        self.dropout1 = nn.Dropout(0.1)  # Reduced dropout from 0.2 to 0.1
+        self.dropout1 = nn.Dropout(0.15)  # Increased slightly from 0.1
         
         self.fc2 = nn.Linear(hidden_dim, hidden_dim // 2)
         self.bn_fc2 = nn.BatchNorm1d(hidden_dim // 2)
-        self.dropout2 = nn.Dropout(0.1)  # Reduced dropout from 0.2 to 0.1
+        self.dropout2 = nn.Dropout(0.15)  # Increased slightly from 0.1
         
         # Policy head - predict action probabilities
         self.policy_head = nn.Sequential(
@@ -112,9 +114,9 @@ class EnhancedAgent(nn.Module):
         # Move to device
         self.to(device)
         
-        # Increased exploration parameters for better exploration
-        self.exploration_noise = 0.75  # Increased from 0.5
-        self.min_exploration_noise = 0.1  # Increased from 0.05
+        # Optimized exploration parameters
+        self.exploration_noise = 0.8  # Start with higher exploration
+        self.min_exploration_noise = 0.15  # Higher minimum for sustained exploration
         
     def _init_weights(self, module):
         """Initialize weights with a stable approach"""
@@ -147,6 +149,9 @@ class EnhancedAgent(nn.Module):
             # Ensure float type
             x = x.float()
             
+            # Save input for skip connection
+            skip = self.skip_bn(self.skip_conv(x))
+            
             # Initial convolution
             x = F.relu(self.bn1(self.conv1(x)))
             
@@ -154,15 +159,16 @@ class EnhancedAgent(nn.Module):
             for res_block in self.res_blocks:
                 x = res_block(x)
             
-            # Removed self-attention block
-            
             # Second convolution
             x = F.relu(self.bn2(self.conv2(x)))
+            
+            # Add skip connection
+            x = x + skip
             
             # Flatten for fully connected layers
             x = x.view(x.size(0), -1)
             
-            # Fully connected layers
+            # Fully connected layers with improved dropout
             x = self.dropout1(F.relu(self.bn_fc1(self.fc1(x))))
             x = self.dropout2(F.relu(self.bn_fc2(self.fc2(x))))
             
@@ -191,9 +197,9 @@ class EnhancedAgent(nn.Module):
                     torch.zeros((batch_size, 1), device=device))
     
     def update_exploration(self, progress):
-        """Update exploration noise with a slower decay schedule"""
-        # Slower decay to encourage more exploration
+        """Update exploration noise with an optimized decay schedule"""
+        # Slower initial decay with sustained exploration
         self.exploration_noise = max(
             self.min_exploration_noise,
-            0.75 * (1.0 - progress * 0.6)  # Start higher, decay more slowly (was 0.5 and 0.8)
+            0.8 * (1.0 - progress * 0.5)  # Slower decay rate
         )

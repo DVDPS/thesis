@@ -15,7 +15,9 @@ if "%1"=="" (
     echo   enhanced   - Run enhanced agent training
     echo   balanced   - Run balanced exploration training
     echo   curriculum - Run curriculum learning
+    echo   mcts       - Run with MCTS enhancement
     echo   evaluate   - Evaluate a trained model
+    echo   compare    - Compare agent with MCTS version
     echo   help       - Show more detailed help
     echo   debug      - Run in debug mode to check imports
     echo   install    - Install the package in development mode
@@ -23,6 +25,8 @@ if "%1"=="" (
     echo Example:
     echo   train.bat enhanced --epochs 1000
     echo   train.bat evaluate checkpoints/enhanced/best_model.pt
+    echo   train.bat mcts --checkpoint checkpoints/enhanced/best_model.pt --mcts-simulations 100
+    echo   train.bat compare --checkpoint checkpoints/enhanced/best_model.pt
     exit /b
 )
 
@@ -51,6 +55,10 @@ if "%1"=="standard" (
     python run_2048.py --mode balanced --epochs 2000 --batch-size 96 --dynamic-batch --min-batch-size 16 --output-dir checkpoints/balanced %2 %3 %4 %5 %6 %7 %8 %9
 ) else if "%1"=="curriculum" (
     python run_2048.py --mode enhanced --epochs 500 --curriculum --curriculum-epochs 500 --checkpoint checkpoints/enhanced/best_model.pt --output-dir checkpoints/curriculum %2 %3 %4 %5 %6 %7 %8 %9
+) else if "%1"=="mcts" (
+    python run_2048.py --mode mcts --evaluate --games 10 --mcts-simulations 50 --checkpoint checkpoints/enhanced/best_model.pt %2 %3 %4 %5 %6 %7 %8 %9
+) else if "%1"=="compare" (
+    python run_2048.py --mode enhanced --evaluate --games 5 --compare-mcts --mcts-simulations 50 --checkpoint %2 %3 %4 %5 %6 %7 %8 %9
 ) else if "%1"=="evaluate" (
     python run_2048.py --mode enhanced --evaluate --games 20 --checkpoint %2 %3 %4 %5 %6 %7 %8 %9
 ) else (

@@ -215,11 +215,11 @@ def save_checkpoint(agent: PPOAgent, optimizer, epoch: int, running_reward: floa
         'max_tile': max_tile,
     }, abs_filename)
 
-def train(agent: PPOAgent, env: Game2048, optimizer, epochs: int = 1000, 
-          mini_batch_size: int = 64, ppo_epochs: int = 8,
-          clip_param: float = 0.2, gamma: float = 0.99, lam: float = 0.95, 
-          entropy_coef: float = 0.8, max_grad_norm: float = 0.5,
-          steps_per_update: int = 500, 
+def train(agent: PPOAgent, env: Game2048, optimizer, epochs: int = 3000, 
+          mini_batch_size: int = 128, ppo_epochs: int = 10,
+          clip_param: float = 0.15, gamma: float = 0.99, lam: float = 0.95, 
+          entropy_coef: float = 0.6, max_grad_norm: float = 0.5,
+          steps_per_update: int = 1000, 
           start_epoch: int = 0,
           best_running_reward: float = float('-inf'),
           checkpoint_dir: str = "checkpoints") -> None:
@@ -233,9 +233,9 @@ def train(agent: PPOAgent, env: Game2048, optimizer, epochs: int = 1000,
     logging.info(f"Training for {epochs} epochs")
     os.makedirs(checkpoint_dir, exist_ok=True)
     
-    # Initialize training parameters with more effective decay schedule
-    initial_lr = 5e-4
-    final_lr = 5e-5  # Lower final learning rate for fine-tuning
+    # Initialize training parameters with optimized decay schedule
+    initial_lr = 3e-4  # Reduced initial learning rate
+    final_lr = 1e-5  # Lower final learning rate
     min_entropy = 0.05
     
     block_best_running_reward = -float('inf')
@@ -248,213 +248,119 @@ def train(agent: PPOAgent, env: Game2048, optimizer, epochs: int = 1000,
     scheduler = CosineAnnealingLR(optimizer, T_max=epochs, eta_min=final_lr)
     
     # Use GradScaler for mixed precision training
-    scaler = torch.amp.GradScaler(device='cuda')
+    scaler = torch.cuda.amp.GradScaler()
     
-    # Keep track of the highest tile achieved for curriculum learning
-    highest_tile_achieved = 0
-    best_total_score = 0
-    
-    # Start from the loaded epoch
+    # Training loop
     for epoch in range(start_epoch, epochs):
-        progress = epoch / epochs
-        # Update the learning rate via the scheduler
-        scheduler.step()
-        current_lr = optimizer.param_groups[0]['lr']
-        agent.update_exploration(progress)
+        # Collect trajectories with increased steps and episodes
+        trajectories = collect_trajectories(agent, env, min_steps=steps_per_update)
         
-        # Enhanced entropy coefficient decay schedule
-        # Maintain higher entropy for longer for better exploration
-        initial_entropy_coef = entropy_coef
-        final_entropy_coef = min_entropy
-        # Extend decay period to 50% of training
-        decay_fraction = 0.5  
-        decay_epochs = decay_fraction * epochs
-        if epoch < decay_epochs:
-            current_entropy_coef = initial_entropy_coef - ((initial_entropy_coef - final_entropy_coef) * (epoch / decay_epochs))
-        else:
-            current_entropy_coef = final_entropy_coef
+        states = torch.tensor(trajectories['states'], dtype=torch.float, device=device)
+        actions = torch.tensor(trajectories['actions'], dtype=torch.long, device=device)
+        rewards = torch.tensor(trajectories['rewards'], dtype=torch.float, device=device)
+        old_log_probs = torch.tensor(trajectories['log_probs'], dtype=torch.float, device=device)
+        old_values = torch.tensor(trajectories['values'], dtype=torch.float, device=device)
         
-        # Collect trajectories
-        trajectory = collect_trajectories(agent, env, min_steps=steps_per_update)
-        if len(trajectory['states']) < 8:
-            continue
+        # Compute advantages with optimized parameters
+        advantages = compute_advantages_vectorized(rewards.cpu().numpy(), 
+                                                old_values.cpu().numpy(), 
+                                                gamma=gamma, 
+                                                lam=lam)
+        advantages = torch.tensor(advantages, dtype=torch.float, device=device)
         
-        # Update highest tile achieved for tracking progress
-        current_max_tile = trajectory['max_tile']
-        current_total_score = trajectory['total_score']
+        # Normalize advantages for stability
+        advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
         
-        # Update batch best stats
-        block_best_score = max(block_best_score, current_total_score)
-        block_best_tile = max(block_best_tile, current_max_tile)
-        
-        # Log significant milestones (only log when we achieve new records)
-        if current_max_tile > highest_tile_achieved:
-            highest_tile_achieved = current_max_tile
-            logging.info(f"[MILESTONE] Achieved new highest tile {highest_tile_achieved} at epoch {epoch}")
-            # Only save milestone model if it's a significant improvement (128, 256, 512, 1024, 2048)
-            if highest_tile_achieved in [128, 256, 512, 1024, 2048]:
-                milestone_path = os.path.join(checkpoint_dir, f"model_tile_{highest_tile_achieved}.pt")
-                save_checkpoint(agent, optimizer, epoch, running_reward, highest_tile_achieved, milestone_path)
-                logging.info(f"Saved milestone model for tile {highest_tile_achieved} at {milestone_path}")
-                
-        if current_total_score > best_total_score:
-            old_best = best_total_score
-            best_total_score = current_total_score
-            # Only log if significant improvement (>10% increase)
-            if best_total_score > old_best * 1.1 or best_total_score > 10000:
-                logging.info(f"[HIGH SCORE] New high score: {best_total_score} at epoch {epoch} (previous: {old_best})")
-        
-        # Process trajectory data
-        states = torch.tensor(trajectory['states'], dtype=torch.float, device=device)
-        actions = torch.tensor(trajectory['actions'], dtype=torch.long, device=device)
-        old_log_probs = torch.tensor(trajectory['log_probs'], dtype=torch.float, device=device)
-        rewards = trajectory['rewards']
-        values = trajectory['values']
-        
-        # Compute advantages
-        advantages = compute_advantages_vectorized(rewards, values, gamma, lam)
-        advantages_tensor = torch.tensor(advantages, dtype=torch.float, device=device)
-        returns_tensor = torch.tensor(np.array(values) + advantages, dtype=torch.float, device=device)
-        
-        # Training phase
-        agent.train()
-        num_samples = len(advantages)
-        indices = np.arange(num_samples)
-        
-        # Track loss metrics
-        epoch_value_loss = 0
-        epoch_policy_loss = 0
-        epoch_entropy = 0
-        update_count = 0
-        
-        # PPO update loop
+        # PPO update with increased epochs and batch size
         for _ in range(ppo_epochs):
-            np.random.shuffle(indices)
-            for start in range(0, num_samples, mini_batch_size):
-                end = start + mini_batch_size
-                batch_idx = indices[start:end]
-                batch_states = states[batch_idx]
-                batch_actions = actions[batch_idx]
-                batch_old_log_probs = old_log_probs[batch_idx]
-                batch_advantages = advantages_tensor[batch_idx]
-                batch_returns = returns_tensor[batch_idx]
+            # Generate random indices for mini-batches
+            indices = torch.randperm(states.size(0))
+            
+            for start_idx in range(0, states.size(0), mini_batch_size):
+                # Get mini-batch indices
+                batch_indices = indices[start_idx:start_idx + mini_batch_size]
                 
-                # Mixed precision forward pass
-                with torch.amp.autocast(device_type='cuda'):
-                    policy_logits, value_preds = agent(batch_states, training=True)
-                    dist = torch.distributions.Categorical(logits=policy_logits)
-                    new_log_probs = dist.log_prob(batch_actions)
+                # Extract mini-batch data
+                batch_states = states[batch_indices]
+                batch_actions = actions[batch_indices]
+                batch_advantages = advantages[batch_indices]
+                batch_old_log_probs = old_log_probs[batch_indices]
+                
+                # Forward pass with mixed precision
+                with torch.cuda.amp.autocast():
+                    logits, values = agent(batch_states, training=True)
+                    dist = torch.distributions.Categorical(logits=logits)
+                    log_probs = dist.log_prob(batch_actions)
                     entropy = dist.entropy().mean()
                     
-                    # Calculate PPO losses
-                    ratio = torch.exp(new_log_probs - batch_old_log_probs)
+                    # Compute policy loss with clipping
+                    ratio = torch.exp(log_probs - batch_old_log_probs)
                     surr1 = ratio * batch_advantages
                     surr2 = torch.clamp(ratio, 1.0 - clip_param, 1.0 + clip_param) * batch_advantages
                     policy_loss = -torch.min(surr1, surr2).mean()
                     
-                    # Enhanced value loss with huber loss for stability
-                    value_loss = F.huber_loss(value_preds.view(-1), batch_returns, delta=1.0)
+                    # Compute value loss with clipping
+                    value_pred = values.squeeze()
+                    value_targets = rewards[batch_indices]
+                    value_loss = F.mse_loss(value_pred, value_targets)
                     
-                    # Combined loss with adaptive entropy coefficient
-                    loss = policy_loss + 0.5 * value_loss - current_entropy_coef * entropy
+                    # Total loss with entropy bonus
+                    loss = policy_loss + 0.5 * value_loss - entropy_coef * entropy
                 
-                # Optimizer step with gradient scaling
+                # Optimize with gradient clipping
                 optimizer.zero_grad()
                 scaler.scale(loss).backward()
-                # Clip gradients for stability
+                scaler.unscale_(optimizer)
                 torch.nn.utils.clip_grad_norm_(agent.parameters(), max_grad_norm)
                 scaler.step(optimizer)
                 scaler.update()
-                
-                # Track metrics
-                epoch_value_loss += value_loss.item()
-                epoch_policy_loss += policy_loss.item()
-                epoch_entropy += entropy.item()
-                update_count += 1
         
-        # Average losses
-        if update_count > 0:
-            epoch_value_loss /= update_count
-            epoch_policy_loss /= update_count
-            epoch_entropy /= update_count
+        # Update learning rate
+        scheduler.step()
         
-        # Calculate reward stats
-        episode_reward = np.sum(rewards)
-        episode_length = len(trajectory['states'])
-        max_tile = trajectory['max_tile']
-        total_score = trajectory['total_score']
+        # Update exploration noise
+        agent.update_exploration(epoch / epochs)
         
-        # Update running reward with adaptive coefficient
-        # Use a smaller coefficient for smoother tracking (0.03 instead of 0.05)
-        running_reward = 0.03 * episode_reward + (1 - 0.03) * running_reward
+        # Update statistics
+        running_reward = 0.95 * running_reward + 0.05 * trajectories['total_score'] if running_reward > float('-inf') else trajectories['total_score']
         
-        # Update training statistics
-        stats.update(episode_reward, max_tile, episode_length, running_reward,
-                    epoch_policy_loss, epoch_value_loss, epoch_entropy, 
-                    total_score)
-
-        # Track best performance within the current block
-        if running_reward > block_best_running_reward:
-            block_best_running_reward = running_reward
-            block_best_epoch_info = {
-                "epoch": epoch,
-                "running_reward": running_reward,
-                "episode_reward": episode_reward,
-                "max_tile": max_tile,
-                "episode_length": episode_length,
-                "policy_loss": epoch_policy_loss,
-                "value_loss": epoch_value_loss,
-                "entropy": epoch_entropy,
-                "learning_rate": current_lr,
-                "trajectory": trajectory['states'],
-                "terminal_states": trajectory['terminal_states'],
-                "total_score": total_score,
-            }
-
-        # Log progress every 20 epochs
-        if (epoch + 1) % 20 == 0:
-            # Calculate the starting epoch number for this block (using 1-indexed epochs)
-            start_epoch_block = (epoch + 1) - 20 + 1
-            logging.info(f"\n----- TRAINING PROGRESS: EPOCHS {start_epoch_block} to {epoch + 1} -----")
-            logging.info(f"PARAMETERS: entropy={current_entropy_coef:.4f}, lr={current_lr:.6f}")
-            logging.info(f"GLOBAL BEST: highest_tile={highest_tile_achieved}, best_score={best_total_score}")
-            logging.info(f"BATCH BEST: highest_tile={block_best_tile}, best_score={block_best_score}")
-            logging.info(f"STATS: avg_reward={np.mean(stats.recent_rewards):.2f}, current_best_tile={stats.best_max_tile}")
-            
-            if block_best_epoch_info:
-                logging.info("Best epoch in this batch:")
-                info = block_best_epoch_info
-                logging.info(f"  Epoch {info['epoch']}: reward={info['running_reward']:.2f}, "
-                            f"max_tile={info['max_tile']}, score={info['total_score']}, "
-                            f"steps={info['episode_length']}")
-                logging.info(f"  Metrics: policy_loss={info['policy_loss']:.6f}, "
-                            f"value_loss={info['value_loss']:.6f}, entropy={info['entropy']:.6f}")
-                logging.info("-" * 30)
-                # Plot the terminal (final) board states for the best epoch in this block.
-                plot_board_trajectory(info['terminal_states'], f"board_trajectory_epoch_{info['epoch']}.png")
-                
-            # Reset batch tracking
-            block_best_running_reward = -float('inf')
-            block_best_epoch_info = None
-            block_best_score = 0
-            block_best_tile = 0
-                
-            # Save intermediate models every 100 epochs
-            if (epoch + 1) % 100 == 0:
-                save_checkpoint(agent, optimizer, epoch, running_reward, max_tile, 
-                                os.path.join(checkpoint_dir, f"model_epoch_{epoch+1}.pt"))
+        # Log performance metrics
+        stats.update(
+            epoch_reward=trajectories['total_score'],
+            running_reward=running_reward,
+            policy_loss=policy_loss.item(),
+            value_loss=value_loss.item(),
+            entropy=entropy.item(),
+            max_tile=trajectories['max_tile']
+        )
         
-        # Save best model based on running reward
+        # Save checkpoint if performance improves
         if running_reward > best_score:
             best_score = running_reward
-            save_checkpoint(agent, optimizer, epoch, running_reward, max_tile, os.path.join(checkpoint_dir, "best_model.pt"))
-    
-    # Print final training stats and ensure highest_tile_achieved is reflected in stats
-    stats.best_max_tile = max(stats.best_max_tile, highest_tile_achieved)
-    stats.print_summary()
-    logging.info(f"TRAINING COMPLETE! Final model saved as '{checkpoint_dir}/best_model.pt'")
-    logging.info(f"HIGHEST TILE: {highest_tile_achieved}")
-    logging.info(f"TRAINING PROGRESS: Plot saved as 'training_progress.png'")
+            save_checkpoint(
+                agent=agent,
+                optimizer=optimizer,
+                epoch=epoch,
+                running_reward=running_reward,
+                max_tile=trajectories['max_tile'],
+                filename=f"{checkpoint_dir}/enhanced/best_model.pt"
+            )
+            
+            # Log improvement
+            logging.info(f"Epoch {epoch}: New best model saved with running reward: {running_reward:.2f}")
+            logging.info(f"Max tile achieved: {trajectories['max_tile']}")
+        
+        # Plot training statistics every 100 epochs
+        if (epoch + 1) % 100 == 0:
+            stats.plot(f"{checkpoint_dir}/training_stats.png")
+            
+        # Log progress
+        if (epoch + 1) % 10 == 0:
+            logging.info(f"Epoch {epoch + 1}/{epochs}")
+            logging.info(f"Running reward: {running_reward:.2f}")
+            logging.info(f"Max tile: {trajectories['max_tile']}")
+            logging.info(f"Learning rate: {scheduler.get_last_lr()[0]:.2e}")
+            logging.info(f"Exploration noise: {agent.exploration_noise:.2f}")
 
 def onehot_to_board(onehot_state):
     """Convert a one-hot encoded state back to regular board format."""

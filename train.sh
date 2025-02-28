@@ -15,7 +15,9 @@ if [ "$1" = "" ]; then
     echo "  enhanced   - Run enhanced agent training"
     echo "  balanced   - Run balanced exploration training"
     echo "  curriculum - Run curriculum learning"
+    echo "  mcts       - Run with MCTS enhancement"
     echo "  evaluate   - Evaluate a trained model"
+    echo "  compare    - Compare agent with MCTS version"
     echo "  help       - Show more detailed help"
     echo "  debug      - Run in debug mode to check imports"
     echo "  install    - Install the package in development mode"
@@ -23,6 +25,8 @@ if [ "$1" = "" ]; then
     echo "Example:"
     echo "  ./train.sh enhanced --epochs 1000"
     echo "  ./train.sh evaluate checkpoints/enhanced/best_model.pt"
+    echo "  ./train.sh mcts --checkpoint checkpoints/enhanced/best_model.pt --mcts-simulations 100"
+    echo "  ./train.sh compare --checkpoint checkpoints/enhanced/best_model.pt"
     exit 0
 fi
 
@@ -50,6 +54,12 @@ case "$1" in
         ;;
     "curriculum")
         python run_2048.py --mode enhanced --epochs 500 --curriculum --curriculum-epochs 500 --checkpoint checkpoints/enhanced/best_model.pt --output-dir checkpoints/curriculum "${@:2}"
+        ;;
+    "mcts")
+        python run_2048.py --mode mcts --evaluate --games 10 --mcts-simulations 50 --checkpoint checkpoints/enhanced/best_model.pt "${@:2}"
+        ;;
+    "compare")
+        python run_2048.py --mode enhanced --evaluate --games 5 --compare-mcts --mcts-simulations 50 --checkpoint "$2" "${@:3}"
         ;;
     "evaluate")
         python run_2048.py --mode enhanced --evaluate --games 20 --checkpoint "$2" "${@:3}"

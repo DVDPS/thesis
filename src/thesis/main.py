@@ -60,7 +60,7 @@ def parse_args(args=None):
     
     # Training modes
     parser.add_argument("--mode", type=str, default="enhanced", 
-                        choices=["standard", "simplified", "enhanced", "balanced"],
+                        choices=["standard", "simplified", "enhanced", "balanced", "mcts"],
                         help="Training mode to use (default: enhanced)")
     parser.add_argument("--evaluate", action="store_true", 
                         help="Evaluate model without training")
@@ -84,6 +84,14 @@ def parse_args(args=None):
                         help="Use curriculum learning after normal training")
     parser.add_argument("--curriculum-epochs", type=int, default=500,
                         help="Number of curriculum learning epochs (default: 500)")
+    
+    # MCTS options
+    parser.add_argument("--mcts-simulations", type=int, default=50,
+                        help="Number of MCTS simulations (default: 50)")
+    parser.add_argument("--mcts-temperature", type=float, default=1.0,
+                        help="Temperature for MCTS action selection (default: 1.0)")
+    parser.add_argument("--compare-mcts", action="store_true",
+                        help="Compare regular agent with MCTS-enhanced version")
     
     return parser.parse_args(args)
 
@@ -186,6 +194,16 @@ def main():
     elif args.mode == "balanced":
         agent = EnhancedAgent(board_size=4, hidden_dim=args.hidden_dim, input_channels=16)
         log_file = "balanced_training.log"
+    elif args.mode == "mcts":
+        # Use EnhancedAgent as base for MCTS
+        base_agent = EnhancedAgent(board_size=4, hidden_dim=args.hidden_dim, input_channels=16)
+        from .utils.mcts_agent_wrapper import wrap_agent_with_mcts
+        agent = wrap_agent_with_mcts(
+            base_agent, 
+            num_simulations=args.mcts_simulations,
+            temperature=args.mcts_temperature
+        )
+        log_file = "mcts_evaluation.log"
     else:
         raise ValueError(f"Unknown training mode: {args.mode}")
     
@@ -193,11 +211,11 @@ def main():
     setup_logging(log_file)
     
     # Override exploration parameters if specified
-    if args.exploration is not None:
+    if hasattr(agent, 'exploration_noise') and args.exploration is not None:
         agent.exploration_noise = args.exploration
         logging.info(f"Overriding exploration noise: {agent.exploration_noise}")
     
-    if args.min_exploration is not None:
+    if hasattr(agent, 'min_exploration_noise') and args.min_exploration is not None:
         agent.min_exploration_noise = args.min_exploration
         logging.info(f"Overriding minimum exploration noise: {agent.min_exploration_noise}")
     
@@ -208,9 +226,16 @@ def main():
         optimizer = optim.Adam(agent.parameters(), lr=args.lr, weight_decay=1e-5)
     elif args.mode == "balanced":
         optimizer = optim.AdamW(agent.parameters(), lr=args.lr, weight_decay=5e-6, eps=1e-5)
+    elif args.mode == "mcts":
+        # For MCTS mode, use the parameters of the wrapped agent
+        optimizer = optim.Adam(agent.agent.parameters(), lr=args.lr, weight_decay=1e-5)
+        logging.info(f"Created optimizer for the base agent within the MCTS wrapper")
     
     # Log configuration details
-    logging.info(f"=== 2048 {args.mode.capitalize()} Training ===")
+    logging.info(f"=== 2048 {args.mode.capitalize()} Training/Evaluation ===")
+    if args.mode == "mcts":
+        logging.info(f"MCTS Simulations: {args.mcts_simulations}")
+        logging.info(f"MCTS Temperature: {args.mcts_temperature}")
     logging.info(f"Training for {args.epochs} epochs with batch size {args.batch_size}")
     logging.info(f"Learning rate: {args.lr}")
     logging.info(f"Device: {device}")
@@ -219,8 +244,14 @@ def main():
     start_epoch = 0
     if args.checkpoint and os.path.exists(args.checkpoint):
         logging.info(f"Loading checkpoint: {args.checkpoint}")
-        checkpoint = torch.load(args.checkpoint)
-        agent.load_state_dict(checkpoint['model_state_dict'])
+        checkpoint = torch.load(args.checkpoint, weights_only=False)
+        
+        # If using MCTS mode, load checkpoint into the base agent
+        if args.mode == "mcts":
+            agent.agent.load_state_dict(checkpoint['model_state_dict'])
+        else:
+            agent.load_state_dict(checkpoint['model_state_dict'])
+            
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         start_epoch = checkpoint.get('epoch', 0) + 1
         logging.info(f"Resuming from epoch {start_epoch}")
@@ -228,8 +259,25 @@ def main():
     # Evaluation mode
     if args.evaluate:
         logging.info("Running evaluation")
-        best_tile = evaluate_agent(agent, env, num_games=args.games)
-        logging.info(f"Evaluation complete. Best tile: {best_tile}")
+        if args.compare_mcts and args.mode != "mcts":
+            # Compare regular agent with MCTS-enhanced version
+            from .utils.mcts_agent_wrapper import wrap_agent_with_mcts
+            from .utils.mcts_evaluation import compare_agents
+            
+            # Create MCTS version of the agent
+            mcts_agent = wrap_agent_with_mcts(
+                agent, 
+                num_simulations=args.mcts_simulations,
+                temperature=args.mcts_temperature
+            )
+            
+            # Compare both agents
+            logging.info(f"Comparing regular agent with MCTS agent ({args.mcts_simulations} simulations)")
+            compare_agents(agent, mcts_agent, num_games=args.games)
+        else:
+            # Standard evaluation
+            best_tile = evaluate_agent(agent, env, num_games=args.games)
+            logging.info(f"Evaluation complete. Best tile: {best_tile}")
         return
     
     # Training mode - select appropriate training function
@@ -243,18 +291,7 @@ def main():
             start_epoch=start_epoch,
             checkpoint_dir=args.output_dir
         )
-    elif args.mode == "simplified":
-        train_agent(
-            agent=agent,
-            env=env,
-            optimizer=optimizer,
-            num_epochs=args.epochs,
-            batch_size=args.batch_size,
-            gamma=args.gamma,
-            save_dir=args.output_dir,
-            log_interval=10
-        )
-    elif args.mode == "enhanced":
+    elif args.mode in ["simplified", "enhanced", "mcts"]:
         train_agent(
             agent=agent,
             env=env,
