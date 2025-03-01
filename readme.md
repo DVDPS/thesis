@@ -1,168 +1,214 @@
-# 2048 Game AI with Reinforcement Learning
+# 2048 MCTS Evaluation System
 
-This project implements an AI agent that learns to play the 2048 game using Proximal Policy Optimization (PPO) and other reinforcement learning techniques. The implementation includes several modern deep learning approaches and optimizations.
+This project implements a Monte Carlo Tree Search (MCTS) enhanced agent for playing the 2048 game, along with a comprehensive evaluation system to analyze its performance.
 
-## Project Organization
-
-The project has been reorganized into a clean, modular Python package structure:
+## Project Structure
 
 ```
-thesis/
-├── src/thesis/                # Main package
-│   ├── agents/                # Agent implementations
-│   │   ├── base_agent.py      # PPO agent base classes
-│   │   ├── enhanced_agent.py  # Enhanced agent with improvements
-│   │   └── simplified_agent.py # Simplified agent implementation
-│   ├── environment/           # Game environment
-│   │   ├── game2048.py        # 2048 game implementation
-│   │   └── improved_reward.py # Enhanced reward functions
-│   ├── training/              # Training implementations
-│   │   ├── training.py        # Standard PPO training
-│   │   └── simplified_training.py # Simplified training loop
-│   ├── utils/                 # Utility modules
-│   │   ├── curriculum_learning.py # Curriculum learning implementation
-│   │   ├── enhanced_exploration.py # Exploration techniques
-│   │   └── visualizations.py  # Visualization tools
-│   ├── config.py              # Configuration settings
-│   └── main.py                # Unified entry point
-├── checkpoints/               # Model checkpoints
-├── visualizations/            # Generated visualizations
-├── setup.py                   # Package setup
-├── requirements.txt           # Dependencies
-├── train.bat                  # Windows training script
-└── train.sh                   # Unix training script
+├── scripts/                # Batch files and scripts
+│   ├── analyze_results.bat # Script to analyze evaluation results
+│   ├── comprehensive_eval.bat # Script to run comprehensive evaluation
+│   ├── evaluate.bat        # Script to run evaluation
+│   ├── play_game.bat       # Script to play a single game
+│   └── ...
+├── src/thesis/
+│   ├── agents/             # Agent implementations
+│   │   ├── enhanced_agent.py # Neural network agent
+│   │   └── ...
+│   ├── environment/        # Game environment
+│   │   ├── game2048.py     # 2048 game implementation
+│   │   └── ...
+│   ├── utils/              # Utility modules
+│   │   ├── cli/            # Command-line interface
+│   │   │   └── cli.py      # CLI utilities
+│   │   ├── evaluation/     # Evaluation utilities
+│   │   │   ├── analyze_results.py # Results analysis
+│   │   │   ├── comprehensive_eval.py # Comprehensive evaluation
+│   │   │   ├── evaluation.py # Agent evaluation
+│   │   │   └── mcts_evaluation.py # MCTS-specific evaluation
+│   │   ├── mcts/           # MCTS utilities
+│   │   │   ├── mcts.py     # MCTS implementation
+│   │   │   └── mcts_agent_wrapper.py # MCTS wrapper for agents
+│   │   ├── visualization/  # Visualization utilities
+│   │   │   ├── game_analysis.py # Game trajectory analysis
+│   │   │   ├── mcts_visualization.py # MCTS search visualization
+│   │   │   └── play_game.py # Single game visualization
+│   │   └── ...
+│   ├── config.py           # Configuration settings
+│   ├── main.py             # Main entry point
+│   └── run_evaluation.py   # Script to run evaluation
+└── ...
 ```
 
 ## Features
 
-- **Multiple Agent Architectures**:
-  - Standard PPO agent with convolutional layers
-  - Enhanced agent with residual connections and batch normalization
-  - Simplified agent with stable learning properties
+- Neural network agent for playing 2048
+- MCTS enhancement for improved planning
+- Comprehensive evaluation system
+- Visualization of game trajectories and MCTS search
+- Command-line interface for easy experimentation
+- Single game visualization for debugging and demonstration
+- Results analysis for comparing different configurations
 
-- **Advanced Training Methods**:
-  - Standard PPO training
-  - Simplified stable training
-  - Balanced exploration training
-  - Curriculum learning for high tile values
+## Requirements
 
-- **Optimizations**:
-  - Dynamic batch sizing
-  - Exploration noise management
-  - Optimistic value initialization
-  - Reward function shaping
+- Python 3.8+
+- PyTorch
+- NumPy
+- Matplotlib
 
 ## Installation
 
-### Prerequisites
-- Python 3.8 or higher
-- CUDA-capable GPU (recommended)
-
-### Setup
-
 1. Clone the repository:
-```bash
+   ```
 git clone https://github.com/yourusername/thesis.git
 cd thesis
 ```
 
-2. Create and activate a virtual environment:
-```bash
-# Windows
-python -m venv .venv
-.venv\Scripts\activate
+2. Create a virtual environment (optional but recommended):
+   ```
+   python -m venv venv
+   ```
 
-# Unix/Linux
-python -m venv .venv
-source .venv/bin/activate
-```
+3. Activate the virtual environment:
+   - Windows: `venv\Scripts\activate`
+   - Linux/Mac: `source venv/bin/activate`
 
-3. Install dependencies and the package in development mode:
-```bash
-# Option 1: Using the launcher script's install feature
-python run_2048.py --install
-
-# Option 2: Manual installation
+4. Install dependencies:
+   ```
 pip install -r requirements.txt
-pip install -e .
 ```
 
 ## Usage
 
-The project provides a unified command-line interface through either script files or the launcher script:
+### Running Evaluation
 
-### Basic Usage
+On Windows, use the provided batch file:
 
-```bash
-# Using the convenience scripts
-# Windows
-train.bat [mode]
-
-# Unix
-./train.sh [mode]
-
-# Or directly using the launcher script
-python run_2048.py --mode [mode] [options]
+```
+scripts\evaluate.bat --checkpoint checkpoints/best_model.pt --mcts-simulations 200 --games 10
 ```
 
-Available modes:
-- `standard`: Standard PPO training
-- `simplified`: Simplified stable training
-- `enhanced`: Enhanced agent training
-- `balanced`: Balanced exploration training
-- `curriculum`: Curriculum learning for high-value tiles
-- `evaluate`: Evaluate a trained model
+Or run directly with Python:
+
+```
+python -m src.thesis.run_evaluation --checkpoint checkpoints/best_model.pt --mcts-simulations 200 --games 10
+```
+
+### Playing a Single Game
+
+To play and visualize a single game:
+
+```
+scripts\play_game.bat checkpoints/best_model.pt 200 0.5
+```
+
+Where:
+- First argument: Path to the model checkpoint
+- Second argument: Number of MCTS simulations (0 for regular agent)
+- Third argument: MCTS temperature parameter
+
+This will:
+1. Play a single game with the specified agent
+2. Display the game progress in the console
+3. Generate visualizations in the `game_visualization` directory:
+   - Board trajectory showing key frames from the game
+   - Action distribution chart
+   - Reward progression chart
+
+### Analyzing Results
+
+To analyze and compare results from multiple evaluations:
+
+```
+scripts\analyze_results.bat --results-dir evaluation_results --output-dir analysis_results
+```
+
+This will:
+1. Parse all result files in the specified directory
+2. Generate comparison visualizations:
+   - Average max tile comparison
+   - Average score comparison
+   - Best max tile comparison
+   - Tile distribution comparison
+3. Create a summary table with key metrics
+
+### Running Comprehensive Evaluation
+
+To run a comprehensive evaluation with different MCTS configurations:
+
+```
+scripts\comprehensive_eval.bat --checkpoint checkpoints/best_model.pt --games 5 --output-dir comprehensive_results
+```
+
+This will:
+1. Run evaluations with different MCTS simulation counts (0, 50, 100, 200, 400)
+2. Save results for each configuration in separate directories
+3. Generate comparison visualizations and summary tables
+4. Log the entire process in a comprehensive evaluation log
+
+### Command-line Arguments for Evaluation
+
+- `--checkpoint`: Path to model checkpoint (required)
+- `--mcts-simulations`: Number of MCTS simulations (default: 200)
+- `--mcts-temperature`: MCTS temperature parameter (default: 0.5)
+- `--games`: Number of games to play (default: 10)
+- `--render`: Whether to render the games (default: False)
+- `--max-steps`: Maximum steps per game (default: 1000)
+- `--save-trajectories`: Whether to save game trajectories (default: False)
+- `--compare`: Compare regular agent with MCTS-enhanced version (default: False)
+- `--output-dir`: Directory to save results (default: "evaluation_results")
+- `--hidden-dim`: Hidden dimension size for the neural network (default: 256)
 
 ### Examples
 
-#### Training a standard agent:
-```bash
-train.bat standard --epochs 3000 --batch-size 64
-```
+1. Evaluate MCTS agent with 200 simulations:
+   ```
+   scripts\evaluate.bat --checkpoint checkpoints/best_model.pt --mcts-simulations 200 --games 10
+   ```
 
-#### Training with balanced exploration:
-```bash
-train.bat balanced --epochs 2000 --dynamic-batch --min-batch-size 16
-```
+2. Compare regular agent with MCTS-enhanced version:
+   ```
+   scripts\evaluate.bat --checkpoint checkpoints/best_model.pt --mcts-simulations 200 --games 5 --compare
+   ```
 
-#### Curriculum learning (after initial training):
-```bash
-train.bat curriculum --checkpoint checkpoints/enhanced/best_model.pt
-```
+3. Save game trajectories for analysis:
+   ```
+   scripts\evaluate.bat --checkpoint checkpoints/best_model.pt --mcts-simulations 200 --games 3 --save-trajectories
+   ```
 
-#### Evaluating a model:
-```bash
-train.bat evaluate checkpoints/enhanced/best_model.pt --games 50
-```
+4. Play a single game with MCTS (200 simulations):
+   ```
+   scripts\play_game.bat checkpoints/best_model.pt 200 0.5
+   ```
 
-## Advanced Options
+5. Analyze results from multiple evaluations:
+   ```
+   scripts\analyze_results.bat --results-dir evaluation_results
+   ```
 
-The main script supports various advanced options:
+6. Run comprehensive evaluation with different MCTS configurations:
+   ```
+   scripts\comprehensive_eval.bat --checkpoint checkpoints/best_model.pt --games 5
+   ```
 
-- `--dynamic-batch`: Enable dynamic batch size scheduling
-- `--min-batch-size`: Minimum batch size for dynamic scheduling
-- `--exploration`: Override initial exploration noise
-- `--min-exploration`: Override minimum exploration noise
-- `--curriculum`: Enable curriculum learning
-- `--curriculum-epochs`: Set curriculum learning epochs
+## Results
 
-See all options with:
-```bash
-python -m src.thesis.main --help
-```
+Evaluation results are saved to the specified output directory (default: "evaluation_results") and include:
+- Summary statistics (average max tile, average score, etc.)
+- Tile distribution
+- Game trajectories (if requested)
+- Visualizations of MCTS search (if requested)
 
-## Cleaning Up
+Analysis results are saved to the specified output directory (default: "analysis_results") and include:
+- Comparison visualizations (average max tile, average score, best max tile, tile distribution)
+- Summary table with key metrics
 
-The repository includes a cleanup script to remove old/unnecessary files:
-
-```bash
-python cleanup.py
-```
+Comprehensive evaluation results are saved to the specified output directory (default: "comprehensive_results") and include:
+- Results for each MCTS configuration
+- Comparison visualizations and summary tables
+- Comprehensive evaluation log
 
 ## License
 
-This project is for educational and research purposes.
-
-## Acknowledgments
-
-This project is inspired by various reinforcement learning techniques and 2048 game implementations.
+[MIT License](LICENSE)

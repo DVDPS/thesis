@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-from config import device
+from ..config import device
 
 class ResidualBlock(nn.Module):
     """Residual block with batch normalization"""

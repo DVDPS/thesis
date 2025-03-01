@@ -2154,3 +2154,170 @@ Evaluating MCTS agent...
 2025-02-28 18:31:47,019 - INFO - Loading checkpoint: checkpoints/enhanced/best_model.pt
 2025-02-28 18:31:47,129 - INFO - Resuming from epoch 1
 2025-02-28 18:31:47,130 - INFO - Running evaluation
+2025-02-28 18:47:42,413 - INFO - Created optimizer for the base agent within the MCTS wrapper
+2025-02-28 18:47:42,413 - INFO - === 2048 Mcts Training/Evaluation ===
+2025-02-28 18:47:42,414 - INFO - MCTS Simulations: 200
+2025-02-28 18:47:42,414 - INFO - MCTS Temperature: 0.5
+2025-02-28 18:47:42,414 - INFO - Training for 2000 epochs with batch size 96
+2025-02-28 18:47:42,414 - INFO - Learning rate: 0.0008
+2025-02-28 18:47:42,415 - INFO - Device: cuda
+2025-02-28 18:47:42,415 - INFO - Loading checkpoint: checkpoints/enhanced/best_model.pt
+2025-02-28 18:47:42,521 - INFO - Resuming from epoch 1
+2025-02-28 18:47:42,521 - INFO - Running evaluation
+2025-02-28 19:11:06,819 - INFO - Created optimizer for the base agent within the MCTS wrapper
+2025-02-28 19:11:06,820 - INFO - === 2048 Mcts Training/Evaluation ===
+2025-02-28 19:11:06,820 - INFO - MCTS Simulations: 200
+2025-02-28 19:11:06,821 - INFO - MCTS Temperature: 0.5
+2025-02-28 19:11:06,821 - INFO - Training for 2000 epochs with batch size 96
+2025-02-28 19:11:06,821 - INFO - Learning rate: 0.0008
+2025-02-28 19:11:06,821 - INFO - Device: cuda
+2025-02-28 19:11:06,822 - INFO - Loading checkpoint: checkpoints/enhanced/best_model.pt
+2025-02-28 19:11:06,932 - INFO - Resuming from epoch 1
+2025-02-28 19:11:06,932 - INFO - Running evaluation
+2025-02-28 19:37:58,920 - INFO - Game 1: Score = 7764, Max Tile = 512
+2025-02-28 20:36:29,436 - INFO - Game 2: Score = 15824, Max Tile = 1024
+2025-02-28 20:41:19,789 - INFO - Game 3: Score = 1276, Max Tile = 128
+2025-02-28 21:28:59,046 - INFO - Game 4: Score = 13820, Max Tile = 1024
+2025-02-28 22:12:35,972 - INFO - Game 5: Score = 12224, Max Tile = 1024
+2025-02-28 22:12:35,972 - INFO - ========================================
+2025-02-28 22:12:35,973 - INFO - Evaluation over 5 games:
+2025-02-28 22:12:35,973 - INFO - Average Score: 10181.6
+2025-02-28 22:12:35,974 - INFO - Average Max Tile: 742.4
+2025-02-28 22:12:35,974 - INFO - Best Max Tile: 1024
+2025-02-28 22:12:35,974 - INFO - Tile distribution:
+2025-02-28 22:12:35,974 - INFO -   128: 1 games (20.0%)
+2025-02-28 22:12:35,975 - INFO -   512: 1 games (20.0%)
+2025-02-28 22:12:35,975 - INFO -   1024: 3 games (60.0%)
+2025-02-28 22:12:35,975 - INFO - Evaluation complete. Best tile: 1024
+2025-03-01 11:51:32,764 - INFO - Loading model from checkpoints/enhanced/best_model.pt
+2025-03-01 11:52:22,358 - INFO - Loading model from checkpoints/enhanced/best_model.pt
+2025-03-01 11:52:22,537 - INFO - Creating MCTS agent with 200 simulations
+2025-03-01 11:54:51,396 - INFO - Loading model from checkpoints/enhanced/best_model.pt
+2025-03-01 11:54:51,573 - INFO - Creating MCTS agent with 200 simulations
+2025-03-01 11:56:19,870 - INFO - Loading model from checkpoints/enhanced/best_model.pt
+2025-03-01 11:56:20,033 - INFO - Creating MCTS agent with 200 simulations
+2025-03-01 12:35:39,950 - INFO - Using device: cuda
+2025-03-01 12:35:39,951 - INFO - Arguments: Namespace(episodes=10000, max_steps=2000, hidden_dim=256, buffer_size=100000, batch_size=64, min_buffer_size=10000, gamma=0.99, epsilon_start=1.0, epsilon_end=0.1, epsilon_decay=0.9995, target_update_freq=1000, log_interval=100, eval_interval=500, eval_episodes=10, output_dir='dqn_results', checkpoint=None, seed=42)
+2025-03-01 12:37:46,652 - INFO - Using device: cuda
+2025-03-01 12:37:46,652 - INFO - Arguments: Namespace(episodes=10000, max_steps=2000, hidden_dim=256, buffer_size=100000, batch_size=64, min_buffer_size=10000, gamma=0.99, epsilon_start=1.0, epsilon_end=0.1, epsilon_decay=0.9995, target_update_freq=1000, log_interval=100, eval_interval=500, eval_episodes=10, output_dir='dqn_results', checkpoint=None, seed=42)
+2025-03-01 12:38:21,373 - INFO - Using device: cuda
+2025-03-01 12:38:21,374 - INFO - Arguments: Namespace(episodes=10000, max_steps=2000, hidden_dim=256, buffer_size=100000, batch_size=64, min_buffer_size=10000, gamma=0.99, epsilon_start=1.0, epsilon_end=0.1, epsilon_decay=0.9995, target_update_freq=1000, log_interval=100, eval_interval=500, eval_episodes=10, output_dir='dqn_results', checkpoint=None, seed=42)
+2025-03-01 12:38:21,561 - INFO - Filling replay buffer with 10000 experiences...
+2025-03-01 12:38:52,317 - INFO - Starting training for 10000 episodes...
+2025-03-01 12:40:58,698 - INFO - Using device: cuda
+2025-03-01 12:40:58,699 - INFO - Arguments: Namespace(episodes=5000, max_steps=2000, hidden_dim=256, buffer_size=100000, batch_size=64, min_buffer_size=10000, gamma=0.99, epsilon_start=1.0, epsilon_end=0.1, epsilon_decay=0.9995, target_update_freq=1000, log_interval=100, eval_interval=1000, eval_episodes=10, output_dir='dqn_results', checkpoint=None, seed=42)
+2025-03-01 12:40:58,880 - INFO - Filling replay buffer with 10000 experiences...
+2025-03-01 12:41:29,860 - INFO - Starting training for 5000 episodes...
+2025-03-01 12:52:04,573 - INFO - Episode 100/5000 | Avg Reward: 2801.0 | Avg Max Tile: 121.1 | Avg Length: 129.4 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 13:03:32,606 - INFO - Episode 200/5000 | Avg Reward: 2890.2 | Avg Max Tile: 123.5 | Avg Length: 135.3 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 13:10:12,116 - INFO - Using device: cuda
+2025-03-01 13:10:12,116 - INFO - Arguments: Namespace(episodes=5000, max_steps=2000, hidden_dim=256, buffer_size=100000, batch_size=128, min_buffer_size=10000, gamma=0.99, epsilon_start=1.0, epsilon_end=0.1, epsilon_decay=0.9995, target_update_freq=1000, update_freq=4, learning_rate=0.0001, log_interval=250, eval_interval=1000, eval_episodes=5, output_dir='dqn_results', checkpoint=None, seed=42)
+2025-03-01 13:11:24,036 - INFO - Using device: cuda
+2025-03-01 13:11:24,036 - INFO - Arguments: Namespace(episodes=5000, max_steps=2000, hidden_dim=256, buffer_size=100000, batch_size=128, min_buffer_size=10000, gamma=0.99, epsilon_start=1.0, epsilon_end=0.1, epsilon_decay=0.9995, target_update_freq=1000, update_freq=4, learning_rate=0.0001, log_interval=250, eval_interval=1000, eval_episodes=5, output_dir='dqn_results', checkpoint=None, seed=42)
+2025-03-01 13:11:26,095 - INFO - Filling replay buffer with 10000 experiences...
+2025-03-01 13:11:56,917 - INFO - Starting training for 5000 episodes...
+2025-03-01 13:21:58,387 - INFO - Episode 250/5000 | Avg Reward: 2590.6 | Avg Max Tile: 114.9 | Avg Length: 120.0 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 13:32:46,139 - INFO - Episode 500/5000 | Avg Reward: 2736.7 | Avg Max Tile: 118.7 | Avg Length: 126.8 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 13:43:40,572 - INFO - Episode 750/5000 | Avg Reward: 2772.5 | Avg Max Tile: 120.0 | Avg Length: 128.3 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 13:54:52,439 - INFO - Episode 1000/5000 | Avg Reward: 2849.3 | Avg Max Tile: 122.1 | Avg Length: 131.7 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 13:54:59,438 - INFO - Evaluation | Avg Score: 4699.2 | Avg Max Tile: 204.8 | Best Max Tile: 256
+2025-03-01 13:54:59,494 - INFO - Saved checkpoint to dqn_results\checkpoint_episode_1000.pt
+2025-03-01 13:54:59,537 - INFO - Saved best model to dqn_results\best_model.pt
+2025-03-01 14:06:01,406 - INFO - Episode 1250/5000 | Avg Reward: 2792.5 | Avg Max Tile: 122.8 | Avg Length: 128.8 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 14:16:50,915 - INFO - Episode 1500/5000 | Avg Reward: 2739.1 | Avg Max Tile: 116.6 | Avg Length: 127.4 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 14:27:58,004 - INFO - Episode 1750/5000 | Avg Reward: 2827.0 | Avg Max Tile: 120.6 | Avg Length: 131.3 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 14:39:00,740 - INFO - Episode 2000/5000 | Avg Reward: 2849.5 | Avg Max Tile: 126.6 | Avg Length: 130.6 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 14:39:06,826 - INFO - Evaluation | Avg Score: 4218.3 | Avg Max Tile: 179.2 | Best Max Tile: 256
+2025-03-01 14:39:06,890 - INFO - Saved checkpoint to dqn_results\checkpoint_episode_2000.pt
+2025-03-01 14:50:00,548 - INFO - Episode 2250/5000 | Avg Reward: 2765.0 | Avg Max Tile: 118.1 | Avg Length: 128.7 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 15:01:03,814 - INFO - Episode 2500/5000 | Avg Reward: 2808.3 | Avg Max Tile: 121.1 | Avg Length: 130.2 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 15:12:49,159 - INFO - Episode 2750/5000 | Avg Reward: 2986.6 | Avg Max Tile: 131.7 | Avg Length: 137.2 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 15:24:15,303 - INFO - Episode 3000/5000 | Avg Reward: 2926.8 | Avg Max Tile: 128.6 | Avg Length: 134.2 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 15:24:20,753 - INFO - Evaluation | Avg Score: 3860.6 | Avg Max Tile: 166.4 | Best Max Tile: 256
+2025-03-01 15:24:20,820 - INFO - Saved checkpoint to dqn_results\checkpoint_episode_3000.pt
+2025-03-01 15:34:49,821 - INFO - Episode 3250/5000 | Avg Reward: 2607.5 | Avg Max Tile: 107.8 | Avg Length: 123.6 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 15:45:43,057 - INFO - Episode 3500/5000 | Avg Reward: 2731.1 | Avg Max Tile: 115.3 | Avg Length: 127.9 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 15:55:46,140 - INFO - Episode 3750/5000 | Avg Reward: 2505.9 | Avg Max Tile: 106.8 | Avg Length: 118.3 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 16:06:23,694 - INFO - Episode 4000/5000 | Avg Reward: 2735.4 | Avg Max Tile: 119.8 | Avg Length: 125.4 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 16:06:29,594 - INFO - Evaluation | Avg Score: 3901.5 | Avg Max Tile: 153.6 | Best Max Tile: 256
+2025-03-01 16:06:29,672 - INFO - Saved checkpoint to dqn_results\checkpoint_episode_4000.pt
+2025-03-01 16:18:14,615 - INFO - Episode 4250/5000 | Avg Reward: 2993.5 | Avg Max Tile: 129.7 | Avg Length: 138.4 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 16:29:06,054 - INFO - Episode 4500/5000 | Avg Reward: 2716.4 | Avg Max Tile: 113.7 | Avg Length: 128.1 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 16:39:46,634 - INFO - Episode 4750/5000 | Avg Reward: 2755.4 | Avg Max Tile: 117.1 | Avg Length: 128.4 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 16:50:57,949 - INFO - Episode 5000/5000 | Avg Reward: 2832.2 | Avg Max Tile: 121.6 | Avg Length: 131.7 | Avg Loss: inf | Epsilon: 0.1000
+2025-03-01 16:51:03,920 - INFO - Evaluation | Avg Score: 3954.1 | Avg Max Tile: 169.6 | Best Max Tile: 512
+2025-03-01 16:51:04,022 - INFO - Saved checkpoint to dqn_results\checkpoint_episode_5000.pt
+2025-03-01 16:51:04,059 - INFO - Saved final model to dqn_results\final_model.pt
+2025-03-01 16:51:05,106 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-01 16:51:05,107 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-01 16:55:19,453 - INFO - Loading model from dqn_results/final_model.pt
+2025-03-01 16:57:13,152 - INFO - Loading model from dqn_results/final_model.pt
+2025-03-01 16:57:15,260 - INFO - Creating MCTS agent with 200 simulations
+2025-03-01 16:57:15,260 - INFO - Evaluating regular agent...
+2025-03-01 16:57:16,668 - INFO - Game 1/10 completed: Max Tile = 128
+2025-03-01 16:57:17,596 - INFO - Game 2/10 completed: Max Tile = 128
+2025-03-01 16:57:18,148 - INFO - Game 3/10 completed: Max Tile = 64
+2025-03-01 16:57:19,550 - INFO - Game 4/10 completed: Max Tile = 256
+2025-03-01 16:57:20,579 - INFO - Game 5/10 completed: Max Tile = 128
+2025-03-01 16:57:21,230 - INFO - Game 6/10 completed: Max Tile = 128
+2025-03-01 16:57:22,025 - INFO - Game 7/10 completed: Max Tile = 128
+2025-03-01 16:57:22,970 - INFO - Game 8/10 completed: Max Tile = 128
+2025-03-01 16:57:24,028 - INFO - Game 9/10 completed: Max Tile = 128
+2025-03-01 16:57:25,611 - INFO - Game 10/10 completed: Max Tile = 256
+2025-03-01 16:57:25,611 - INFO - ========================================
+2025-03-01 16:57:25,612 - INFO - Evaluation over 10 games:
+2025-03-01 16:57:25,612 - INFO - Average Max Tile: 147.2
+2025-03-01 16:57:25,612 - INFO - Average Score: 1704.8
+2025-03-01 16:57:25,612 - INFO - Average Steps: 159.5
+2025-03-01 16:57:25,612 - INFO - Best Max Tile: 256
+2025-03-01 16:57:25,613 - INFO - Tile distribution:
+2025-03-01 16:57:25,613 - INFO -   64: 1 games (10.0%)
+2025-03-01 16:57:25,613 - INFO -   128: 7 games (70.0%)
+2025-03-01 16:57:25,614 - INFO -   256: 2 games (20.0%)
+2025-03-01 16:57:25,614 - INFO - Average steps to achieve tile:
+2025-03-01 16:57:25,614 - INFO - 
+Evaluating MCTS agent...
+2025-03-01 17:01:12,164 - INFO - Loading model from dqn_results/final_model.pt
+2025-03-01 17:01:14,208 - INFO - Creating MCTS agent with 200 simulations
+2025-03-01 17:01:14,208 - INFO - Evaluating regular agent...
+2025-03-01 17:01:15,568 - INFO - Game 1/5 completed: Max Tile = 128
+2025-03-01 17:01:16,488 - INFO - Game 2/5 completed: Max Tile = 128
+2025-03-01 17:01:17,030 - INFO - Game 3/5 completed: Max Tile = 64
+2025-03-01 17:01:18,347 - INFO - Game 4/5 completed: Max Tile = 256
+2025-03-01 17:01:19,302 - INFO - Game 5/5 completed: Max Tile = 128
+2025-03-01 17:01:19,302 - INFO - ========================================
+2025-03-01 17:01:19,303 - INFO - Evaluation over 5 games:
+2025-03-01 17:01:19,303 - INFO - Average Max Tile: 140.8
+2025-03-01 17:01:19,303 - INFO - Average Score: 1634.4
+2025-03-01 17:01:19,304 - INFO - Average Steps: 155.2
+2025-03-01 17:01:19,305 - INFO - Best Max Tile: 256
+2025-03-01 17:01:19,305 - INFO - Tile distribution:
+2025-03-01 17:01:19,305 - INFO -   64: 1 games (20.0%)
+2025-03-01 17:01:19,305 - INFO -   128: 3 games (60.0%)
+2025-03-01 17:01:19,306 - INFO -   256: 1 games (20.0%)
+2025-03-01 17:01:19,306 - INFO - Average steps to achieve tile:
+2025-03-01 17:01:19,306 - INFO - 
+Evaluating MCTS agent...
+2025-03-01 17:07:35,414 - INFO - Loading model from dqn_results/final_model.pt
+2025-03-01 17:07:37,470 - INFO - Creating MCTS agent with 200 simulations
+2025-03-01 17:13:41,478 - INFO - Loading model from dqn_results/final_model.pt
+2025-03-01 17:13:43,575 - INFO - Creating MCTS agent with 200 simulations
+2025-03-01 17:13:43,575 - INFO - Evaluating regular agent...
+2025-03-01 17:13:44,971 - INFO - Game 1/5 completed: Max Tile = 128
+2025-03-01 17:13:45,914 - INFO - Game 2/5 completed: Max Tile = 128
+2025-03-01 17:13:46,476 - INFO - Game 3/5 completed: Max Tile = 64
+2025-03-01 17:13:47,928 - INFO - Game 4/5 completed: Max Tile = 256
+2025-03-01 17:13:49,015 - INFO - Game 5/5 completed: Max Tile = 128
+2025-03-01 17:13:49,015 - INFO - ========================================
+2025-03-01 17:13:49,016 - INFO - Evaluation over 5 games:
+2025-03-01 17:13:49,016 - INFO - Average Max Tile: 140.8
+2025-03-01 17:13:49,016 - INFO - Average Score: 1634.4
+2025-03-01 17:13:49,016 - INFO - Average Steps: 155.2
+2025-03-01 17:13:49,016 - INFO - Best Max Tile: 256
+2025-03-01 17:13:49,018 - INFO - Tile distribution:
+2025-03-01 17:13:49,018 - INFO -   64: 1 games (20.0%)
+2025-03-01 17:13:49,018 - INFO -   128: 3 games (60.0%)
+2025-03-01 17:13:49,018 - INFO -   256: 1 games (20.0%)
+2025-03-01 17:13:49,018 - INFO - Average steps to achieve tile:
+2025-03-01 17:13:49,018 - INFO - 
+Evaluating MCTS agent...
