@@ -271,6 +271,22 @@ class Game2048:
     def is_game_over(self) -> bool:
         return len(self.get_possible_moves()) == 0
 
+    def render(self):
+        """
+        Render the game board to the console.
+        """
+        print("\n" + "-" * 25)
+        print(f"Score: {self.score}")
+        for row in self.board:
+            print("|", end="")
+            for cell in row:
+                if cell == 0:
+                    print("".center(5), end="|")
+                else:
+                    print(str(cell).center(5), end="|")
+            print("\n" + "-" * 25)
+        print("")
+
 def preprocess_state(state):
     """Convert board state to log2 scale; zeros remain zeros."""
     state = state.astype(np.float32)

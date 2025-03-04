@@ -1,0 +1,2 @@
+model_path,num_simulations,temperature,c_puct,dirichlet_alpha,max_depth,adaptive_simulations,tile_bonuses,avg_score,avg_max_tile,avg_game_length,win_rate,total_time,time_per_game,tile_256,tile_512
+models/dqn_agent.pt,20,0.5,2.0,0.2,200,True,"{64: 0.5, 128: 1.5, 256: 4.0, 512: 10.0, 1024: 25.0, 2048: 60.0, 4096: 150.0}",3745.3333333333335,341.3333333333333,266.3333333333333,0.0,465.3195230960846,155.10650769869486,66.66666666666666,33.33333333333333

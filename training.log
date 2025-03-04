@@ -2321,3 +2321,645 @@ Evaluating MCTS agent...
 2025-03-01 17:13:49,018 - INFO - Average steps to achieve tile:
 2025-03-01 17:13:49,018 - INFO - 
 Evaluating MCTS agent...
+2025-03-01 17:15:39,247 - INFO - Loading model from dqn_results/final_model.pt
+2025-03-01 17:15:41,353 - INFO - Creating MCTS agent with 100 simulations
+2025-03-01 17:16:05,811 - INFO - Loading model from dqn_results/final_model.pt
+2025-03-01 17:16:07,859 - INFO - Creating MCTS agent with 300 simulations
+2025-03-01 17:20:08,315 - INFO - Loading model from dqn_results/final_model.pt
+2025-03-01 17:20:10,357 - INFO - Creating MCTS agent with 150 simulations
+2025-03-01 17:20:10,357 - INFO - Evaluating regular agent...
+2025-03-01 17:20:11,686 - INFO - Game 1/5 completed: Max Tile = 128
+2025-03-01 17:20:12,624 - INFO - Game 2/5 completed: Max Tile = 128
+2025-03-01 17:20:13,182 - INFO - Game 3/5 completed: Max Tile = 64
+2025-03-01 17:20:14,573 - INFO - Game 4/5 completed: Max Tile = 256
+2025-03-01 17:20:15,574 - INFO - Game 5/5 completed: Max Tile = 128
+2025-03-01 17:20:15,574 - INFO - ========================================
+2025-03-01 17:20:15,574 - INFO - Evaluation over 5 games:
+2025-03-01 17:20:15,575 - INFO - Average Max Tile: 140.8
+2025-03-01 17:20:15,575 - INFO - Average Score: 1634.4
+2025-03-01 17:20:15,575 - INFO - Average Steps: 155.2
+2025-03-01 17:20:15,576 - INFO - Best Max Tile: 256
+2025-03-01 17:20:15,576 - INFO - Tile distribution:
+2025-03-01 17:20:15,576 - INFO -   64: 1 games (20.0%)
+2025-03-01 17:20:15,576 - INFO -   128: 3 games (60.0%)
+2025-03-01 17:20:15,576 - INFO -   256: 1 games (20.0%)
+2025-03-01 17:20:15,576 - INFO - Average steps to achieve tile:
+2025-03-01 17:20:15,576 - INFO - 
+Evaluating MCTS agent...
+2025-03-01 17:46:39,292 - INFO - Game 1/5 completed: Max Tile = 512
+2025-03-01 18:12:31,876 - INFO - Game 2/5 completed: Max Tile = 512
+2025-03-01 18:26:38,270 - INFO - Loading model from dqn_results/final_model.pt
+2025-03-01 18:26:40,342 - INFO - Creating MCTS agent with 50 simulations
+2025-03-01 18:26:40,343 - INFO - Evaluating regular agent...
+2025-03-01 18:26:41,684 - INFO - Game 1/5 completed: Max Tile = 128
+2025-03-01 18:26:42,582 - INFO - Game 2/5 completed: Max Tile = 128
+2025-03-01 18:26:43,135 - INFO - Game 3/5 completed: Max Tile = 64
+2025-03-01 18:26:44,523 - INFO - Game 4/5 completed: Max Tile = 256
+2025-03-01 18:26:45,548 - INFO - Game 5/5 completed: Max Tile = 128
+2025-03-01 18:26:45,549 - INFO - ========================================
+2025-03-01 18:26:45,549 - INFO - Evaluation over 5 games:
+2025-03-01 18:26:45,550 - INFO - Average Max Tile: 140.8
+2025-03-01 18:26:45,550 - INFO - Average Score: 1634.4
+2025-03-01 18:26:45,550 - INFO - Average Steps: 155.2
+2025-03-01 18:26:45,550 - INFO - Best Max Tile: 256
+2025-03-01 18:26:45,551 - INFO - Tile distribution:
+2025-03-01 18:26:45,551 - INFO -   64: 1 games (20.0%)
+2025-03-01 18:26:45,551 - INFO -   128: 3 games (60.0%)
+2025-03-01 18:26:45,551 - INFO -   256: 1 games (20.0%)
+2025-03-01 18:26:45,551 - INFO - Average steps to achieve tile:
+2025-03-01 18:26:45,552 - INFO - 
+Evaluating MCTS agent...
+2025-03-01 18:32:32,684 - INFO - Game 1/5 completed: Max Tile = 512
+2025-03-01 18:37:34,289 - INFO - Game 2/5 completed: Max Tile = 512
+2025-03-01 18:40:34,098 - INFO - Game 3/5 completed: Max Tile = 256
+2025-03-01 18:42:15,094 - INFO - Game 4/5 completed: Max Tile = 128
+2025-03-01 18:47:22,781 - INFO - Game 5/5 completed: Max Tile = 512
+2025-03-01 18:47:22,782 - INFO - ========================================
+2025-03-01 18:47:22,783 - INFO - Evaluation over 5 games:
+2025-03-01 18:47:22,783 - INFO - Average Max Tile: 384.0
+2025-03-01 18:47:22,783 - INFO - Average Score: 4485.6
+2025-03-01 18:47:22,783 - INFO - Average Steps: 302.2
+2025-03-01 18:47:22,784 - INFO - Best Max Tile: 512
+2025-03-01 18:47:22,784 - INFO - Tile distribution:
+2025-03-01 18:47:22,784 - INFO -   128: 1 games (20.0%)
+2025-03-01 18:47:22,784 - INFO -   256: 1 games (20.0%)
+2025-03-01 18:47:22,785 - INFO -   512: 3 games (60.0%)
+2025-03-01 18:47:22,785 - INFO - Average steps to achieve tile:
+2025-03-01 18:47:22,785 - INFO - 
+==================================================
+2025-03-01 18:47:22,785 - INFO - COMPARISON RESULTS:
+2025-03-01 18:47:22,785 - INFO - Average Max Tile: Regular = 140.8, MCTS = 384.0
+2025-03-01 18:47:22,786 - INFO - Average Score: Regular = 1634.4, MCTS = 4485.6
+2025-03-01 18:47:22,786 - INFO - Best Max Tile: Regular = 256, MCTS = 512
+2025-03-01 18:47:23,121 - INFO - Testing with 5 simulations...
+2025-03-01 18:47:28,173 - INFO - Game 1/2 completed: Max Tile = 64
+2025-03-01 18:47:36,724 - INFO - Game 2/2 completed: Max Tile = 128
+2025-03-01 18:47:36,724 - INFO - ========================================
+2025-03-01 18:47:36,725 - INFO - Evaluation over 2 games:
+2025-03-01 18:47:36,725 - INFO - Average Max Tile: 96.0
+2025-03-01 18:47:36,726 - INFO - Average Score: 1204.0
+2025-03-01 18:47:36,726 - INFO - Average Steps: 126.5
+2025-03-01 18:47:36,726 - INFO - Best Max Tile: 128
+2025-03-01 18:47:36,726 - INFO - Tile distribution:
+2025-03-01 18:47:36,726 - INFO -   64: 1 games (50.0%)
+2025-03-01 18:47:36,727 - INFO -   128: 1 games (50.0%)
+2025-03-01 18:47:36,727 - INFO - Average steps to achieve tile:
+2025-03-01 18:47:36,727 - INFO - Testing with 10 simulations...
+2025-03-01 18:47:51,949 - INFO - Game 1/2 completed: Max Tile = 128
+2025-03-01 18:48:19,817 - INFO - Game 2/2 completed: Max Tile = 256
+2025-03-01 18:48:19,817 - INFO - ========================================
+2025-03-01 18:48:19,818 - INFO - Evaluation over 2 games:
+2025-03-01 18:48:19,818 - INFO - Average Max Tile: 192.0
+2025-03-01 18:48:19,818 - INFO - Average Score: 2194.0
+2025-03-01 18:48:19,819 - INFO - Average Steps: 183.5
+2025-03-01 18:48:19,819 - INFO - Best Max Tile: 256
+2025-03-01 18:48:19,819 - INFO - Tile distribution:
+2025-03-01 18:48:19,819 - INFO -   128: 1 games (50.0%)
+2025-03-01 18:48:19,820 - INFO -   256: 1 games (50.0%)
+2025-03-01 18:48:19,820 - INFO - Average steps to achieve tile:
+2025-03-01 18:48:19,820 - INFO - Testing with 25 simulations...
+2025-03-01 18:49:47,406 - INFO - Game 1/2 completed: Max Tile = 256
+2025-03-01 18:51:52,433 - INFO - Game 2/2 completed: Max Tile = 512
+2025-03-01 18:51:52,434 - INFO - ========================================
+2025-03-01 18:51:52,434 - INFO - Evaluation over 2 games:
+2025-03-01 18:51:52,434 - INFO - Average Max Tile: 384.0
+2025-03-01 18:51:52,434 - INFO - Average Score: 4014.0
+2025-03-01 18:51:52,436 - INFO - Average Steps: 282.5
+2025-03-01 18:51:52,436 - INFO - Best Max Tile: 512
+2025-03-01 18:51:52,436 - INFO - Tile distribution:
+2025-03-01 18:51:52,436 - INFO -   256: 1 games (50.0%)
+2025-03-01 18:51:52,436 - INFO -   512: 1 games (50.0%)
+2025-03-01 18:51:52,436 - INFO - Average steps to achieve tile:
+2025-03-01 18:51:52,437 - INFO - Testing with 50 simulations...
+2025-03-01 18:56:26,578 - INFO - Game 1/2 completed: Max Tile = 512
+2025-03-01 19:02:04,018 - INFO - Game 2/2 completed: Max Tile = 512
+2025-03-01 19:02:04,018 - INFO - ========================================
+2025-03-01 19:02:04,019 - INFO - Evaluation over 2 games:
+2025-03-01 19:02:04,019 - INFO - Average Max Tile: 512.0
+2025-03-01 19:02:04,019 - INFO - Average Score: 5698.0
+2025-03-01 19:02:04,019 - INFO - Average Steps: 362.0
+2025-03-01 19:02:04,019 - INFO - Best Max Tile: 512
+2025-03-01 19:02:04,019 - INFO - Tile distribution:
+2025-03-01 19:02:04,020 - INFO -   512: 2 games (100.0%)
+2025-03-01 19:02:04,020 - INFO - Average steps to achieve tile:
+2025-03-01 19:02:04,020 - INFO - Testing with 100 simulations...
+2025-03-01 19:16:46,372 - INFO - Game 1/2 completed: Max Tile = 512
+2025-03-01 19:31:48,778 - INFO - Game 2/2 completed: Max Tile = 512
+2025-03-01 19:31:48,779 - INFO - ========================================
+2025-03-01 19:31:48,779 - INFO - Evaluation over 2 games:
+2025-03-01 19:31:48,780 - INFO - Average Max Tile: 512.0
+2025-03-01 19:31:48,780 - INFO - Average Score: 6858.0
+2025-03-01 19:31:48,781 - INFO - Average Steps: 443.0
+2025-03-01 19:31:48,781 - INFO - Best Max Tile: 512
+2025-03-01 19:31:48,781 - INFO - Tile distribution:
+2025-03-01 19:31:48,782 - INFO -   512: 2 games (100.0%)
+2025-03-01 19:31:48,782 - INFO - Average steps to achieve tile:
+2025-03-01 19:31:48,782 - INFO - Testing with 200 simulations...
+2025-03-01 20:28:33,476 - INFO - Game 1/2 completed: Max Tile = 1024
+2025-03-01 21:01:57,412 - INFO - Game 2/2 completed: Max Tile = 512
+2025-03-01 21:01:57,413 - INFO - ========================================
+2025-03-01 21:01:57,413 - INFO - Evaluation over 2 games:
+2025-03-01 21:01:57,414 - INFO - Average Max Tile: 768.0
+2025-03-01 21:01:57,414 - INFO - Average Score: 9086.0
+2025-03-01 21:01:57,414 - INFO - Average Steps: 533.0
+2025-03-01 21:01:57,415 - INFO - Best Max Tile: 1024
+2025-03-01 21:01:57,415 - INFO - Tile distribution:
+2025-03-01 21:01:57,415 - INFO -   512: 1 games (50.0%)
+2025-03-01 21:01:57,415 - INFO -   1024: 1 games (50.0%)
+2025-03-01 21:01:57,416 - INFO - Average steps to achieve tile:
+2025-03-01 21:01:57,424 - INFO - Testing with temperature 0.1...
+2025-03-01 21:05:27,047 - INFO - Game 1/2 completed: Max Tile = 256
+2025-03-01 21:12:01,684 - INFO - Game 2/2 completed: Max Tile = 512
+2025-03-01 21:12:01,685 - INFO - ========================================
+2025-03-01 21:12:01,685 - INFO - Evaluation over 2 games:
+2025-03-01 21:12:01,686 - INFO - Average Max Tile: 384.0
+2025-03-01 21:12:01,686 - INFO - Average Score: 5196.0
+2025-03-01 21:12:01,686 - INFO - Average Steps: 364.5
+2025-03-01 21:12:01,686 - INFO - Best Max Tile: 512
+2025-03-01 21:12:01,687 - INFO - Tile distribution:
+2025-03-01 21:12:01,687 - INFO -   256: 1 games (50.0%)
+2025-03-01 21:12:01,687 - INFO -   512: 1 games (50.0%)
+2025-03-01 21:12:01,687 - INFO - Average steps to achieve tile:
+2025-03-01 21:12:01,688 - INFO - Testing with temperature 0.5...
+2025-03-01 21:13:21,859 - INFO - Game 1/2 completed: Max Tile = 128
+2025-03-01 21:15:42,508 - INFO - Game 2/2 completed: Max Tile = 128
+2025-03-01 21:15:42,509 - INFO - ========================================
+2025-03-01 21:15:42,509 - INFO - Evaluation over 2 games:
+2025-03-01 21:15:42,510 - INFO - Average Max Tile: 128.0
+2025-03-01 21:15:42,510 - INFO - Average Score: 1662.0
+2025-03-01 21:15:42,511 - INFO - Average Steps: 152.0
+2025-03-01 21:15:42,511 - INFO - Best Max Tile: 128
+2025-03-01 21:15:42,511 - INFO - Tile distribution:
+2025-03-01 21:15:42,511 - INFO -   128: 2 games (100.0%)
+2025-03-01 21:15:42,512 - INFO - Average steps to achieve tile:
+2025-03-01 21:15:42,512 - INFO - Testing with temperature 1.0...
+2025-03-01 21:21:30,384 - INFO - Game 1/2 completed: Max Tile = 512
+2025-03-01 21:26:44,958 - INFO - Game 2/2 completed: Max Tile = 512
+2025-03-01 21:26:44,959 - INFO - ========================================
+2025-03-01 21:26:44,959 - INFO - Evaluation over 2 games:
+2025-03-01 21:26:44,959 - INFO - Average Max Tile: 512.0
+2025-03-01 21:26:44,960 - INFO - Average Score: 6052.0
+2025-03-01 21:26:44,960 - INFO - Average Steps: 386.5
+2025-03-01 21:26:44,960 - INFO - Best Max Tile: 512
+2025-03-01 21:26:44,961 - INFO - Tile distribution:
+2025-03-01 21:26:44,961 - INFO -   512: 2 games (100.0%)
+2025-03-01 21:26:44,961 - INFO - Average steps to achieve tile:
+2025-03-01 21:26:44,961 - INFO - Testing with temperature 1.5...
+2025-03-01 21:29:57,789 - INFO - Game 1/2 completed: Max Tile = 256
+2025-03-01 21:33:00,817 - INFO - Game 2/2 completed: Max Tile = 256
+2025-03-01 21:33:00,817 - INFO - ========================================
+2025-03-01 21:33:00,818 - INFO - Evaluation over 2 games:
+2025-03-01 21:33:00,818 - INFO - Average Max Tile: 256.0
+2025-03-01 21:33:00,818 - INFO - Average Score: 3028.0
+2025-03-01 21:33:00,818 - INFO - Average Steps: 239.0
+2025-03-01 21:33:00,818 - INFO - Best Max Tile: 256
+2025-03-01 21:33:00,819 - INFO - Tile distribution:
+2025-03-01 21:33:00,819 - INFO -   256: 2 games (100.0%)
+2025-03-01 21:33:00,819 - INFO - Average steps to achieve tile:
+2025-03-01 21:33:00,819 - INFO - Testing with temperature 2.0...
+2025-03-01 21:35:44,928 - INFO - Game 1/2 completed: Max Tile = 256
+2025-03-01 21:38:44,130 - INFO - Game 2/2 completed: Max Tile = 256
+2025-03-01 21:38:44,130 - INFO - ========================================
+2025-03-01 21:38:44,131 - INFO - Evaluation over 2 games:
+2025-03-01 21:38:44,131 - INFO - Average Max Tile: 256.0
+2025-03-01 21:38:44,131 - INFO - Average Score: 2888.0
+2025-03-01 21:38:44,131 - INFO - Average Steps: 223.0
+2025-03-01 21:38:44,132 - INFO - Best Max Tile: 256
+2025-03-01 21:38:44,132 - INFO - Tile distribution:
+2025-03-01 21:38:44,132 - INFO -   256: 2 games (100.0%)
+2025-03-01 21:38:44,132 - INFO - Average steps to achieve tile:
+2025-03-01 21:38:45,069 - INFO - Analyzing position after 42 steps:
+2025-03-01 21:38:45,070 - INFO - [[64  4  0  0]
+ [16  2  0  0]
+ [ 4  2  4  0]
+ [ 8  4  2  0]]
+2025-03-01 21:38:46,777 - INFO - MCTS Analysis with 100 simulations:
+2025-03-01 21:38:46,777 - INFO - Time taken: 1.71 seconds
+2025-03-01 21:38:46,777 - INFO - Network value estimate: 1.4019
+2025-03-01 21:38:46,777 - INFO - 
+Action analysis:
+2025-03-01 21:38:46,778 - INFO - RIGHT: Visits=425, Value=1.8255, Prior=0.6459, Max Tile=64
+2025-03-01 21:38:46,778 - INFO - LEFT: Visits=216, Value=1.8428, Prior=0.2191, Max Tile=64
+2025-03-01 21:38:46,778 - INFO - DOWN: Visits=26, Value=1.6229, Prior=0.1350, Max Tile=64
+2025-03-01 21:38:47,989 - INFO - 
+Evaluation Summary:
+2025-03-01 21:38:47,990 - INFO - Regular Agent - Avg Max Tile: 140.8, Best: 256
+2025-03-01 21:38:47,990 - INFO - MCTS Agent (50 sims) - Avg Max Tile: 384.0, Best: 512
+2025-03-01 21:38:47,990 - INFO - 
+Testing different simulation counts:
+2025-03-01 21:45:32,216 - INFO - Game 1/2 completed: Max Tile = 512
+2025-03-01 21:48:49,582 - INFO - Game 2/2 completed: Max Tile = 256
+2025-03-01 21:48:49,582 - INFO - ========================================
+2025-03-01 21:48:49,583 - INFO - Evaluation over 2 games:
+2025-03-01 21:48:49,583 - INFO - Average Max Tile: 384.0
+2025-03-01 21:48:49,583 - INFO - Average Score: 5018.0
+2025-03-01 21:48:49,584 - INFO - Average Steps: 344.0
+2025-03-01 21:48:49,584 - INFO - Best Max Tile: 512
+2025-03-01 21:48:49,584 - INFO - Tile distribution:
+2025-03-01 21:48:49,585 - INFO -   256: 1 games (50.0%)
+2025-03-01 21:48:49,585 - INFO -   512: 1 games (50.0%)
+2025-03-01 21:48:49,585 - INFO - Average steps to achieve tile:
+2025-03-01 21:48:49,585 - INFO - MCTS with 50 simulations: Avg Max Tile = 384.0, Best = 512
+2025-03-01 21:58:46,602 - INFO - Game 1/2 completed: Max Tile = 256
+2025-03-01 22:07:41,168 - INFO - Game 2/2 completed: Max Tile = 256
+2025-03-01 22:07:41,168 - INFO - ========================================
+2025-03-01 22:07:41,169 - INFO - Evaluation over 2 games:
+2025-03-01 22:07:41,169 - INFO - Average Max Tile: 256.0
+2025-03-01 22:07:41,169 - INFO - Average Score: 4332.0
+2025-03-01 22:07:41,169 - INFO - Average Steps: 324.0
+2025-03-01 22:07:41,170 - INFO - Best Max Tile: 256
+2025-03-01 22:07:41,170 - INFO - Tile distribution:
+2025-03-01 22:07:41,170 - INFO -   256: 2 games (100.0%)
+2025-03-01 22:07:41,170 - INFO - Average steps to achieve tile:
+2025-03-01 22:07:41,171 - INFO - MCTS with 100 simulations: Avg Max Tile = 256.0, Best = 256
+2025-03-01 22:47:40,504 - INFO - Game 1/2 completed: Max Tile = 512
+2025-03-01 23:22:57,750 - INFO - Game 2/2 completed: Max Tile = 512
+2025-03-01 23:22:57,751 - INFO - ========================================
+2025-03-01 23:22:57,751 - INFO - Evaluation over 2 games:
+2025-03-01 23:22:57,751 - INFO - Average Max Tile: 512.0
+2025-03-01 23:22:57,752 - INFO - Average Score: 7958.0
+2025-03-01 23:22:57,752 - INFO - Average Steps: 511.5
+2025-03-01 23:22:57,752 - INFO - Best Max Tile: 512
+2025-03-01 23:22:57,752 - INFO - Tile distribution:
+2025-03-01 23:22:57,753 - INFO -   512: 2 games (100.0%)
+2025-03-01 23:22:57,753 - INFO - Average steps to achieve tile:
+2025-03-01 23:22:57,753 - INFO - MCTS with 200 simulations: Avg Max Tile = 512.0, Best = 512
+2025-03-02 12:27:31,926 - INFO - Loading model from dqn_results/final_model.pt
+2025-03-02 12:27:34,232 - INFO - Creating MCTS agent with 150 simulations
+2025-03-02 12:27:34,232 - INFO - 
+Evaluating regular agent...
+2025-03-02 12:27:35,533 - INFO - Game 1/5 completed: Max Tile = 128
+2025-03-02 12:27:36,416 - INFO - Game 2/5 completed: Max Tile = 128
+2025-03-02 12:27:36,951 - INFO - Game 3/5 completed: Max Tile = 64
+2025-03-02 12:27:38,342 - INFO - Game 4/5 completed: Max Tile = 256
+2025-03-02 12:27:39,339 - INFO - Game 5/5 completed: Max Tile = 128
+2025-03-02 12:27:39,339 - INFO - ========================================
+2025-03-02 12:27:39,339 - INFO - Evaluation over 5 games:
+2025-03-02 12:27:39,340 - INFO - Average Max Tile: 140.8
+2025-03-02 12:27:39,340 - INFO - Average Score: 1634.4
+2025-03-02 12:27:39,340 - INFO - Average Steps: 155.2
+2025-03-02 12:27:39,340 - INFO - Best Max Tile: 256
+2025-03-02 12:27:39,341 - INFO - Tile distribution:
+2025-03-02 12:27:39,341 - INFO -   64: 1 games (20.0%)
+2025-03-02 12:27:39,341 - INFO -   128: 3 games (60.0%)
+2025-03-02 12:27:39,341 - INFO -   256: 1 games (20.0%)
+2025-03-02 12:27:39,342 - INFO - Average steps to achieve tile:
+2025-03-02 12:27:39,342 - INFO - 
+Evaluating MCTS agent...
+2025-03-02 12:42:40,499 - INFO - Loading model from dqn_results/final_model.pt
+2025-03-02 12:42:42,857 - INFO - Creating MCTS agent with 50 simulations
+2025-03-02 12:42:42,857 - INFO - 
+Evaluating regular agent...
+2025-03-02 12:42:44,193 - INFO - Game 1/5 completed: Max Tile = 128
+2025-03-02 12:42:45,129 - INFO - Game 2/5 completed: Max Tile = 128
+2025-03-02 12:42:45,750 - INFO - Game 3/5 completed: Max Tile = 64
+2025-03-02 12:42:47,191 - INFO - Game 4/5 completed: Max Tile = 256
+2025-03-02 12:42:48,213 - INFO - Game 5/5 completed: Max Tile = 128
+2025-03-02 12:42:48,214 - INFO - ========================================
+2025-03-02 12:42:48,214 - INFO - Evaluation over 5 games:
+2025-03-02 12:42:48,214 - INFO - Average Max Tile: 140.8
+2025-03-02 12:42:48,214 - INFO - Average Score: 1634.4
+2025-03-02 12:42:48,214 - INFO - Average Steps: 155.2
+2025-03-02 12:42:48,215 - INFO - Best Max Tile: 256
+2025-03-02 12:42:48,215 - INFO - Tile distribution:
+2025-03-02 12:42:48,215 - INFO -   64: 1 games (20.0%)
+2025-03-02 12:42:48,215 - INFO -   128: 3 games (60.0%)
+2025-03-02 12:42:48,216 - INFO -   256: 1 games (20.0%)
+2025-03-02 12:42:48,216 - INFO - Average steps to achieve tile:
+2025-03-02 12:42:48,216 - INFO - 
+Evaluating MCTS agent...
+2025-03-02 12:46:26,729 - INFO - Game 1/5 completed: Max Tile = 256
+2025-03-02 12:48:02,636 - INFO - Game 2/5 completed: Max Tile = 128
+2025-03-02 12:49:58,137 - INFO - Game 3/5 completed: Max Tile = 128
+2025-03-02 12:53:49,451 - INFO - Game 4/5 completed: Max Tile = 256
+2025-03-02 12:56:03,857 - INFO - Game 5/5 completed: Max Tile = 128
+2025-03-02 12:56:03,858 - INFO - ========================================
+2025-03-02 12:56:03,858 - INFO - Evaluation over 5 games:
+2025-03-02 12:56:03,858 - INFO - Average Max Tile: 179.2
+2025-03-02 12:56:03,859 - INFO - Average Score: 1823.2
+2025-03-02 12:56:03,859 - INFO - Average Steps: 158.0
+2025-03-02 12:56:03,859 - INFO - Best Max Tile: 256
+2025-03-02 12:56:03,859 - INFO - Tile distribution:
+2025-03-02 12:56:03,860 - INFO -   128: 3 games (60.0%)
+2025-03-02 12:56:03,861 - INFO -   256: 2 games (40.0%)
+2025-03-02 12:56:03,861 - INFO - Average steps to achieve tile:
+2025-03-02 12:56:03,861 - INFO - 
+==================================================
+2025-03-02 12:56:03,861 - INFO - COMPARISON RESULTS:
+2025-03-02 12:56:03,861 - INFO - Average Max Tile: Regular = 140.8, MCTS = 179.2
+2025-03-02 12:56:03,861 - INFO - Average Score: Regular = 1634.4, MCTS = 1823.2
+2025-03-02 12:56:03,862 - INFO - Best Max Tile: Regular = 256, MCTS = 256
+2025-03-02 12:56:03,862 - INFO - 
+Regular Agent Tile Distribution:
+2025-03-02 12:56:03,862 - INFO -   64: 1 games (20.0%)
+2025-03-02 12:56:03,862 - INFO -   128: 3 games (60.0%)
+2025-03-02 12:56:03,862 - INFO -   256: 1 games (20.0%)
+2025-03-02 12:56:03,862 - INFO - 
+MCTS Agent Tile Distribution:
+2025-03-02 12:56:03,863 - INFO -   128: 3 games (60.0%)
+2025-03-02 12:56:03,863 - INFO -   256: 2 games (40.0%)
+2025-03-02 13:05:28,492 - INFO - Loading model from dqn_results/final_model.pt
+2025-03-02 13:05:30,586 - INFO - Creating MCTS agent with 150 simulations
+2025-03-02 13:05:30,586 - INFO - 
+Evaluating regular agent...
+2025-03-02 13:05:31,928 - INFO - Game 1/5 completed: Max Tile = 128
+2025-03-02 13:05:32,840 - INFO - Game 2/5 completed: Max Tile = 128
+2025-03-02 13:05:33,405 - INFO - Game 3/5 completed: Max Tile = 64
+2025-03-02 13:05:34,808 - INFO - Game 4/5 completed: Max Tile = 256
+2025-03-02 13:05:35,869 - INFO - Game 5/5 completed: Max Tile = 128
+2025-03-02 13:05:35,870 - INFO - ========================================
+2025-03-02 13:05:35,870 - INFO - Evaluation over 5 games:
+2025-03-02 13:05:35,870 - INFO - Average Max Tile: 140.8
+2025-03-02 13:05:35,871 - INFO - Average Score: 1634.4
+2025-03-02 13:05:35,871 - INFO - Average Steps: 155.2
+2025-03-02 13:05:35,871 - INFO - Best Max Tile: 256
+2025-03-02 13:05:35,871 - INFO - Tile distribution:
+2025-03-02 13:05:35,871 - INFO -   64: 1 games (20.0%)
+2025-03-02 13:05:35,872 - INFO -   128: 3 games (60.0%)
+2025-03-02 13:05:35,872 - INFO -   256: 1 games (20.0%)
+2025-03-02 13:05:35,872 - INFO - Average steps to achieve tile:
+2025-03-02 13:05:35,872 - INFO - 
+Evaluating MCTS agent...
+2025-03-02 13:18:53,707 - INFO - Game 1/5 completed: Max Tile = 256
+2025-03-02 13:34:28,521 - INFO - Game 2/5 completed: Max Tile = 256
+2025-03-02 13:41:18,433 - INFO - Game 3/5 completed: Max Tile = 128
+2025-03-02 13:48:37,444 - INFO - Loading model from dqn_results/final_model.pt
+2025-03-02 13:48:39,535 - INFO - Creating MCTS agent with 150 simulations
+2025-03-02 13:48:39,536 - INFO - 
+Evaluating regular agent...
+2025-03-02 13:48:40,925 - INFO - Game 1/5 completed: Max Tile = 128
+2025-03-02 13:48:41,850 - INFO - Game 2/5 completed: Max Tile = 128
+2025-03-02 13:48:42,401 - INFO - Game 3/5 completed: Max Tile = 64
+2025-03-02 13:48:43,801 - INFO - Game 4/5 completed: Max Tile = 256
+2025-03-02 13:48:44,802 - INFO - Game 5/5 completed: Max Tile = 128
+2025-03-02 13:48:44,802 - INFO - ========================================
+2025-03-02 13:48:44,802 - INFO - Evaluation over 5 games:
+2025-03-02 13:48:44,803 - INFO - Average Max Tile: 140.8
+2025-03-02 13:48:44,803 - INFO - Average Score: 1634.4
+2025-03-02 13:48:44,803 - INFO - Average Steps: 155.2
+2025-03-02 13:48:44,803 - INFO - Best Max Tile: 256
+2025-03-02 13:48:44,804 - INFO - Tile distribution:
+2025-03-02 13:48:44,804 - INFO -   64: 1 games (20.0%)
+2025-03-02 13:48:44,804 - INFO -   128: 3 games (60.0%)
+2025-03-02 13:48:44,805 - INFO -   256: 1 games (20.0%)
+2025-03-02 13:48:44,805 - INFO - Average steps to achieve tile:
+2025-03-02 13:48:44,805 - INFO - 
+Evaluating MCTS agent...
+2025-03-02 14:00:14,389 - INFO - Game 1/5 completed: Max Tile = 128
+2025-03-02 14:08:15,642 - INFO - Game 2/5 completed: Max Tile = 128
+2025-03-02 14:26:00,326 - INFO - Game 1/5 completed: Max Tile = 32
+2025-03-02 14:26:00,658 - INFO - Game 2/5 completed: Max Tile = 32
+2025-03-02 14:26:01,249 - INFO - Game 3/5 completed: Max Tile = 64
+2025-03-02 14:26:02,290 - INFO - Game 4/5 completed: Max Tile = 128
+2025-03-02 14:26:03,081 - INFO - Game 5/5 completed: Max Tile = 128
+2025-03-02 14:26:03,082 - INFO - ========================================
+2025-03-02 14:26:03,082 - INFO - Evaluation over 5 games:
+2025-03-02 14:26:03,082 - INFO - Average Max Tile: 76.8
+2025-03-02 14:26:03,082 - INFO - Average Score: 852.8
+2025-03-02 14:26:03,083 - INFO - Average Steps: 98.4
+2025-03-02 14:26:03,083 - INFO - Best Max Tile: 128
+2025-03-02 14:26:03,083 - INFO - Tile distribution:
+2025-03-02 14:26:03,084 - INFO -   32: 2 games (40.0%)
+2025-03-02 14:26:03,084 - INFO -   64: 1 games (20.0%)
+2025-03-02 14:26:03,084 - INFO -   128: 2 games (40.0%)
+2025-03-02 14:26:03,084 - INFO - Average steps to achieve tile:
+2025-03-02 14:26:25,416 - INFO - Game 1/5 completed: Max Tile = 32
+2025-03-02 14:26:25,742 - INFO - Game 2/5 completed: Max Tile = 32
+2025-03-02 14:26:26,323 - INFO - Game 3/5 completed: Max Tile = 64
+2025-03-02 14:26:27,310 - INFO - Game 4/5 completed: Max Tile = 128
+2025-03-02 14:26:28,095 - INFO - Game 5/5 completed: Max Tile = 128
+2025-03-02 14:26:28,096 - INFO - ========================================
+2025-03-02 14:26:28,096 - INFO - Evaluation over 5 games:
+2025-03-02 14:26:28,096 - INFO - Average Max Tile: 76.8
+2025-03-02 14:26:28,097 - INFO - Average Score: 852.8
+2025-03-02 14:26:28,097 - INFO - Average Steps: 98.4
+2025-03-02 14:26:28,097 - INFO - Best Max Tile: 128
+2025-03-02 14:26:28,097 - INFO - Tile distribution:
+2025-03-02 14:26:28,098 - INFO -   32: 2 games (40.0%)
+2025-03-02 14:26:28,098 - INFO -   64: 1 games (20.0%)
+2025-03-02 14:26:28,098 - INFO -   128: 2 games (40.0%)
+2025-03-02 14:26:28,098 - INFO - Average steps to achieve tile:
+2025-03-02 14:27:35,650 - INFO - Game 1/5 completed: Max Tile = 16
+2025-03-02 14:28:37,489 - INFO - Game 2/5 completed: Max Tile = 16
+2025-03-02 14:30:22,781 - INFO - Game 3/5 completed: Max Tile = 32
+2025-03-02 14:31:39,063 - INFO - Game 4/5 completed: Max Tile = 16
+2025-03-02 14:35:29,923 - INFO - Loading model from 5
+2025-03-02 14:35:46,470 - INFO - Loading model from 5
+2025-03-02 14:37:15,076 - INFO - Loading model from dqn_results/final_model.pt
+2025-03-02 14:37:17,235 - INFO - Creating MCTS agent with 150 simulations
+2025-03-02 14:37:17,235 - INFO - 
+Evaluating regular agent...
+2025-03-02 14:37:18,569 - INFO - Game 1/5 completed: Max Tile = 128
+2025-03-02 14:37:19,505 - INFO - Game 2/5 completed: Max Tile = 128
+2025-03-02 14:37:20,045 - INFO - Game 3/5 completed: Max Tile = 64
+2025-03-02 14:37:21,445 - INFO - Game 4/5 completed: Max Tile = 256
+2025-03-02 14:37:22,478 - INFO - Game 5/5 completed: Max Tile = 128
+2025-03-02 14:37:22,479 - INFO - ========================================
+2025-03-02 14:37:22,479 - INFO - Evaluation over 5 games:
+2025-03-02 14:37:22,479 - INFO - Average Max Tile: 140.8
+2025-03-02 14:37:22,480 - INFO - Average Score: 1634.4
+2025-03-02 14:37:22,480 - INFO - Average Steps: 155.2
+2025-03-02 14:37:22,480 - INFO - Best Max Tile: 256
+2025-03-02 14:37:22,480 - INFO - Tile distribution:
+2025-03-02 14:37:22,481 - INFO -   64: 1 games (20.0%)
+2025-03-02 14:37:22,481 - INFO -   128: 3 games (60.0%)
+2025-03-02 14:37:22,481 - INFO -   256: 1 games (20.0%)
+2025-03-02 14:37:22,481 - INFO - Average steps to achieve tile:
+2025-03-02 14:37:22,482 - INFO - 
+Evaluating MCTS agent...
+2025-03-02 15:01:48,254 - INFO - Game 1/5 completed: Max Tile = 512
+2025-03-02 15:26:29,226 - INFO - Game 2/5 completed: Max Tile = 512
+2025-03-02 15:43:14,505 - INFO - Game 3/5 completed: Max Tile = 512
+2025-03-02 15:57:59,933 - INFO - Game 4/5 completed: Max Tile = 512
+2025-03-02 16:14:31,469 - INFO - Game 5/5 completed: Max Tile = 512
+2025-03-02 16:14:31,469 - INFO - ========================================
+2025-03-02 16:14:31,470 - INFO - Evaluation over 5 games:
+2025-03-02 16:14:31,470 - INFO - Average Max Tile: 512.0
+2025-03-02 16:14:31,471 - INFO - Average Score: 5884.0
+2025-03-02 16:14:31,471 - INFO - Average Steps: 378.2
+2025-03-02 16:14:31,471 - INFO - Best Max Tile: 512
+2025-03-02 16:14:31,471 - INFO - Tile distribution:
+2025-03-02 16:14:31,472 - INFO -   512: 5 games (100.0%)
+2025-03-02 16:14:31,472 - INFO - Average steps to achieve tile:
+2025-03-02 16:14:31,472 - INFO - 
+==================================================
+2025-03-02 16:14:31,473 - INFO - COMPARISON RESULTS:
+2025-03-02 16:14:31,473 - INFO - Average Max Tile: Regular = 140.8, MCTS = 512.0
+2025-03-02 16:14:31,473 - INFO - Average Score: Regular = 1634.4, MCTS = 5884.0
+2025-03-02 16:14:31,473 - INFO - Best Max Tile: Regular = 256, MCTS = 512
+2025-03-02 16:14:31,474 - INFO - 
+Regular Agent Tile Distribution:
+2025-03-02 16:14:31,474 - INFO -   64: 1 games (20.0%)
+2025-03-02 16:14:31,474 - INFO -   128: 3 games (60.0%)
+2025-03-02 16:14:31,474 - INFO -   256: 1 games (20.0%)
+2025-03-02 16:14:31,474 - INFO - 
+MCTS Agent Tile Distribution:
+2025-03-02 16:14:31,475 - INFO -   512: 5 games (100.0%)
+2025-03-02 16:39:51,101 - INFO - Loading model from dqn_results/final_model.pt
+2025-03-02 16:39:53,209 - INFO - Creating enhanced MCTS agent with 250 simulations
+2025-03-02 16:39:53,210 - INFO - 
+Evaluating regular agent...
+2025-03-02 16:39:54,541 - INFO - Game 1/3 completed: Max Tile = 128
+2025-03-02 16:39:55,432 - INFO - Game 2/3 completed: Max Tile = 128
+2025-03-02 16:39:56,008 - INFO - Game 3/3 completed: Max Tile = 64
+2025-03-02 16:39:56,009 - INFO - ========================================
+2025-03-02 16:39:56,009 - INFO - Evaluation over 3 games:
+2025-03-02 16:39:56,009 - INFO - Average Max Tile: 106.7
+2025-03-02 16:39:56,010 - INFO - Average Score: 1297.3
+2025-03-02 16:39:56,010 - INFO - Average Steps: 133.3
+2025-03-02 16:39:56,010 - INFO - Best Max Tile: 128
+2025-03-02 16:39:56,011 - INFO - Tile distribution:
+2025-03-02 16:39:56,011 - INFO -   64: 1 games (33.3%)
+2025-03-02 16:39:56,011 - INFO -   128: 2 games (66.7%)
+2025-03-02 16:39:56,011 - INFO - Average steps to achieve tile:
+2025-03-02 16:39:56,012 - INFO - 
+Evaluating enhanced MCTS agent...
+2025-03-02 17:11:29,376 - INFO - Game 1/3 completed: Max Tile = 256
+2025-03-02 18:27:11,414 - INFO - Game 2/3 completed: Max Tile = 512
+2025-03-02 19:09:17,871 - INFO - Game 3/3 completed: Max Tile = 256
+2025-03-02 19:09:17,872 - INFO - ========================================
+2025-03-02 19:09:17,872 - INFO - Evaluation over 3 games:
+2025-03-02 19:09:17,872 - INFO - Average Max Tile: 341.3
+2025-03-02 19:09:17,873 - INFO - Average Score: 4185.3
+2025-03-02 19:09:17,873 - INFO - Average Steps: 297.3
+2025-03-02 19:09:17,873 - INFO - Best Max Tile: 512
+2025-03-02 19:09:17,873 - INFO - Tile distribution:
+2025-03-02 19:09:17,873 - INFO -   256: 2 games (66.7%)
+2025-03-02 19:09:17,873 - INFO -   512: 1 games (33.3%)
+2025-03-02 19:09:17,874 - INFO - Average steps to achieve tile:
+2025-03-02 19:09:17,874 - INFO - 
+==================================================
+2025-03-02 19:09:17,874 - INFO - COMPARISON RESULTS:
+2025-03-02 19:09:17,875 - INFO - Average Max Tile: Regular = 106.7, Enhanced MCTS = 341.3
+2025-03-02 19:09:17,875 - INFO - Average Score: Regular = 1297.3, Enhanced MCTS = 4185.3
+2025-03-02 19:09:17,875 - INFO - Best Max Tile: Regular = 128, Enhanced MCTS = 512
+2025-03-02 19:09:17,875 - INFO - 
+Regular Agent Tile Distribution:
+2025-03-02 19:09:17,876 - INFO -   64: 1 games (33.3%)
+2025-03-02 19:09:17,876 - INFO -   128: 2 games (66.7%)
+2025-03-02 19:09:17,876 - INFO - 
+Enhanced MCTS Agent Tile Distribution:
+2025-03-02 19:09:17,876 - INFO -   256: 2 games (66.7%)
+2025-03-02 19:09:17,877 - INFO -   512: 1 games (33.3%)
+2025-03-02 19:09:17,877 - INFO - 
+==================================================
+2025-03-02 19:09:17,877 - INFO - RUNNING SIMULATION COUNT COMPARISON
+2025-03-02 19:09:17,877 - INFO - 
+Evaluating with 50 simulations...
+2025-03-02 19:25:15,760 - INFO - Game 1/2 completed: Max Tile = 512
+2025-03-02 19:29:24,487 - INFO - Game 2/2 completed: Max Tile = 256
+2025-03-02 19:29:24,488 - INFO - ========================================
+2025-03-02 19:29:24,488 - INFO - Evaluation over 2 games:
+2025-03-02 19:29:24,488 - INFO - Average Max Tile: 384.0
+2025-03-02 19:29:24,489 - INFO - Average Score: 4682.0
+2025-03-02 19:29:24,489 - INFO - Average Steps: 317.0
+2025-03-02 19:29:24,489 - INFO - Best Max Tile: 512
+2025-03-02 19:29:24,490 - INFO - Tile distribution:
+2025-03-02 19:29:24,490 - INFO -   256: 1 games (50.0%)
+2025-03-02 19:29:24,490 - INFO -   512: 1 games (50.0%)
+2025-03-02 19:29:24,491 - INFO - Average steps to achieve tile:
+2025-03-02 19:29:24,491 - INFO - 
+Evaluating with 100 simulations...
+2025-03-02 19:42:19,015 - INFO - Game 1/2 completed: Max Tile = 256
+2025-03-02 20:06:29,976 - INFO - Game 2/2 completed: Max Tile = 512
+2025-03-02 20:06:29,977 - INFO - ========================================
+2025-03-02 20:06:29,977 - INFO - Evaluation over 2 games:
+2025-03-02 20:06:29,978 - INFO - Average Max Tile: 384.0
+2025-03-02 20:06:29,978 - INFO - Average Score: 3992.0
+2025-03-02 20:06:29,978 - INFO - Average Steps: 284.0
+2025-03-02 20:06:29,979 - INFO - Best Max Tile: 512
+2025-03-02 20:06:29,979 - INFO - Tile distribution:
+2025-03-02 20:06:29,979 - INFO -   256: 1 games (50.0%)
+2025-03-02 20:06:29,980 - INFO -   512: 1 games (50.0%)
+2025-03-02 20:06:29,980 - INFO - Average steps to achieve tile:
+2025-03-02 20:06:29,980 - INFO - 
+Evaluating with 200 simulations...
+2025-03-02 21:42:40,430 - INFO - Game 1/2 completed: Max Tile = 1024
+2025-03-02 22:48:47,465 - INFO - Game 2/2 completed: Max Tile = 512
+2025-03-02 22:48:47,465 - INFO - ========================================
+2025-03-02 22:48:47,466 - INFO - Evaluation over 2 games:
+2025-03-02 22:48:47,466 - INFO - Average Max Tile: 768.0
+2025-03-02 22:48:47,467 - INFO - Average Score: 9362.0
+2025-03-02 22:48:47,467 - INFO - Average Steps: 552.5
+2025-03-02 22:48:47,467 - INFO - Best Max Tile: 1024
+2025-03-02 22:48:47,468 - INFO - Tile distribution:
+2025-03-02 22:48:47,468 - INFO -   512: 1 games (50.0%)
+2025-03-02 22:48:47,468 - INFO -   1024: 1 games (50.0%)
+2025-03-02 22:48:47,469 - INFO - Average steps to achieve tile:
+2025-03-02 22:48:47,469 - INFO - 
+Evaluating with 300 simulations...
+2025-03-02 23:27:58,468 - INFO - Game 1/2 completed: Max Tile = 256
+2025-03-03 08:08:30,555 - INFO - Loading model from dqn_results/final_model.pt
+2025-03-03 08:08:32,723 - INFO - Creating enhanced MCTS agent with 200 simulations
+2025-03-03 08:08:32,723 - INFO - 
+Evaluating regular agent...
+2025-03-03 08:08:34,006 - INFO - Game 1/10 completed: Max Tile = 128
+2025-03-03 08:08:34,876 - INFO - Game 2/10 completed: Max Tile = 128
+2025-03-03 08:08:35,408 - INFO - Game 3/10 completed: Max Tile = 64
+2025-03-03 08:08:36,763 - INFO - Game 4/10 completed: Max Tile = 256
+2025-03-03 08:08:37,721 - INFO - Game 5/10 completed: Max Tile = 128
+2025-03-03 08:08:38,378 - INFO - Game 6/10 completed: Max Tile = 128
+2025-03-03 08:08:39,178 - INFO - Game 7/10 completed: Max Tile = 128
+2025-03-03 08:08:40,133 - INFO - Game 8/10 completed: Max Tile = 128
+2025-03-03 08:08:41,166 - INFO - Game 9/10 completed: Max Tile = 128
+2025-03-03 08:08:42,711 - INFO - Game 10/10 completed: Max Tile = 256
+2025-03-03 08:08:42,711 - INFO - ========================================
+2025-03-03 08:08:42,712 - INFO - Evaluation over 10 games:
+2025-03-03 08:08:42,712 - INFO - Average Max Tile: 147.2
+2025-03-03 08:08:42,712 - INFO - Average Score: 1704.8
+2025-03-03 08:08:42,712 - INFO - Average Steps: 159.5
+2025-03-03 08:08:42,713 - INFO - Best Max Tile: 256
+2025-03-03 08:08:42,713 - INFO - Tile distribution:
+2025-03-03 08:08:42,713 - INFO -   64: 1 games (10.0%)
+2025-03-03 08:08:42,714 - INFO -   128: 7 games (70.0%)
+2025-03-03 08:08:42,714 - INFO -   256: 2 games (20.0%)
+2025-03-03 08:08:42,714 - INFO - Average steps to achieve tile:
+2025-03-03 08:08:42,714 - INFO - 
+Evaluating enhanced MCTS agent...
+2025-03-03 09:03:04,822 - INFO - Game 1/10 completed: Max Tile = 512
+2025-03-03 10:05:27,103 - INFO - Game 2/10 completed: Max Tile = 512
+2025-03-03 11:00:21,912 - INFO - Game 3/10 completed: Max Tile = 512
+2025-03-03 11:41:42,461 - INFO - Game 4/10 completed: Max Tile = 256
+2025-03-03 12:30:50,687 - INFO - Game 5/10 completed: Max Tile = 512
+2025-03-03 13:19:36,757 - INFO - Game 6/10 completed: Max Tile = 512
+2025-03-03 13:44:07,348 - INFO - Game 7/10 completed: Max Tile = 256
+2025-03-03 14:42:41,761 - INFO - Game 8/10 completed: Max Tile = 512
+2025-03-03 15:21:43,353 - INFO - Game 9/10 completed: Max Tile = 256
+2025-03-03 15:44:22,586 - INFO - Game 10/10 completed: Max Tile = 256
+2025-03-03 15:44:22,587 - INFO - ========================================
+2025-03-03 15:44:22,587 - INFO - Evaluation over 10 games:
+2025-03-03 15:44:22,587 - INFO - Average Max Tile: 409.6
+2025-03-03 15:44:22,588 - INFO - Average Score: 4882.8
+2025-03-03 15:44:22,588 - INFO - Average Steps: 336.2
+2025-03-03 15:44:22,588 - INFO - Best Max Tile: 512
+2025-03-03 15:44:22,589 - INFO - Tile distribution:
+2025-03-03 15:44:22,589 - INFO -   256: 4 games (40.0%)
+2025-03-03 15:44:22,589 - INFO -   512: 6 games (60.0%)
+2025-03-03 15:44:22,589 - INFO - Average steps to achieve tile:
+2025-03-03 15:44:22,590 - INFO - 
+==================================================
+2025-03-03 15:44:22,590 - INFO - COMPARISON RESULTS:
+2025-03-03 15:44:22,590 - INFO - Average Max Tile: Regular = 147.2, Enhanced MCTS = 409.6
+2025-03-03 15:44:22,590 - INFO - Average Score: Regular = 1704.8, Enhanced MCTS = 4882.8
+2025-03-03 15:44:22,591 - INFO - Best Max Tile: Regular = 256, Enhanced MCTS = 512
+2025-03-03 15:44:22,591 - INFO - 
+Regular Agent Tile Distribution:
+2025-03-03 15:44:22,591 - INFO -   64: 1 games (10.0%)
+2025-03-03 15:44:22,591 - INFO -   128: 7 games (70.0%)
+2025-03-03 15:44:22,592 - INFO -   256: 2 games (20.0%)
+2025-03-03 15:44:22,592 - INFO - 
+Enhanced MCTS Agent Tile Distribution:
+2025-03-03 15:44:22,592 - INFO -   256: 4 games (40.0%)
+2025-03-03 15:44:22,593 - INFO -   512: 6 games (60.0%)
+2025-03-03 16:55:07,089 - INFO - Loading base agent from models/dqn_agent.pt
+2025-03-03 16:56:21,177 - INFO - Loading base agent from models/dqn_agent.pt
+2025-03-03 16:57:49,469 - INFO - Loading base agent from models/dqn_agent.pt
+2025-03-03 16:57:51,794 - INFO - Evaluating MCTS agent with 5 games
+2025-03-03 16:58:06,312 - INFO - Loading base agent from models/dqn_agent.pt
+2025-03-03 16:58:08,572 - INFO - Evaluating MCTS agent with 5 games
+2025-03-03 16:59:09,900 - INFO - Loading base agent from models/dqn_agent.pt
+2025-03-03 16:59:12,158 - INFO - Evaluating MCTS agent with 3 games
+2025-03-03 17:06:57,505 - INFO - Results saved to results/enhanced_mcts_evaluation_20250303_170657.csv
+2025-03-03 17:27:05,234 - INFO - Loading base agent from models/dqn_agent.pt
+2025-03-03 17:27:07,597 - INFO - Evaluating MCTS agent with 3 games
+2025-03-03 23:43:02,332 - INFO - Results saved to results/enhanced_mcts_evaluation_20250303_234302.csv
