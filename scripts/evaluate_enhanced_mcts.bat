@@ -9,7 +9,7 @@ if exist .venv\Scripts\activate.bat (
 )
 
 REM Default values
-set CHECKPOINT=dqn_results/final_model.pt
+set CHECKPOINT=models/dueling_dqn/dueling_dqn_per_best.pt
 set GAMES=5
 set SIMULATIONS=200
 set COMPARE=

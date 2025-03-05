@@ -12,14 +12,34 @@ from ...environment.game2048 import preprocess_state_onehot, Game2048
 from ...config import device
 
 # Constants for MCTS
-C_PUCT = 3.5  # Increased exploration constant for better exploration (was 3.0)
-DIRICHLET_ALPHA = 0.2  # Reduced Dirichlet noise parameter for more focused exploration (was 0.25)
-DIRICHLET_WEIGHT = 0.25  # Adjusted weight for Dirichlet noise (was 0.3)
-MAX_DEPTH = 200  # Increased maximum search depth (was 150)
-VIRTUAL_LOSS = 3.0  # Virtual loss to encourage thread diversity
-PROGRESSIVE_WIDENING_BASE = 5  # Base value for progressive widening
-PROGRESSIVE_WIDENING_POWER = 0.5  # Power for progressive widening formula
-VALUE_SCALE = 15.0  # Increased scaling factor for value estimates (was 10.0)
+BASE_C_PUCT = 2.0  # Base exploration constant (reduced from 3.5 for more focused search)
+DIRICHLET_ALPHA = 0.15  # Reduced for more focused exploration (was 0.2)
+DIRICHLET_WEIGHT = 0.2  # Slightly reduced weight for more policy trust (was 0.25)
+MAX_DEPTH = 200
+VIRTUAL_LOSS = 3.0
+PROGRESSIVE_WIDENING_BASE = 8  # Increased from 5 for better branch coverage
+PROGRESSIVE_WIDENING_POWER = 0.6  # Increased from 0.5 for slower expansion
+VALUE_SCALE = 15.0
+
+# Adaptive C_PUCT schedule based on max tile
+C_PUCT_SCHEDULE = {
+    2: 2.5,     # Early game - more exploration
+    64: 2.2,    # Early mid-game
+    128: 2.0,   # Mid game
+    256: 1.8,   # Late early game
+    512: 1.5,   # Mid-late game
+    1024: 1.2,  # Late game
+    2048: 1.0   # End game - more exploitation
+}
+
+# Empty cells influence on exploration
+EMPTY_CELLS_EXPLORATION = {
+    2: 1.3,    # Critical state - reduce exploration
+    4: 1.1,    # Near critical - slightly reduce exploration
+    6: 1.0,    # Normal state
+    8: 0.9,    # Open board - increase exploration
+    10: 0.8    # Very open - maximum exploration
+}
 
 # High-value tile bonuses - exponentially increasing rewards for higher tiles
 TILE_BONUSES = {
@@ -78,18 +98,36 @@ class MCTSNode:
         best_action = -1
         best_child = None
         
+        # Get adaptive C_PUCT based on max tile
+        max_tile = self.max_tile
+        applicable_thresholds = [t for t in C_PUCT_SCHEDULE.keys() if t <= max_tile]
+        c_puct = C_PUCT_SCHEDULE[max(applicable_thresholds)] if applicable_thresholds else BASE_C_PUCT
+        
+        # Adjust C_PUCT based on empty cells
+        empty_cells = self.empty_cells
+        empty_cells_factor = 1.0
+        for threshold in sorted(EMPTY_CELLS_EXPLORATION.keys()):
+            if empty_cells <= threshold:
+                empty_cells_factor = EMPTY_CELLS_EXPLORATION[threshold]
+                break
+        c_puct *= empty_cells_factor
+        
         # Adaptive exploration - reduce exploration as depth increases
-        depth_factor = max(0.4, 1.0 - depth / 100.0)  # Slower decay (was 75.0)
-        exploration_factor = math.sqrt(self.visit_count) * C_PUCT * depth_factor
+        depth_factor = max(0.4, 1.0 - depth / 100.0)  # Slower decay
+        exploration_factor = math.sqrt(self.visit_count) * c_puct * depth_factor
         
         # Progressive widening - consider only the top N most visited children
-        # where N grows with the square root of the parent's visit count
+        # where N grows with the visit count using a slower power law
         if self.visit_count > PROGRESSIVE_WIDENING_BASE:
             num_children_to_consider = int(PROGRESSIVE_WIDENING_BASE * (self.visit_count ** PROGRESSIVE_WIDENING_POWER))
-            # Sort children by visit count
+            # Sort children by combined score (visits + weighted prior)
             sorted_children = sorted(
                 self.children.items(), 
-                key=lambda item: item[1].visit_count + item[1].prior * 20,  # Increased prior weight (was 15)
+                key=lambda item: (
+                    item[1].visit_count + 
+                    item[1].prior * 25 +  # Increased prior weight for better initial estimates
+                    (TILE_BONUSES.get(item[1].max_tile, 0) * 2)  # Consider tile value in sorting
+                ),
                 reverse=True
             )
             children_to_consider = dict(sorted_children[:num_children_to_consider])
@@ -98,7 +136,7 @@ class MCTSNode:
         
         for action, child in children_to_consider.items():
             # UCB-like score with prior and virtual loss
-            # Virtual loss temporarily reduces the value to discourage other threads from selecting the same node
+            # Virtual loss temporarily reduces the value to discourage other threads
             adjusted_value = (child.value_sum - child.virtual_loss) / max(child.visit_count, 1)
             
             # Exploration term with adaptive scaling
@@ -115,15 +153,26 @@ class MCTSNode:
             # Bonus for maintaining empty cells - critical for high scores
             empty_cells_bonus = 0.0
             if hasattr(child, 'empty_cells') and child.empty_cells > 0:
-                # Exponential bonus for more empty cells
-                empty_cells_bonus = 0.2 * math.exp(min(child.empty_cells, 10) / 5)
+                # Use adaptive empty cells bonus
+                empty_cells_factor = 1.0
+                for threshold in sorted(EMPTY_CELLS_EXPLORATION.keys()):
+                    if child.empty_cells <= threshold:
+                        empty_cells_factor = EMPTY_CELLS_EXPLORATION[threshold]
+                        break
+                        
+                empty_cells_bonus = 0.2 * math.exp(min(child.empty_cells, 10) / 5) * empty_cells_factor
                 
                 # Extra bonus for maintaining minimum empty cells
                 if child.empty_cells >= MIN_EMPTY_CELLS:
                     empty_cells_bonus *= 1.5
             
-            # Combine all factors
-            score = adjusted_value + exploration_term + tile_bonus + empty_cells_bonus
+            # Combine all factors with adaptive weights
+            score = (
+                adjusted_value + 
+                exploration_term + 
+                tile_bonus * (1.0 + 0.2 * (depth / 100)) +  # Increase tile bonus importance with depth
+                empty_cells_bonus * (1.2 - 0.2 * (depth / 100))  # Slightly reduce empty cells importance with depth
+            )
             
             # Penalty for very deep nodes to avoid infinite loops
             if child.depth > 100:
@@ -273,8 +322,41 @@ class MCTS:
         # Add root to transposition table
         self.transposition_table[board_hash] = root
         
-        # Simulation phase - run multiple simulations
-        for _ in range(self.num_simulations):
+        # Calculate dynamic simulation budget based on state complexity
+        base_simulations = self.num_simulations
+        
+        # Adjust simulations based on max tile
+        if max_tile >= 1024:
+            base_simulations *= 2.0  # Double simulations for very high-value states
+        elif max_tile >= 512:
+            base_simulations *= 1.5  # 50% more simulations for high-value states
+        
+        # Adjust simulations based on empty cells
+        if empty_cells <= 2:
+            base_simulations *= 2.0  # Double simulations for critical states
+        elif empty_cells <= 4:
+            base_simulations *= 1.5  # More simulations for near-critical states
+        
+        # Check policy confidence
+        top_policy = max(policy)
+        if top_policy > 0.9:
+            # Very confident policy - reduce simulations
+            base_simulations *= 0.7
+        elif top_policy < 0.4:
+            # Uncertain policy - increase simulations
+            base_simulations *= 1.3
+        
+        # Ensure minimum and maximum simulation counts
+        actual_simulations = int(min(max(base_simulations, 50), self.num_simulations * 3))
+        
+        # Early stopping variables
+        min_visits = actual_simulations // 4  # Minimum visits before considering early stopping
+        required_visit_ratio = 0.6  # Required ratio of visits for early stopping
+        last_policy = None
+        policy_stable_count = 0
+        
+        # Simulation phase - run multiple simulations with early stopping
+        for sim_count in range(actual_simulations):
             # Clone the environment for this simulation
             sim_env = Game2048()
             sim_env.board = np.copy(root_state)
@@ -403,6 +485,28 @@ class MCTS:
             # Backup phase - propagate the value up the tree
             for node in reversed(search_path):
                 node.backup(value)
+            
+            # Check for early stopping
+            if sim_count >= min_visits and sim_count % 10 == 0:
+                current_policy = self._get_current_policy(root)
+                
+                if last_policy is not None:
+                    # Check if policy is stable
+                    policy_diff = np.max(np.abs(current_policy - last_policy))
+                    if policy_diff < 0.05:  # Policy change threshold
+                        policy_stable_count += 1
+                        if policy_stable_count >= 3:  # Number of stable iterations required
+                            # Check visit count distribution
+                            visits = np.array([child.visit_count for child in root.children.values()])
+                            if len(visits) > 0:
+                                max_visits = np.max(visits)
+                                total_visits = np.sum(visits)
+                                if max_visits / total_visits > required_visit_ratio:
+                                    break  # Early stopping
+                    else:
+                        policy_stable_count = 0
+                
+                last_policy = current_policy
         
         # Calculate improved policy based on visit counts
         improved_policy = np.zeros(4, dtype=np.float32)
@@ -515,6 +619,15 @@ class MCTS:
                 action = valid_actions[int(np.argmax([root.children[a].visit_count for a in valid_actions]))]
         
         return action, policy
+
+    def _get_current_policy(self, root):
+        """Helper method to get current policy from visit counts."""
+        policy = np.zeros(4)
+        total_visits = sum(child.visit_count for child in root.children.values())
+        if total_visits > 0:
+            for action, child in root.children.items():
+                policy[action] = child.visit_count / total_visits
+        return policy
 
 
 def mcts_action(agent, state, num_simulations=100, temperature=1.0):

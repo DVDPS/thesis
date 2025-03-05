@@ -2963,3 +2963,936 @@ Enhanced MCTS Agent Tile Distribution:
 2025-03-03 17:27:05,234 - INFO - Loading base agent from models/dqn_agent.pt
 2025-03-03 17:27:07,597 - INFO - Evaluating MCTS agent with 3 games
 2025-03-03 23:43:02,332 - INFO - Results saved to results/enhanced_mcts_evaluation_20250303_234302.csv
+2025-03-04 09:50:48,635 - INFO - Loading model from dqn_results/final_model.pt
+2025-03-04 09:50:50,901 - INFO - Creating enhanced MCTS agent with 200 simulations
+2025-03-04 09:50:50,901 - INFO - 
+Evaluating regular agent...
+2025-03-04 09:50:52,249 - INFO - Game 1/3 completed: Max Tile = 128
+2025-03-04 09:50:53,118 - INFO - Game 2/3 completed: Max Tile = 128
+2025-03-04 09:50:53,682 - INFO - Game 3/3 completed: Max Tile = 64
+2025-03-04 09:50:53,683 - INFO - ========================================
+2025-03-04 09:50:53,683 - INFO - Evaluation over 3 games:
+2025-03-04 09:50:53,684 - INFO - Average Max Tile: 106.7
+2025-03-04 09:50:53,684 - INFO - Average Score: 1297.3
+2025-03-04 09:50:53,684 - INFO - Average Steps: 133.3
+2025-03-04 09:50:53,684 - INFO - Best Max Tile: 128
+2025-03-04 09:50:53,685 - INFO - Tile distribution:
+2025-03-04 09:50:53,685 - INFO -   64: 1 games (33.3%)
+2025-03-04 09:50:53,685 - INFO -   128: 2 games (66.7%)
+2025-03-04 09:50:53,686 - INFO - Average steps to achieve tile:
+2025-03-04 09:50:53,687 - INFO - 
+Evaluating enhanced MCTS agent...
+2025-03-04 10:11:37,070 - INFO - Game 1/3 completed: Max Tile = 256
+2025-03-04 10:20:25,186 - INFO - Loading model from dqn_results/final_model.pt
+2025-03-04 10:20:27,198 - INFO - Creating enhanced MCTS agent with 200 simulations
+2025-03-04 10:20:27,198 - INFO - 
+Evaluating regular agent...
+2025-03-04 10:20:28,501 - INFO - Game 1/5 completed: Max Tile = 128
+2025-03-04 10:20:29,395 - INFO - Game 2/5 completed: Max Tile = 128
+2025-03-04 10:20:29,924 - INFO - Game 3/5 completed: Max Tile = 64
+2025-03-04 10:20:31,288 - INFO - Game 4/5 completed: Max Tile = 256
+2025-03-04 10:20:32,269 - INFO - Game 5/5 completed: Max Tile = 128
+2025-03-04 10:20:32,269 - INFO - ========================================
+2025-03-04 10:20:32,270 - INFO - Evaluation over 5 games:
+2025-03-04 10:20:32,270 - INFO - Average Max Tile: 140.8
+2025-03-04 10:20:32,270 - INFO - Average Score: 1634.4
+2025-03-04 10:20:32,270 - INFO - Average Steps: 155.2
+2025-03-04 10:20:32,271 - INFO - Best Max Tile: 256
+2025-03-04 10:20:32,271 - INFO - Tile distribution:
+2025-03-04 10:20:32,271 - INFO -   64: 1 games (20.0%)
+2025-03-04 10:20:32,272 - INFO -   128: 3 games (60.0%)
+2025-03-04 10:20:32,272 - INFO -   256: 1 games (20.0%)
+2025-03-04 10:20:32,272 - INFO - Average steps to achieve tile:
+2025-03-04 10:20:32,272 - INFO - 
+Evaluating enhanced MCTS agent...
+2025-03-04 10:35:29,362 - INFO - Game 1/5 completed: Max Tile = 256
+2025-03-04 11:26:45,085 - INFO - Game 2/5 completed: Max Tile = 512
+2025-03-04 11:55:54,698 - INFO - Game 3/5 completed: Max Tile = 512
+2025-03-04 12:17:28,157 - INFO - Game 4/5 completed: Max Tile = 256
+2025-03-04 12:29:10,112 - INFO - Game 5/5 completed: Max Tile = 256
+2025-03-04 12:29:10,113 - INFO - ========================================
+2025-03-04 12:29:10,113 - INFO - Evaluation over 5 games:
+2025-03-04 12:29:10,113 - INFO - Average Max Tile: 358.4
+2025-03-04 12:29:10,114 - INFO - Average Score: 3660.0
+2025-03-04 12:29:10,114 - INFO - Average Steps: 261.6
+2025-03-04 12:29:10,114 - INFO - Best Max Tile: 512
+2025-03-04 12:29:10,114 - INFO - Tile distribution:
+2025-03-04 12:29:10,115 - INFO -   256: 3 games (60.0%)
+2025-03-04 12:29:10,115 - INFO -   512: 2 games (40.0%)
+2025-03-04 12:29:10,115 - INFO - Average steps to achieve tile:
+2025-03-04 12:29:10,115 - INFO - 
+==================================================
+2025-03-04 12:29:10,115 - INFO - COMPARISON RESULTS:
+2025-03-04 12:29:10,116 - INFO - Average Max Tile: Regular = 140.8, Enhanced MCTS = 358.4
+2025-03-04 12:29:10,116 - INFO - Average Score: Regular = 1634.4, Enhanced MCTS = 3660.0
+2025-03-04 12:29:10,116 - INFO - Best Max Tile: Regular = 256, Enhanced MCTS = 512
+2025-03-04 12:29:10,116 - INFO - 
+Regular Agent Tile Distribution:
+2025-03-04 12:29:10,116 - INFO -   64: 1 games (20.0%)
+2025-03-04 12:29:10,117 - INFO -   128: 3 games (60.0%)
+2025-03-04 12:29:10,117 - INFO -   256: 1 games (20.0%)
+2025-03-04 12:29:10,117 - INFO - 
+Enhanced MCTS Agent Tile Distribution:
+2025-03-04 12:29:10,117 - INFO -   256: 3 games (60.0%)
+2025-03-04 12:29:10,117 - INFO -   512: 2 games (40.0%)
+2025-03-04 18:50:36,816 - INFO - Starting training with device: cuda
+2025-03-04 18:50:36,817 - INFO - Model parameters: 3394954
+2025-03-04 18:50:37,630 - INFO - New best score: 2970.731244033574 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 18:50:41,951 - INFO - New best score: 3082.1781187534325 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 18:51:02,566 - INFO - New best score: 3621.9281171381476 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 18:51:06,084 - INFO - New best score: 5388.059368750456 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 18:51:24,698 - INFO - New best score: 5601.296867364646 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 18:52:10,942 - INFO - New best score: 8558.146865475179 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 18:52:38,197 - INFO - New best score: 8783.762491774556 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 18:53:27,254 - INFO - Episode 100/100000 - Avg Reward: 3160.68 - Avg Max Tile: 139.20 - Epsilon: 0.010 - Beta: 0.401
+2025-03-04 18:53:49,668 - INFO - New best score: 8995.178113901611 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 18:56:21,825 - INFO - New best score: 9658.728112649915 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 18:56:33,800 - INFO - Episode 200/100000 - Avg Reward: 3441.52 - Avg Max Tile: 150.08 - Epsilon: 0.010 - Beta: 0.401
+2025-03-04 19:00:01,274 - INFO - Episode 300/100000 - Avg Reward: 3738.92 - Avg Max Tile: 164.80 - Epsilon: 0.010 - Beta: 0.402
+2025-03-04 19:03:11,705 - INFO - Episode 400/100000 - Avg Reward: 3360.55 - Avg Max Tile: 143.84 - Epsilon: 0.010 - Beta: 0.402
+2025-03-04 19:04:48,172 - INFO - New best score: 9913.071863532063 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:06:36,996 - INFO - Episode 500/100000 - Avg Reward: 3664.69 - Avg Max Tile: 160.64 - Epsilon: 0.010 - Beta: 0.403
+2025-03-04 19:09:37,069 - INFO - Starting training with device: cuda
+2025-03-04 19:09:37,069 - INFO - Model parameters: 3394954
+2025-03-04 19:09:37,072 - INFO - New highest tile achieved: 2 (Episode 1)
+2025-03-04 19:09:37,075 - INFO - New highest tile achieved: 4 (Episode 1)
+2025-03-04 19:09:37,086 - INFO - New highest tile achieved: 8 (Episode 1)
+2025-03-04 19:09:37,096 - INFO - New highest tile achieved: 16 (Episode 1)
+2025-03-04 19:09:37,136 - INFO - New highest tile achieved: 32 (Episode 1)
+2025-03-04 19:09:37,160 - INFO - New highest tile achieved: 64 (Episode 1)
+2025-03-04 19:09:37,247 - INFO - New highest tile achieved: 128 (Episode 1)
+2025-03-04 19:09:37,870 - INFO - New best score: 2970.731244033574 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:09:42,357 - INFO - New best score: 3082.1781187534325 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:10:03,475 - INFO - New best score: 3621.9281171381476 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:10:06,102 - INFO - New highest tile achieved: 256 (Episode 25)
+2025-03-04 19:10:06,939 - INFO - New best score: 5388.059368750456 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:10:25,701 - INFO - New best score: 5601.296867364646 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:11:11,571 - INFO - New highest tile achieved: 512 (Episode 62)
+2025-03-04 19:11:12,341 - INFO - New best score: 8558.146865475179 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:11:39,374 - INFO - New best score: 8783.762491774556 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:12:27,873 - INFO - Episode 100/50000 - Avg Reward: 3160.68 - Avg Max Tile: 139.20 - Epsilon: 0.010 - Beta: 0.401
+2025-03-04 19:12:50,206 - INFO - New best score: 8995.178113901611 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:15:25,117 - INFO - New best score: 9658.728112649915 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:15:37,420 - INFO - Episode 200/50000 - Avg Reward: 3441.52 - Avg Max Tile: 150.08 - Epsilon: 0.010 - Beta: 0.401
+2025-03-04 19:19:03,745 - INFO - Episode 300/50000 - Avg Reward: 3738.92 - Avg Max Tile: 164.80 - Epsilon: 0.010 - Beta: 0.402
+2025-03-04 19:22:11,494 - INFO - Episode 400/50000 - Avg Reward: 3360.55 - Avg Max Tile: 143.84 - Epsilon: 0.010 - Beta: 0.402
+2025-03-04 19:23:46,218 - INFO - New best score: 9913.071863532063 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:25:31,945 - INFO - Episode 500/50000 - Avg Reward: 3664.69 - Avg Max Tile: 160.64 - Epsilon: 0.010 - Beta: 0.403
+2025-03-04 19:28:57,107 - INFO - Episode 600/50000 - Avg Reward: 3643.39 - Avg Max Tile: 156.48 - Epsilon: 0.010 - Beta: 0.404
+2025-03-04 19:30:20,844 - INFO - New best score: 11576.696858221305 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:32:11,148 - INFO - Episode 700/50000 - Avg Reward: 3462.84 - Avg Max Tile: 149.76 - Epsilon: 0.010 - Beta: 0.404
+2025-03-04 19:35:21,739 - INFO - Episode 800/50000 - Avg Reward: 3319.05 - Avg Max Tile: 140.16 - Epsilon: 0.010 - Beta: 0.405
+2025-03-04 19:38:50,931 - INFO - Episode 900/50000 - Avg Reward: 3741.88 - Avg Max Tile: 165.76 - Epsilon: 0.010 - Beta: 0.405
+2025-03-04 19:44:21,780 - INFO - Starting training with device: cuda
+2025-03-04 19:44:21,782 - INFO - Model parameters: 3394954
+2025-03-04 19:44:21,785 - INFO - New highest tile achieved: 2 (Episode 1)
+2025-03-04 19:44:21,787 - INFO - New highest tile achieved: 4 (Episode 1)
+2025-03-04 19:44:21,797 - INFO - New highest tile achieved: 8 (Episode 1)
+2025-03-04 19:44:21,807 - INFO - New highest tile achieved: 16 (Episode 1)
+2025-03-04 19:44:21,847 - INFO - New highest tile achieved: 32 (Episode 1)
+2025-03-04 19:44:21,871 - INFO - New highest tile achieved: 64 (Episode 1)
+2025-03-04 19:44:21,961 - INFO - New highest tile achieved: 128 (Episode 1)
+2025-03-04 19:44:22,156 - INFO - New best score: 2970.731244033574 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:44:22,989 - INFO - New best score: 3509.028116792443 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:44:49,261 - INFO - New highest tile achieved: 256 (Episode 26)
+2025-03-04 19:44:49,966 - INFO - New best score: 4835.187491637467 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:45:08,405 - INFO - Starting training with device: cuda
+2025-03-04 19:45:08,406 - INFO - Model parameters: 3394954
+2025-03-04 19:45:08,409 - INFO - New highest tile achieved: 2 (Episode 1)
+2025-03-04 19:45:08,411 - INFO - New highest tile achieved: 4 (Episode 1)
+2025-03-04 19:45:08,421 - INFO - New highest tile achieved: 8 (Episode 1)
+2025-03-04 19:45:08,431 - INFO - New highest tile achieved: 16 (Episode 1)
+2025-03-04 19:45:08,471 - INFO - New highest tile achieved: 32 (Episode 1)
+2025-03-04 19:45:08,498 - INFO - New highest tile achieved: 64 (Episode 1)
+2025-03-04 19:45:08,587 - INFO - New highest tile achieved: 128 (Episode 1)
+2025-03-04 19:45:08,783 - INFO - New best score: 2970.731244033574 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:45:09,613 - INFO - New best score: 3509.028116792443 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:45:36,314 - INFO - New highest tile achieved: 256 (Episode 26)
+2025-03-04 19:45:36,983 - INFO - New best score: 4835.187491637467 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:46:13,958 - INFO - New best score: 4909.731243944167 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:47:07,681 - INFO - New best score: 6226.09373958707 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:47:41,910 - INFO - Episode 100/50000 - Avg Reward: 2694.14 - Avg Max Tile: 112.32 - Epsilon: 0.100 - Beta: 0.401
+2025-03-04 19:50:28,586 - INFO - Episode 200/50000 - Avg Reward: 2791.80 - Avg Max Tile: 118.72 - Epsilon: 0.100 - Beta: 0.401
+2025-03-04 19:51:41,828 - INFO - New highest tile achieved: 512 (Episode 244)
+2025-03-04 19:51:42,036 - INFO - New best score: 8041.97499014735 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 19:53:06,434 - INFO - Episode 300/50000 - Avg Reward: 2811.57 - Avg Max Tile: 123.84 - Epsilon: 0.100 - Beta: 0.402
+2025-03-04 19:55:47,988 - INFO - Episode 400/50000 - Avg Reward: 2770.25 - Avg Max Tile: 118.88 - Epsilon: 0.100 - Beta: 0.402
+2025-03-04 19:58:20,779 - INFO - Episode 500/50000 - Avg Reward: 2528.76 - Avg Max Tile: 107.52 - Epsilon: 0.100 - Beta: 0.403
+2025-03-04 20:01:09,058 - INFO - Episode 600/50000 - Avg Reward: 2785.58 - Avg Max Tile: 119.68 - Epsilon: 0.100 - Beta: 0.404
+2025-03-04 20:04:02,452 - INFO - Episode 700/50000 - Avg Reward: 2884.78 - Avg Max Tile: 124.96 - Epsilon: 0.100 - Beta: 0.404
+2025-03-04 20:06:45,175 - INFO - Episode 800/50000 - Avg Reward: 2628.61 - Avg Max Tile: 108.48 - Epsilon: 0.100 - Beta: 0.405
+2025-03-04 20:09:22,854 - INFO - Episode 900/50000 - Avg Reward: 2579.21 - Avg Max Tile: 111.20 - Epsilon: 0.100 - Beta: 0.405
+2025-03-04 20:12:13,432 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_1000.pt
+2025-03-04 20:12:13,432 - INFO - Episode 1000/50000 - Avg Reward: 2820.63 - Avg Max Tile: 122.24 - Epsilon: 0.100 - Beta: 0.406
+2025-03-04 20:15:06,328 - INFO - Episode 1100/50000 - Avg Reward: 2807.89 - Avg Max Tile: 119.68 - Epsilon: 0.100 - Beta: 0.407
+2025-03-04 20:18:08,728 - INFO - Episode 1200/50000 - Avg Reward: 3040.88 - Avg Max Tile: 132.48 - Epsilon: 0.100 - Beta: 0.407
+2025-03-04 20:20:50,874 - INFO - Episode 1300/50000 - Avg Reward: 2720.38 - Avg Max Tile: 121.44 - Epsilon: 0.100 - Beta: 0.408
+2025-03-04 20:23:46,334 - INFO - Episode 1400/50000 - Avg Reward: 2886.43 - Avg Max Tile: 121.92 - Epsilon: 0.100 - Beta: 0.408
+2025-03-04 20:26:23,917 - INFO - Episode 1500/50000 - Avg Reward: 2556.60 - Avg Max Tile: 109.12 - Epsilon: 0.100 - Beta: 0.409
+2025-03-04 20:29:19,444 - INFO - Episode 1600/50000 - Avg Reward: 2886.16 - Avg Max Tile: 123.68 - Epsilon: 0.100 - Beta: 0.410
+2025-03-04 20:32:07,204 - INFO - Episode 1700/50000 - Avg Reward: 2778.67 - Avg Max Tile: 119.68 - Epsilon: 0.100 - Beta: 0.410
+2025-03-04 20:34:58,524 - INFO - Episode 1800/50000 - Avg Reward: 2891.89 - Avg Max Tile: 130.40 - Epsilon: 0.100 - Beta: 0.411
+2025-03-04 20:37:43,810 - INFO - Episode 1900/50000 - Avg Reward: 2693.82 - Avg Max Tile: 113.28 - Epsilon: 0.100 - Beta: 0.411
+2025-03-04 20:40:39,249 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_2000.pt
+2025-03-04 20:40:39,250 - INFO - Episode 2000/50000 - Avg Reward: 2908.77 - Avg Max Tile: 126.72 - Epsilon: 0.100 - Beta: 0.412
+2025-03-04 20:41:30,311 - INFO - New best score: 8202.134363359217 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 20:42:16,474 - INFO - New best score: 8497.553115448356 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 20:43:40,060 - INFO - Episode 2100/50000 - Avg Reward: 2997.32 - Avg Max Tile: 131.20 - Epsilon: 0.100 - Beta: 0.413
+2025-03-04 20:46:29,579 - INFO - Episode 2200/50000 - Avg Reward: 2804.07 - Avg Max Tile: 122.24 - Epsilon: 0.100 - Beta: 0.413
+2025-03-04 20:49:18,340 - INFO - Episode 2300/50000 - Avg Reward: 2769.87 - Avg Max Tile: 118.08 - Epsilon: 0.100 - Beta: 0.414
+2025-03-04 20:51:58,827 - INFO - New best score: 8534.337485402822 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 20:52:12,192 - INFO - Episode 2400/50000 - Avg Reward: 2870.45 - Avg Max Tile: 125.76 - Epsilon: 0.100 - Beta: 0.414
+2025-03-04 20:54:10,715 - INFO - New best score: 8590.412485092878 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 20:55:10,823 - INFO - Episode 2500/50000 - Avg Reward: 2949.45 - Avg Max Tile: 131.04 - Epsilon: 0.100 - Beta: 0.415
+2025-03-04 20:58:02,663 - INFO - Episode 2600/50000 - Avg Reward: 2847.42 - Avg Max Tile: 124.80 - Epsilon: 0.100 - Beta: 0.416
+2025-03-04 21:00:57,223 - INFO - Episode 2700/50000 - Avg Reward: 2869.33 - Avg Max Tile: 124.00 - Epsilon: 0.100 - Beta: 0.416
+2025-03-04 21:03:39,522 - INFO - Episode 2800/50000 - Avg Reward: 2617.92 - Avg Max Tile: 112.00 - Epsilon: 0.100 - Beta: 0.417
+2025-03-04 21:06:29,095 - INFO - Episode 2900/50000 - Avg Reward: 2804.35 - Avg Max Tile: 121.28 - Epsilon: 0.100 - Beta: 0.417
+2025-03-04 21:09:22,017 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_3000.pt
+2025-03-04 21:09:22,018 - INFO - Episode 3000/50000 - Avg Reward: 2881.27 - Avg Max Tile: 126.72 - Epsilon: 0.100 - Beta: 0.418
+2025-03-04 21:12:14,578 - INFO - Episode 3100/50000 - Avg Reward: 2700.39 - Avg Max Tile: 113.60 - Epsilon: 0.100 - Beta: 0.419
+2025-03-04 21:15:15,315 - INFO - Episode 3200/50000 - Avg Reward: 2930.96 - Avg Max Tile: 126.56 - Epsilon: 0.100 - Beta: 0.419
+2025-03-04 21:18:01,294 - INFO - Episode 3300/50000 - Avg Reward: 2700.32 - Avg Max Tile: 116.48 - Epsilon: 0.100 - Beta: 0.420
+2025-03-04 21:21:06,121 - INFO - Episode 3400/50000 - Avg Reward: 3014.82 - Avg Max Tile: 129.60 - Epsilon: 0.100 - Beta: 0.420
+2025-03-04 21:23:51,126 - INFO - Episode 3500/50000 - Avg Reward: 2791.39 - Avg Max Tile: 121.28 - Epsilon: 0.100 - Beta: 0.421
+2025-03-04 21:26:50,330 - INFO - Episode 3600/50000 - Avg Reward: 2906.27 - Avg Max Tile: 126.72 - Epsilon: 0.100 - Beta: 0.422
+2025-03-04 21:29:34,013 - INFO - Episode 3700/50000 - Avg Reward: 2715.67 - Avg Max Tile: 117.44 - Epsilon: 0.100 - Beta: 0.422
+2025-03-04 21:32:21,943 - INFO - Episode 3800/50000 - Avg Reward: 2744.17 - Avg Max Tile: 117.76 - Epsilon: 0.100 - Beta: 0.423
+2025-03-04 21:35:20,135 - INFO - Episode 3900/50000 - Avg Reward: 2947.04 - Avg Max Tile: 128.64 - Epsilon: 0.100 - Beta: 0.423
+2025-03-04 21:38:05,803 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_4000.pt
+2025-03-04 21:38:05,804 - INFO - Episode 4000/50000 - Avg Reward: 2712.43 - Avg Max Tile: 113.60 - Epsilon: 0.100 - Beta: 0.424
+2025-03-04 21:40:53,273 - INFO - Episode 4100/50000 - Avg Reward: 2737.95 - Avg Max Tile: 116.16 - Epsilon: 0.100 - Beta: 0.425
+2025-03-04 21:43:43,970 - INFO - Episode 4200/50000 - Avg Reward: 2833.75 - Avg Max Tile: 124.00 - Epsilon: 0.100 - Beta: 0.425
+2025-03-04 21:46:36,376 - INFO - Episode 4300/50000 - Avg Reward: 2824.37 - Avg Max Tile: 121.92 - Epsilon: 0.100 - Beta: 0.426
+2025-03-04 21:49:27,347 - INFO - Episode 4400/50000 - Avg Reward: 2847.78 - Avg Max Tile: 122.24 - Epsilon: 0.100 - Beta: 0.426
+2025-03-04 21:52:10,027 - INFO - Episode 4500/50000 - Avg Reward: 2615.45 - Avg Max Tile: 106.56 - Epsilon: 0.100 - Beta: 0.427
+2025-03-04 21:55:09,675 - INFO - Episode 4600/50000 - Avg Reward: 3027.17 - Avg Max Tile: 136.00 - Epsilon: 0.100 - Beta: 0.428
+2025-03-04 21:57:58,229 - INFO - Episode 4700/50000 - Avg Reward: 2803.33 - Avg Max Tile: 120.32 - Epsilon: 0.100 - Beta: 0.428
+2025-03-04 22:00:55,353 - INFO - Episode 4800/50000 - Avg Reward: 2897.29 - Avg Max Tile: 124.16 - Epsilon: 0.100 - Beta: 0.429
+2025-03-04 22:03:48,096 - INFO - Episode 4900/50000 - Avg Reward: 2842.89 - Avg Max Tile: 120.32 - Epsilon: 0.100 - Beta: 0.429
+2025-03-04 22:06:28,678 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_5000.pt
+2025-03-04 22:06:28,679 - INFO - Episode 5000/50000 - Avg Reward: 2633.29 - Avg Max Tile: 111.68 - Epsilon: 0.100 - Beta: 0.430
+2025-03-04 22:09:09,883 - INFO - Episode 5100/50000 - Avg Reward: 2647.92 - Avg Max Tile: 115.20 - Epsilon: 0.100 - Beta: 0.431
+2025-03-04 22:11:53,387 - INFO - Episode 5200/50000 - Avg Reward: 2668.75 - Avg Max Tile: 114.56 - Epsilon: 0.100 - Beta: 0.431
+2025-03-04 22:14:47,675 - INFO - Episode 5300/50000 - Avg Reward: 2843.51 - Avg Max Tile: 119.68 - Epsilon: 0.100 - Beta: 0.432
+2025-03-04 22:17:45,859 - INFO - Episode 5400/50000 - Avg Reward: 2979.24 - Avg Max Tile: 132.16 - Epsilon: 0.100 - Beta: 0.432
+2025-03-04 22:20:32,667 - INFO - Episode 5500/50000 - Avg Reward: 2795.07 - Avg Max Tile: 120.00 - Epsilon: 0.100 - Beta: 0.433
+2025-03-04 22:23:29,077 - INFO - Episode 5600/50000 - Avg Reward: 2913.10 - Avg Max Tile: 124.00 - Epsilon: 0.100 - Beta: 0.434
+2025-03-04 22:26:18,603 - INFO - Episode 5700/50000 - Avg Reward: 2807.05 - Avg Max Tile: 122.24 - Epsilon: 0.100 - Beta: 0.434
+2025-03-04 22:26:41,234 - INFO - New best score: 8833.593736749888 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-04 22:29:13,108 - INFO - Episode 5800/50000 - Avg Reward: 2846.94 - Avg Max Tile: 122.56 - Epsilon: 0.100 - Beta: 0.435
+2025-03-04 22:32:07,666 - INFO - Episode 5900/50000 - Avg Reward: 2881.43 - Avg Max Tile: 126.08 - Epsilon: 0.100 - Beta: 0.435
+2025-03-04 22:35:05,070 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_6000.pt
+2025-03-04 22:35:05,071 - INFO - Episode 6000/50000 - Avg Reward: 2956.17 - Avg Max Tile: 129.60 - Epsilon: 0.100 - Beta: 0.436
+2025-03-04 22:37:42,324 - INFO - Episode 6100/50000 - Avg Reward: 2534.33 - Avg Max Tile: 105.44 - Epsilon: 0.100 - Beta: 0.437
+2025-03-04 22:40:21,126 - INFO - Episode 6200/50000 - Avg Reward: 2568.95 - Avg Max Tile: 107.68 - Epsilon: 0.100 - Beta: 0.437
+2025-03-04 22:43:09,166 - INFO - Episode 6300/50000 - Avg Reward: 2734.43 - Avg Max Tile: 117.12 - Epsilon: 0.100 - Beta: 0.438
+2025-03-04 22:46:06,296 - INFO - Episode 6400/50000 - Avg Reward: 2916.11 - Avg Max Tile: 125.76 - Epsilon: 0.100 - Beta: 0.438
+2025-03-04 22:48:48,382 - INFO - Episode 6500/50000 - Avg Reward: 2644.57 - Avg Max Tile: 112.32 - Epsilon: 0.100 - Beta: 0.439
+2025-03-04 22:51:36,558 - INFO - Episode 6600/50000 - Avg Reward: 2765.87 - Avg Max Tile: 117.12 - Epsilon: 0.100 - Beta: 0.440
+2025-03-04 22:54:25,755 - INFO - Episode 6700/50000 - Avg Reward: 2778.09 - Avg Max Tile: 118.88 - Epsilon: 0.100 - Beta: 0.440
+2025-03-04 22:57:10,955 - INFO - Episode 6800/50000 - Avg Reward: 2740.60 - Avg Max Tile: 118.72 - Epsilon: 0.100 - Beta: 0.441
+2025-03-04 23:00:09,527 - INFO - Episode 6900/50000 - Avg Reward: 3025.95 - Avg Max Tile: 135.36 - Epsilon: 0.100 - Beta: 0.441
+2025-03-04 23:02:51,455 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_7000.pt
+2025-03-04 23:02:51,456 - INFO - Episode 7000/50000 - Avg Reward: 2613.40 - Avg Max Tile: 109.28 - Epsilon: 0.100 - Beta: 0.442
+2025-03-04 23:05:37,924 - INFO - Episode 7100/50000 - Avg Reward: 2787.24 - Avg Max Tile: 122.88 - Epsilon: 0.100 - Beta: 0.443
+2025-03-04 23:08:32,833 - INFO - Episode 7200/50000 - Avg Reward: 2867.24 - Avg Max Tile: 124.64 - Epsilon: 0.100 - Beta: 0.443
+2025-03-04 23:11:09,237 - INFO - Episode 7300/50000 - Avg Reward: 2513.98 - Avg Max Tile: 103.52 - Epsilon: 0.100 - Beta: 0.444
+2025-03-04 23:14:05,588 - INFO - Episode 7400/50000 - Avg Reward: 2916.99 - Avg Max Tile: 122.88 - Epsilon: 0.100 - Beta: 0.444
+2025-03-04 23:16:55,046 - INFO - Episode 7500/50000 - Avg Reward: 2788.96 - Avg Max Tile: 118.08 - Epsilon: 0.100 - Beta: 0.445
+2025-03-04 23:19:56,811 - INFO - Episode 7600/50000 - Avg Reward: 2984.30 - Avg Max Tile: 128.96 - Epsilon: 0.100 - Beta: 0.446
+2025-03-04 23:23:00,596 - INFO - Episode 7700/50000 - Avg Reward: 2993.92 - Avg Max Tile: 129.60 - Epsilon: 0.100 - Beta: 0.446
+2025-03-04 23:25:55,670 - INFO - Episode 7800/50000 - Avg Reward: 2922.06 - Avg Max Tile: 129.92 - Epsilon: 0.100 - Beta: 0.447
+2025-03-04 23:28:50,180 - INFO - Episode 7900/50000 - Avg Reward: 2918.93 - Avg Max Tile: 127.36 - Epsilon: 0.100 - Beta: 0.447
+2025-03-04 23:29:05,212 - INFO - New best score: 8990.724985745552 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 00:18:49,477 - INFO - Starting training with device: cuda
+2025-03-05 00:18:49,477 - INFO - Model parameters: 3394954
+2025-03-05 00:18:49,477 - INFO - New highest tile achieved: 2 (Episode 1)
+2025-03-05 00:18:49,477 - INFO - New highest tile achieved: 4 (Episode 1)
+2025-03-05 00:18:49,493 - INFO - New highest tile achieved: 8 (Episode 1)
+2025-03-05 00:18:49,520 - INFO - New highest tile achieved: 16 (Episode 1)
+2025-03-05 00:18:49,588 - INFO - New highest tile achieved: 32 (Episode 1)
+2025-03-05 00:18:49,632 - INFO - New highest tile achieved: 64 (Episode 1)
+2025-03-05 00:18:49,800 - INFO - New highest tile achieved: 128 (Episode 1)
+2025-03-05 00:18:50,180 - INFO - New best score: 2970.731244033574 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 00:18:51,720 - INFO - New best score: 3509.028116792443 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 00:19:20,607 - INFO - New highest tile achieved: 256 (Episode 26)
+2025-03-05 00:19:21,250 - INFO - New best score: 4835.187491637467 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 00:19:57,917 - INFO - New best score: 4909.731243944167 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 00:20:48,504 - INFO - New best score: 6226.09373958707 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 00:21:20,688 - INFO - Episode 100/50000 - Avg Reward: 2694.14 - Avg Max Tile: 112.32 - Epsilon: 0.100 - Beta: 0.401
+2025-03-05 00:24:01,312 - INFO - Episode 200/50000 - Avg Reward: 2791.80 - Avg Max Tile: 118.72 - Epsilon: 0.100 - Beta: 0.401
+2025-03-05 00:25:15,467 - INFO - New highest tile achieved: 512 (Episode 244)
+2025-03-05 00:25:15,658 - INFO - New best score: 8041.97499014735 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 00:26:42,379 - INFO - Episode 300/50000 - Avg Reward: 2811.57 - Avg Max Tile: 123.84 - Epsilon: 0.100 - Beta: 0.402
+2025-03-05 00:29:22,965 - INFO - Episode 400/50000 - Avg Reward: 2770.25 - Avg Max Tile: 118.88 - Epsilon: 0.100 - Beta: 0.402
+2025-03-05 00:31:54,252 - INFO - Episode 500/50000 - Avg Reward: 2528.76 - Avg Max Tile: 107.52 - Epsilon: 0.100 - Beta: 0.403
+2025-03-05 00:34:39,740 - INFO - Episode 600/50000 - Avg Reward: 2785.58 - Avg Max Tile: 119.68 - Epsilon: 0.100 - Beta: 0.404
+2025-03-05 00:37:31,800 - INFO - Episode 700/50000 - Avg Reward: 2884.78 - Avg Max Tile: 124.96 - Epsilon: 0.100 - Beta: 0.404
+2025-03-05 00:40:11,495 - INFO - Episode 800/50000 - Avg Reward: 2628.61 - Avg Max Tile: 108.48 - Epsilon: 0.100 - Beta: 0.405
+2025-03-05 00:42:46,281 - INFO - Episode 900/50000 - Avg Reward: 2579.21 - Avg Max Tile: 111.20 - Epsilon: 0.100 - Beta: 0.405
+2025-03-05 00:45:33,215 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_1000.pt
+2025-03-05 00:45:33,215 - INFO - Episode 1000/50000 - Avg Reward: 2820.63 - Avg Max Tile: 122.24 - Epsilon: 0.100 - Beta: 0.406
+2025-03-05 00:48:22,111 - INFO - Episode 1100/50000 - Avg Reward: 2807.89 - Avg Max Tile: 119.68 - Epsilon: 0.100 - Beta: 0.407
+2025-03-05 00:51:21,079 - INFO - Episode 1200/50000 - Avg Reward: 3040.88 - Avg Max Tile: 132.48 - Epsilon: 0.100 - Beta: 0.407
+2025-03-05 00:53:59,489 - INFO - Episode 1300/50000 - Avg Reward: 2720.38 - Avg Max Tile: 121.44 - Epsilon: 0.100 - Beta: 0.408
+2025-03-05 00:56:51,290 - INFO - Episode 1400/50000 - Avg Reward: 2886.43 - Avg Max Tile: 121.92 - Epsilon: 0.100 - Beta: 0.408
+2025-03-05 00:59:26,256 - INFO - Episode 1500/50000 - Avg Reward: 2556.60 - Avg Max Tile: 109.12 - Epsilon: 0.100 - Beta: 0.409
+2025-03-05 01:02:18,966 - INFO - Episode 1600/50000 - Avg Reward: 2886.16 - Avg Max Tile: 123.68 - Epsilon: 0.100 - Beta: 0.410
+2025-03-05 01:05:05,176 - INFO - Episode 1700/50000 - Avg Reward: 2778.67 - Avg Max Tile: 119.68 - Epsilon: 0.100 - Beta: 0.410
+2025-03-05 01:07:53,628 - INFO - Episode 1800/50000 - Avg Reward: 2891.89 - Avg Max Tile: 130.40 - Epsilon: 0.100 - Beta: 0.411
+2025-03-05 01:10:35,706 - INFO - Episode 1900/50000 - Avg Reward: 2693.82 - Avg Max Tile: 113.28 - Epsilon: 0.100 - Beta: 0.411
+2025-03-05 01:13:27,629 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_2000.pt
+2025-03-05 01:13:27,629 - INFO - Episode 2000/50000 - Avg Reward: 2908.77 - Avg Max Tile: 126.72 - Epsilon: 0.100 - Beta: 0.412
+2025-03-05 01:14:17,299 - INFO - New best score: 8202.134363359217 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 01:15:02,780 - INFO - New best score: 8497.553115448356 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 01:16:24,650 - INFO - Episode 2100/50000 - Avg Reward: 2997.32 - Avg Max Tile: 131.20 - Epsilon: 0.100 - Beta: 0.413
+2025-03-05 01:19:11,290 - INFO - Episode 2200/50000 - Avg Reward: 2804.07 - Avg Max Tile: 122.24 - Epsilon: 0.100 - Beta: 0.413
+2025-03-05 01:21:57,581 - INFO - Episode 2300/50000 - Avg Reward: 2769.87 - Avg Max Tile: 118.08 - Epsilon: 0.100 - Beta: 0.414
+2025-03-05 01:24:34,479 - INFO - New best score: 8534.337485402822 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 01:24:47,661 - INFO - Episode 2400/50000 - Avg Reward: 2870.45 - Avg Max Tile: 125.76 - Epsilon: 0.100 - Beta: 0.414
+2025-03-05 01:26:44,076 - INFO - New best score: 8590.412485092878 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 01:27:42,694 - INFO - Episode 2500/50000 - Avg Reward: 2949.45 - Avg Max Tile: 131.04 - Epsilon: 0.100 - Beta: 0.415
+2025-03-05 01:30:30,558 - INFO - Episode 2600/50000 - Avg Reward: 2847.42 - Avg Max Tile: 124.80 - Epsilon: 0.100 - Beta: 0.416
+2025-03-05 01:33:21,251 - INFO - Episode 2700/50000 - Avg Reward: 2869.33 - Avg Max Tile: 124.00 - Epsilon: 0.100 - Beta: 0.416
+2025-03-05 01:36:00,491 - INFO - Episode 2800/50000 - Avg Reward: 2617.92 - Avg Max Tile: 112.00 - Epsilon: 0.100 - Beta: 0.417
+2025-03-05 01:38:45,462 - INFO - Episode 2900/50000 - Avg Reward: 2804.35 - Avg Max Tile: 121.28 - Epsilon: 0.100 - Beta: 0.417
+2025-03-05 01:41:34,949 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_3000.pt
+2025-03-05 01:41:34,949 - INFO - Episode 3000/50000 - Avg Reward: 2881.27 - Avg Max Tile: 126.72 - Epsilon: 0.100 - Beta: 0.418
+2025-03-05 01:44:18,263 - INFO - Episode 3100/50000 - Avg Reward: 2700.39 - Avg Max Tile: 113.60 - Epsilon: 0.100 - Beta: 0.419
+2025-03-05 01:47:12,502 - INFO - Episode 3200/50000 - Avg Reward: 2930.96 - Avg Max Tile: 126.56 - Epsilon: 0.100 - Beta: 0.419
+2025-03-05 01:49:52,614 - INFO - Episode 3300/50000 - Avg Reward: 2700.32 - Avg Max Tile: 116.48 - Epsilon: 0.100 - Beta: 0.420
+2025-03-05 01:52:50,554 - INFO - Episode 3400/50000 - Avg Reward: 3014.82 - Avg Max Tile: 129.60 - Epsilon: 0.100 - Beta: 0.420
+2025-03-05 01:55:35,855 - INFO - Episode 3500/50000 - Avg Reward: 2791.39 - Avg Max Tile: 121.28 - Epsilon: 0.100 - Beta: 0.421
+2025-03-05 01:58:27,943 - INFO - Episode 3600/50000 - Avg Reward: 2906.27 - Avg Max Tile: 126.72 - Epsilon: 0.100 - Beta: 0.422
+2025-03-05 02:01:09,948 - INFO - Episode 3700/50000 - Avg Reward: 2715.67 - Avg Max Tile: 117.44 - Epsilon: 0.100 - Beta: 0.422
+2025-03-05 02:03:54,731 - INFO - Episode 3800/50000 - Avg Reward: 2744.17 - Avg Max Tile: 117.76 - Epsilon: 0.100 - Beta: 0.423
+2025-03-05 02:06:50,319 - INFO - Episode 3900/50000 - Avg Reward: 2947.04 - Avg Max Tile: 128.64 - Epsilon: 0.100 - Beta: 0.423
+2025-03-05 02:09:33,999 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_4000.pt
+2025-03-05 02:09:33,999 - INFO - Episode 4000/50000 - Avg Reward: 2712.43 - Avg Max Tile: 113.60 - Epsilon: 0.100 - Beta: 0.424
+2025-03-05 02:12:18,406 - INFO - Episode 4100/50000 - Avg Reward: 2737.95 - Avg Max Tile: 116.16 - Epsilon: 0.100 - Beta: 0.425
+2025-03-05 02:15:05,918 - INFO - Episode 4200/50000 - Avg Reward: 2833.75 - Avg Max Tile: 124.00 - Epsilon: 0.100 - Beta: 0.425
+2025-03-05 02:17:56,094 - INFO - Episode 4300/50000 - Avg Reward: 2824.37 - Avg Max Tile: 121.92 - Epsilon: 0.100 - Beta: 0.426
+2025-03-05 02:20:45,580 - INFO - Episode 4400/50000 - Avg Reward: 2847.78 - Avg Max Tile: 122.24 - Epsilon: 0.100 - Beta: 0.426
+2025-03-05 02:23:25,194 - INFO - Episode 4500/50000 - Avg Reward: 2615.45 - Avg Max Tile: 106.56 - Epsilon: 0.100 - Beta: 0.427
+2025-03-05 02:26:22,026 - INFO - Episode 4600/50000 - Avg Reward: 3027.17 - Avg Max Tile: 136.00 - Epsilon: 0.100 - Beta: 0.428
+2025-03-05 02:29:07,881 - INFO - Episode 4700/50000 - Avg Reward: 2803.33 - Avg Max Tile: 120.32 - Epsilon: 0.100 - Beta: 0.428
+2025-03-05 02:32:00,908 - INFO - Episode 4800/50000 - Avg Reward: 2897.29 - Avg Max Tile: 124.16 - Epsilon: 0.100 - Beta: 0.429
+2025-03-05 02:34:51,390 - INFO - Episode 4900/50000 - Avg Reward: 2842.89 - Avg Max Tile: 120.32 - Epsilon: 0.100 - Beta: 0.429
+2025-03-05 02:37:28,543 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_5000.pt
+2025-03-05 02:37:28,543 - INFO - Episode 5000/50000 - Avg Reward: 2633.29 - Avg Max Tile: 111.68 - Epsilon: 0.100 - Beta: 0.430
+2025-03-05 02:40:07,109 - INFO - Episode 5100/50000 - Avg Reward: 2647.92 - Avg Max Tile: 115.20 - Epsilon: 0.100 - Beta: 0.431
+2025-03-05 02:42:47,850 - INFO - Episode 5200/50000 - Avg Reward: 2668.75 - Avg Max Tile: 114.56 - Epsilon: 0.100 - Beta: 0.431
+2025-03-05 02:45:39,011 - INFO - Episode 5300/50000 - Avg Reward: 2843.51 - Avg Max Tile: 119.68 - Epsilon: 0.100 - Beta: 0.432
+2025-03-05 02:48:33,403 - INFO - Episode 5400/50000 - Avg Reward: 2979.24 - Avg Max Tile: 132.16 - Epsilon: 0.100 - Beta: 0.432
+2025-03-05 02:51:17,799 - INFO - Episode 5500/50000 - Avg Reward: 2795.07 - Avg Max Tile: 120.00 - Epsilon: 0.100 - Beta: 0.433
+2025-03-05 02:54:10,630 - INFO - Episode 5600/50000 - Avg Reward: 2913.10 - Avg Max Tile: 124.00 - Epsilon: 0.100 - Beta: 0.434
+2025-03-05 02:56:57,102 - INFO - Episode 5700/50000 - Avg Reward: 2807.05 - Avg Max Tile: 122.24 - Epsilon: 0.100 - Beta: 0.434
+2025-03-05 02:57:18,835 - INFO - New best score: 8833.593736749888 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 02:59:47,980 - INFO - Episode 5800/50000 - Avg Reward: 2846.94 - Avg Max Tile: 122.56 - Epsilon: 0.100 - Beta: 0.435
+2025-03-05 03:02:39,704 - INFO - Episode 5900/50000 - Avg Reward: 2881.43 - Avg Max Tile: 126.08 - Epsilon: 0.100 - Beta: 0.435
+2025-03-05 03:05:34,025 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_6000.pt
+2025-03-05 03:05:34,025 - INFO - Episode 6000/50000 - Avg Reward: 2956.17 - Avg Max Tile: 129.60 - Epsilon: 0.100 - Beta: 0.436
+2025-03-05 03:08:08,042 - INFO - Episode 6100/50000 - Avg Reward: 2534.33 - Avg Max Tile: 105.44 - Epsilon: 0.100 - Beta: 0.437
+2025-03-05 03:10:44,354 - INFO - Episode 6200/50000 - Avg Reward: 2568.95 - Avg Max Tile: 107.68 - Epsilon: 0.100 - Beta: 0.437
+2025-03-05 03:13:29,134 - INFO - Episode 6300/50000 - Avg Reward: 2734.43 - Avg Max Tile: 117.12 - Epsilon: 0.100 - Beta: 0.438
+2025-03-05 03:16:21,562 - INFO - Episode 6400/50000 - Avg Reward: 2916.11 - Avg Max Tile: 125.76 - Epsilon: 0.100 - Beta: 0.438
+2025-03-05 03:19:01,448 - INFO - Episode 6500/50000 - Avg Reward: 2644.57 - Avg Max Tile: 112.32 - Epsilon: 0.100 - Beta: 0.439
+2025-03-05 03:21:47,192 - INFO - Episode 6600/50000 - Avg Reward: 2765.87 - Avg Max Tile: 117.12 - Epsilon: 0.100 - Beta: 0.440
+2025-03-05 03:24:33,293 - INFO - Episode 6700/50000 - Avg Reward: 2778.09 - Avg Max Tile: 118.88 - Epsilon: 0.100 - Beta: 0.440
+2025-03-05 03:27:15,927 - INFO - Episode 6800/50000 - Avg Reward: 2740.60 - Avg Max Tile: 118.72 - Epsilon: 0.100 - Beta: 0.441
+2025-03-05 03:30:11,543 - INFO - Episode 6900/50000 - Avg Reward: 3025.95 - Avg Max Tile: 135.36 - Epsilon: 0.100 - Beta: 0.441
+2025-03-05 03:32:50,509 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_7000.pt
+2025-03-05 03:32:50,509 - INFO - Episode 7000/50000 - Avg Reward: 2613.40 - Avg Max Tile: 109.28 - Epsilon: 0.100 - Beta: 0.442
+2025-03-05 03:35:34,648 - INFO - Episode 7100/50000 - Avg Reward: 2787.24 - Avg Max Tile: 122.88 - Epsilon: 0.100 - Beta: 0.443
+2025-03-05 03:38:25,106 - INFO - Episode 7200/50000 - Avg Reward: 2867.24 - Avg Max Tile: 124.64 - Epsilon: 0.100 - Beta: 0.443
+2025-03-05 03:40:58,713 - INFO - Episode 7300/50000 - Avg Reward: 2513.98 - Avg Max Tile: 103.52 - Epsilon: 0.100 - Beta: 0.444
+2025-03-05 03:43:51,475 - INFO - Episode 7400/50000 - Avg Reward: 2916.99 - Avg Max Tile: 122.88 - Epsilon: 0.100 - Beta: 0.444
+2025-03-05 03:46:37,005 - INFO - Episode 7500/50000 - Avg Reward: 2788.96 - Avg Max Tile: 118.08 - Epsilon: 0.100 - Beta: 0.445
+2025-03-05 03:49:34,164 - INFO - Episode 7600/50000 - Avg Reward: 2984.30 - Avg Max Tile: 128.96 - Epsilon: 0.100 - Beta: 0.446
+2025-03-05 03:52:33,458 - INFO - Episode 7700/50000 - Avg Reward: 2993.92 - Avg Max Tile: 129.60 - Epsilon: 0.100 - Beta: 0.446
+2025-03-05 03:55:25,885 - INFO - Episode 7800/50000 - Avg Reward: 2922.06 - Avg Max Tile: 129.92 - Epsilon: 0.100 - Beta: 0.447
+2025-03-05 03:58:17,592 - INFO - Episode 7900/50000 - Avg Reward: 2918.93 - Avg Max Tile: 127.36 - Epsilon: 0.100 - Beta: 0.447
+2025-03-05 03:58:32,088 - INFO - New best score: 8990.724985745552 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 04:01:06,630 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_8000.pt
+2025-03-05 04:01:06,630 - INFO - Episode 8000/50000 - Avg Reward: 2826.55 - Avg Max Tile: 120.80 - Epsilon: 0.100 - Beta: 0.448
+2025-03-05 04:01:12,324 - INFO - New best score: 10505.66873091459 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 04:03:52,145 - INFO - Episode 8100/50000 - Avg Reward: 2806.99 - Avg Max Tile: 124.16 - Epsilon: 0.100 - Beta: 0.449
+2025-03-05 04:06:39,645 - INFO - Episode 8200/50000 - Avg Reward: 2855.11 - Avg Max Tile: 126.08 - Epsilon: 0.100 - Beta: 0.449
+2025-03-05 04:09:23,454 - INFO - Episode 8300/50000 - Avg Reward: 2717.66 - Avg Max Tile: 114.56 - Epsilon: 0.100 - Beta: 0.450
+2025-03-05 04:12:15,686 - INFO - Episode 8400/50000 - Avg Reward: 2860.25 - Avg Max Tile: 123.20 - Epsilon: 0.100 - Beta: 0.450
+2025-03-05 04:15:02,512 - INFO - Episode 8500/50000 - Avg Reward: 2769.40 - Avg Max Tile: 117.44 - Epsilon: 0.100 - Beta: 0.451
+2025-03-05 04:17:49,604 - INFO - Episode 8600/50000 - Avg Reward: 2765.75 - Avg Max Tile: 117.76 - Epsilon: 0.100 - Beta: 0.452
+2025-03-05 04:20:37,654 - INFO - Episode 8700/50000 - Avg Reward: 2762.64 - Avg Max Tile: 115.84 - Epsilon: 0.100 - Beta: 0.452
+2025-03-05 04:23:23,436 - INFO - Episode 8800/50000 - Avg Reward: 2734.97 - Avg Max Tile: 115.20 - Epsilon: 0.100 - Beta: 0.453
+2025-03-05 04:26:09,053 - INFO - Episode 8900/50000 - Avg Reward: 2746.20 - Avg Max Tile: 117.92 - Epsilon: 0.100 - Beta: 0.453
+2025-03-05 04:29:05,276 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_9000.pt
+2025-03-05 04:29:05,276 - INFO - Episode 9000/50000 - Avg Reward: 2931.41 - Avg Max Tile: 123.84 - Epsilon: 0.100 - Beta: 0.454
+2025-03-05 04:31:56,326 - INFO - Episode 9100/50000 - Avg Reward: 2816.08 - Avg Max Tile: 120.64 - Epsilon: 0.100 - Beta: 0.455
+2025-03-05 04:34:49,741 - INFO - Episode 9200/50000 - Avg Reward: 2920.16 - Avg Max Tile: 128.00 - Epsilon: 0.100 - Beta: 0.455
+2025-03-05 04:37:36,886 - INFO - Episode 9300/50000 - Avg Reward: 2808.29 - Avg Max Tile: 124.00 - Epsilon: 0.100 - Beta: 0.456
+2025-03-05 04:40:21,781 - INFO - Episode 9400/50000 - Avg Reward: 2750.82 - Avg Max Tile: 118.24 - Epsilon: 0.100 - Beta: 0.456
+2025-03-05 04:43:20,080 - INFO - Episode 9500/50000 - Avg Reward: 3020.62 - Avg Max Tile: 131.52 - Epsilon: 0.100 - Beta: 0.457
+2025-03-05 04:46:06,575 - INFO - Episode 9600/50000 - Avg Reward: 2792.66 - Avg Max Tile: 121.60 - Epsilon: 0.100 - Beta: 0.458
+2025-03-05 04:48:57,722 - INFO - Episode 9700/50000 - Avg Reward: 2847.84 - Avg Max Tile: 121.92 - Epsilon: 0.100 - Beta: 0.458
+2025-03-05 04:51:55,666 - INFO - Episode 9800/50000 - Avg Reward: 3046.37 - Avg Max Tile: 139.20 - Epsilon: 0.100 - Beta: 0.459
+2025-03-05 04:54:39,050 - INFO - Episode 9900/50000 - Avg Reward: 2709.13 - Avg Max Tile: 114.56 - Epsilon: 0.100 - Beta: 0.459
+2025-03-05 04:57:29,625 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_10000.pt
+2025-03-05 04:57:29,625 - INFO - Episode 10000/50000 - Avg Reward: 2860.39 - Avg Max Tile: 123.20 - Epsilon: 0.100 - Beta: 0.460
+2025-03-05 05:00:15,417 - INFO - Episode 10100/50000 - Avg Reward: 2774.44 - Avg Max Tile: 119.04 - Epsilon: 0.100 - Beta: 0.461
+2025-03-05 05:03:02,851 - INFO - Episode 10200/50000 - Avg Reward: 2822.47 - Avg Max Tile: 124.80 - Epsilon: 0.100 - Beta: 0.461
+2025-03-05 05:05:40,233 - INFO - Episode 10300/50000 - Avg Reward: 2594.70 - Avg Max Tile: 108.48 - Epsilon: 0.100 - Beta: 0.462
+2025-03-05 05:08:46,125 - INFO - Episode 10400/50000 - Avg Reward: 3192.06 - Avg Max Tile: 143.36 - Epsilon: 0.100 - Beta: 0.462
+2025-03-05 05:11:31,767 - INFO - Episode 10500/50000 - Avg Reward: 2782.68 - Avg Max Tile: 119.68 - Epsilon: 0.100 - Beta: 0.463
+2025-03-05 05:14:21,535 - INFO - Episode 10600/50000 - Avg Reward: 2809.58 - Avg Max Tile: 117.76 - Epsilon: 0.100 - Beta: 0.464
+2025-03-05 05:17:10,792 - INFO - Episode 10700/50000 - Avg Reward: 2866.81 - Avg Max Tile: 125.12 - Epsilon: 0.100 - Beta: 0.464
+2025-03-05 05:19:58,296 - INFO - Episode 10800/50000 - Avg Reward: 2822.19 - Avg Max Tile: 122.88 - Epsilon: 0.100 - Beta: 0.465
+2025-03-05 05:22:46,228 - INFO - Episode 10900/50000 - Avg Reward: 2840.89 - Avg Max Tile: 125.28 - Epsilon: 0.100 - Beta: 0.465
+2025-03-05 05:25:36,224 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_11000.pt
+2025-03-05 05:25:36,224 - INFO - Episode 11000/50000 - Avg Reward: 2855.93 - Avg Max Tile: 121.76 - Epsilon: 0.100 - Beta: 0.466
+2025-03-05 05:28:18,402 - INFO - Episode 11100/50000 - Avg Reward: 2729.79 - Avg Max Tile: 119.36 - Epsilon: 0.100 - Beta: 0.467
+2025-03-05 05:31:00,030 - INFO - Episode 11200/50000 - Avg Reward: 2727.92 - Avg Max Tile: 117.44 - Epsilon: 0.100 - Beta: 0.467
+2025-03-05 05:33:41,323 - INFO - Episode 11300/50000 - Avg Reward: 2687.13 - Avg Max Tile: 111.84 - Epsilon: 0.100 - Beta: 0.468
+2025-03-05 05:36:37,141 - INFO - Episode 11400/50000 - Avg Reward: 2979.46 - Avg Max Tile: 128.32 - Epsilon: 0.100 - Beta: 0.468
+2025-03-05 05:39:29,477 - INFO - Episode 11500/50000 - Avg Reward: 2889.47 - Avg Max Tile: 125.12 - Epsilon: 0.100 - Beta: 0.469
+2025-03-05 05:42:05,537 - INFO - Episode 11600/50000 - Avg Reward: 2576.51 - Avg Max Tile: 109.44 - Epsilon: 0.100 - Beta: 0.470
+2025-03-05 05:44:56,639 - INFO - Episode 11700/50000 - Avg Reward: 2945.22 - Avg Max Tile: 133.28 - Epsilon: 0.100 - Beta: 0.470
+2025-03-05 05:47:39,860 - INFO - Episode 11800/50000 - Avg Reward: 2732.82 - Avg Max Tile: 116.80 - Epsilon: 0.100 - Beta: 0.471
+2025-03-05 05:50:24,109 - INFO - Episode 11900/50000 - Avg Reward: 2751.64 - Avg Max Tile: 118.72 - Epsilon: 0.100 - Beta: 0.471
+2025-03-05 05:53:08,893 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_12000.pt
+2025-03-05 05:53:08,893 - INFO - Episode 12000/50000 - Avg Reward: 2715.93 - Avg Max Tile: 114.72 - Epsilon: 0.100 - Beta: 0.472
+2025-03-05 05:55:46,921 - INFO - Episode 12100/50000 - Avg Reward: 2582.30 - Avg Max Tile: 108.48 - Epsilon: 0.100 - Beta: 0.473
+2025-03-05 05:58:34,374 - INFO - Episode 12200/50000 - Avg Reward: 2792.18 - Avg Max Tile: 121.60 - Epsilon: 0.100 - Beta: 0.473
+2025-03-05 06:01:20,543 - INFO - Episode 12300/50000 - Avg Reward: 2745.01 - Avg Max Tile: 115.20 - Epsilon: 0.100 - Beta: 0.474
+2025-03-05 06:04:01,092 - INFO - Episode 12400/50000 - Avg Reward: 2701.71 - Avg Max Tile: 118.72 - Epsilon: 0.100 - Beta: 0.474
+2025-03-05 06:06:56,208 - INFO - Episode 12500/50000 - Avg Reward: 2965.77 - Avg Max Tile: 128.96 - Epsilon: 0.100 - Beta: 0.475
+2025-03-05 06:09:39,996 - INFO - Episode 12600/50000 - Avg Reward: 2768.40 - Avg Max Tile: 121.52 - Epsilon: 0.100 - Beta: 0.476
+2025-03-05 06:12:25,447 - INFO - Episode 12700/50000 - Avg Reward: 2744.96 - Avg Max Tile: 117.44 - Epsilon: 0.100 - Beta: 0.476
+2025-03-05 06:15:17,108 - INFO - Episode 12800/50000 - Avg Reward: 2872.99 - Avg Max Tile: 122.40 - Epsilon: 0.100 - Beta: 0.477
+2025-03-05 06:18:09,325 - INFO - Episode 12900/50000 - Avg Reward: 2932.45 - Avg Max Tile: 129.60 - Epsilon: 0.100 - Beta: 0.477
+2025-03-05 06:20:53,418 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_13000.pt
+2025-03-05 06:20:53,418 - INFO - Episode 13000/50000 - Avg Reward: 2738.15 - Avg Max Tile: 116.00 - Epsilon: 0.100 - Beta: 0.478
+2025-03-05 06:23:34,752 - INFO - Episode 13100/50000 - Avg Reward: 2674.18 - Avg Max Tile: 113.92 - Epsilon: 0.100 - Beta: 0.479
+2025-03-05 06:26:26,154 - INFO - Episode 13200/50000 - Avg Reward: 2909.05 - Avg Max Tile: 129.28 - Epsilon: 0.100 - Beta: 0.479
+2025-03-05 06:29:05,986 - INFO - Episode 13300/50000 - Avg Reward: 2662.09 - Avg Max Tile: 115.04 - Epsilon: 0.100 - Beta: 0.480
+2025-03-05 06:31:52,021 - INFO - Episode 13400/50000 - Avg Reward: 2799.43 - Avg Max Tile: 120.64 - Epsilon: 0.100 - Beta: 0.480
+2025-03-05 06:34:40,931 - INFO - Episode 13500/50000 - Avg Reward: 2837.31 - Avg Max Tile: 122.56 - Epsilon: 0.100 - Beta: 0.481
+2025-03-05 06:37:25,123 - INFO - Episode 13600/50000 - Avg Reward: 2777.54 - Avg Max Tile: 121.28 - Epsilon: 0.100 - Beta: 0.482
+2025-03-05 06:40:22,750 - INFO - Episode 13700/50000 - Avg Reward: 2968.18 - Avg Max Tile: 129.28 - Epsilon: 0.100 - Beta: 0.482
+2025-03-05 07:52:15,569 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_13000.pt
+2025-03-05 07:52:15,648 - ERROR - Error loading checkpoint: 'optimizer_state_dict'
+2025-03-05 07:52:32,611 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_13000.pt
+2025-03-05 07:52:32,679 - ERROR - Error loading checkpoint: 'optimizer_state_dict'
+2025-03-05 07:53:33,735 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_13000.pt
+2025-03-05 07:53:33,811 - INFO - Resuming from episode 13001
+2025-03-05 07:53:33,811 - INFO - Starting training with device: cuda
+2025-03-05 07:53:33,811 - INFO - Model parameters: 3394954
+2025-03-05 07:53:34,004 - INFO - New highest tile achieved: 2 (Episode 13002)
+2025-03-05 07:53:34,004 - INFO - New highest tile achieved: 4 (Episode 13002)
+2025-03-05 07:53:34,026 - INFO - New highest tile achieved: 8 (Episode 13002)
+2025-03-05 07:53:34,095 - INFO - New highest tile achieved: 16 (Episode 13002)
+2025-03-05 07:53:34,158 - INFO - New highest tile achieved: 32 (Episode 13002)
+2025-03-05 07:53:34,255 - INFO - New highest tile achieved: 64 (Episode 13002)
+2025-03-05 07:53:34,587 - INFO - New best score: 1781.7749973118307 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 07:53:35,134 - INFO - New highest tile achieved: 128 (Episode 13003)
+2025-03-05 07:53:35,486 - INFO - New best score: 3087.887496685981 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 07:53:36,535 - INFO - New best score: 3689.687493884564 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 07:53:55,258 - INFO - New highest tile achieved: 256 (Episode 13016)
+2025-03-05 07:53:55,945 - INFO - New best score: 5571.193738847972 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 07:54:02,710 - INFO - New best score: 5673.165615934133 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 07:55:42,757 - INFO - New best score: 6226.09373958707 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 07:55:58,024 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_13000.pt
+2025-03-05 07:55:58,171 - INFO - Resuming from episode 1
+2025-03-05 07:55:58,171 - INFO - Previous best score: 0
+2025-03-05 07:55:58,171 - INFO - Previous highest tile: 0
+2025-03-05 07:55:58,171 - INFO - Starting training with device: cuda
+2025-03-05 07:55:58,172 - INFO - Model parameters: 3394954
+2025-03-05 07:55:58,371 - INFO - New highest tile achieved: 2 (Episode 2)
+2025-03-05 07:55:58,371 - INFO - New highest tile achieved: 4 (Episode 2)
+2025-03-05 07:55:58,392 - INFO - New highest tile achieved: 8 (Episode 2)
+2025-03-05 07:55:58,463 - INFO - New highest tile achieved: 16 (Episode 2)
+2025-03-05 07:55:58,525 - INFO - New highest tile achieved: 32 (Episode 2)
+2025-03-05 07:55:58,625 - INFO - New highest tile achieved: 64 (Episode 2)
+2025-03-05 07:55:58,941 - INFO - New best score: 1781.7749973118307 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 07:55:59,504 - INFO - New highest tile achieved: 128 (Episode 3)
+2025-03-05 07:55:59,847 - INFO - New best score: 3087.887496685981 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 07:56:00,939 - INFO - New best score: 3689.687493884564 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 07:56:20,680 - INFO - New highest tile achieved: 256 (Episode 16)
+2025-03-05 07:56:21,355 - INFO - New best score: 5571.193738847972 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 07:56:28,576 - INFO - New best score: 5673.165615934133 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 07:56:55,826 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_13000.pt
+2025-03-05 07:56:55,900 - ERROR - Error loading checkpoint: 'optimizer_state_dict'
+2025-03-05 07:59:50,232 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_13000.pt
+2025-03-05 07:59:50,287 - ERROR - Error loading checkpoint: 'optimizer_state_dict'
+2025-03-05 08:01:12,180 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_13000.pt
+2025-03-05 08:01:12,238 - WARNING - Replay buffer state not found in checkpoint, starting with empty buffer
+2025-03-05 08:01:12,238 - WARNING - GradScaler state not found in checkpoint, using default initialization
+2025-03-05 08:01:12,238 - INFO - Resuming from episode 1
+2025-03-05 08:01:12,238 - INFO - Current epsilon: 0.100
+2025-03-05 08:01:12,238 - INFO - Starting training with device: cuda
+2025-03-05 08:01:12,238 - INFO - Model parameters: 3394954
+2025-03-05 08:01:12,437 - INFO - New highest tile achieved: 2 (Episode 2)
+2025-03-05 08:01:12,437 - INFO - New highest tile achieved: 4 (Episode 2)
+2025-03-05 08:01:12,458 - INFO - New highest tile achieved: 8 (Episode 2)
+2025-03-05 08:01:12,528 - INFO - New highest tile achieved: 16 (Episode 2)
+2025-03-05 08:01:12,592 - INFO - New highest tile achieved: 32 (Episode 2)
+2025-03-05 08:01:12,690 - INFO - New highest tile achieved: 64 (Episode 2)
+2025-03-05 08:01:12,992 - INFO - New best score: 1781.7749973118307 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 08:01:13,532 - INFO - New highest tile achieved: 128 (Episode 3)
+2025-03-05 08:01:13,877 - INFO - New best score: 3087.887496685981 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 08:01:14,913 - INFO - New best score: 3689.687493884564 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 08:01:33,219 - INFO - New highest tile achieved: 256 (Episode 16)
+2025-03-05 08:01:33,919 - INFO - New best score: 5571.193738847972 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 08:01:40,997 - INFO - New best score: 5673.165615934133 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 08:05:54,174 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_13000.pt
+2025-03-05 08:05:54,289 - WARNING - Replay buffer state not found in checkpoint, starting with empty buffer
+2025-03-05 08:05:54,289 - WARNING - GradScaler state not found in checkpoint, using default initialization
+2025-03-05 08:05:54,289 - INFO - Resuming from episode 1
+2025-03-05 08:05:54,289 - INFO - Current epsilon: 0.100
+2025-03-05 08:05:54,295 - INFO - Starting training with device: cuda
+2025-03-05 08:05:54,295 - INFO - Model parameters: 3394954
+2025-03-05 08:05:55,189 - INFO - New highest tile achieved: 2 (Episode 2)
+2025-03-05 08:05:55,193 - INFO - New highest tile achieved: 4 (Episode 2)
+2025-03-05 08:05:55,213 - INFO - New highest tile achieved: 8 (Episode 2)
+2025-03-05 08:05:55,305 - INFO - New highest tile achieved: 16 (Episode 2)
+2025-03-05 08:05:55,401 - INFO - New highest tile achieved: 32 (Episode 2)
+2025-03-05 08:05:55,532 - INFO - New highest tile achieved: 64 (Episode 2)
+2025-03-05 08:05:56,064 - INFO - New best score: 1781.7749973118307 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 08:05:56,735 - INFO - New highest tile achieved: 128 (Episode 3)
+2025-03-05 08:05:57,136 - INFO - New best score: 3087.887496685981 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 08:05:58,334 - INFO - New best score: 3689.687493884564 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 08:06:18,183 - INFO - New highest tile achieved: 256 (Episode 16)
+2025-03-05 08:06:18,836 - INFO - New best score: 5571.193738847972 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 08:06:25,557 - INFO - New best score: 5673.165615934133 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 08:07:58,726 - INFO - New best score: 6226.09373958707 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 08:08:30,474 - INFO - Episode 100/50000 - Avg Reward: 2768.14 - Avg Max Tile: 113.45 - Epsilon: 0.100 - Beta: 0.401
+2025-03-05 08:11:10,825 - INFO - Episode 200/50000 - Avg Reward: 2791.80 - Avg Max Tile: 118.72 - Epsilon: 0.100 - Beta: 0.401
+2025-03-05 08:12:24,263 - INFO - New highest tile achieved: 512 (Episode 244)
+2025-03-05 08:12:25,325 - INFO - New best score: 8041.97499014735 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 08:13:51,970 - INFO - Episode 300/50000 - Avg Reward: 2811.57 - Avg Max Tile: 123.84 - Epsilon: 0.100 - Beta: 0.402
+2025-03-05 08:16:32,847 - INFO - Episode 400/50000 - Avg Reward: 2770.25 - Avg Max Tile: 118.88 - Epsilon: 0.100 - Beta: 0.402
+2025-03-05 08:19:02,058 - INFO - Episode 500/50000 - Avg Reward: 2528.76 - Avg Max Tile: 107.52 - Epsilon: 0.100 - Beta: 0.403
+2025-03-05 08:21:49,345 - INFO - Episode 600/50000 - Avg Reward: 2785.58 - Avg Max Tile: 119.68 - Epsilon: 0.100 - Beta: 0.404
+2025-03-05 08:24:39,651 - INFO - Episode 700/50000 - Avg Reward: 2884.78 - Avg Max Tile: 124.96 - Epsilon: 0.100 - Beta: 0.404
+2025-03-05 10:55:04,913 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_13000.pt
+2025-03-05 10:55:04,988 - WARNING - Replay buffer state not found in checkpoint, starting with empty buffer
+2025-03-05 10:55:04,988 - WARNING - GradScaler state not found in checkpoint, using default initialization
+2025-03-05 10:55:04,989 - INFO - Resuming from episode 1
+2025-03-05 10:55:04,989 - INFO - Current epsilon: 0.100
+2025-03-05 10:55:04,989 - INFO - Starting training with device: cuda
+2025-03-05 10:55:04,990 - INFO - Model parameters: 3394954
+2025-03-05 10:55:05,206 - INFO - New highest tile achieved: 2 (Episode 2)
+2025-03-05 10:55:05,209 - INFO - New highest tile achieved: 4 (Episode 2)
+2025-03-05 10:55:05,225 - INFO - New highest tile achieved: 8 (Episode 2)
+2025-03-05 10:55:05,300 - INFO - New highest tile achieved: 16 (Episode 2)
+2025-03-05 10:55:05,366 - INFO - New highest tile achieved: 32 (Episode 2)
+2025-03-05 10:55:05,498 - INFO - New highest tile achieved: 64 (Episode 2)
+2025-03-05 10:55:05,819 - INFO - New best score: 1781.7749973118307 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 10:55:06,407 - INFO - New highest tile achieved: 128 (Episode 3)
+2025-03-05 10:55:06,808 - INFO - New best score: 3087.887496685981 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 10:55:08,035 - INFO - New best score: 3689.687493884564 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 10:55:27,143 - INFO - New highest tile achieved: 256 (Episode 16)
+2025-03-05 10:55:27,932 - INFO - New best score: 5571.193738847972 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 10:55:35,045 - INFO - New best score: 5673.165615934133 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 10:57:17,927 - INFO - New best score: 6226.09373958707 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 10:57:55,349 - INFO - Episode 100/50000 - Avg Reward: 2768.14 - Avg Max Tile: 113.45 - Epsilon: 0.100 - Beta: 0.401
+2025-03-05 11:01:01,780 - INFO - Episode 200/50000 - Avg Reward: 2791.80 - Avg Max Tile: 118.72 - Epsilon: 0.100 - Beta: 0.401
+2025-03-05 11:02:25,185 - INFO - New highest tile achieved: 512 (Episode 244)
+2025-03-05 11:02:26,408 - INFO - New best score: 8041.97499014735 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 11:04:04,393 - INFO - Episode 300/50000 - Avg Reward: 2811.57 - Avg Max Tile: 123.84 - Epsilon: 0.100 - Beta: 0.402
+2025-03-05 11:07:05,987 - INFO - Episode 400/50000 - Avg Reward: 2770.25 - Avg Max Tile: 118.88 - Epsilon: 0.100 - Beta: 0.402
+2025-03-05 11:15:40,508 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_13000.pt
+2025-03-05 11:15:40,562 - WARNING - Replay buffer state not found in checkpoint, starting with empty buffer
+2025-03-05 11:15:40,562 - WARNING - GradScaler state not found in checkpoint, using default initialization
+2025-03-05 11:15:40,562 - INFO - Resuming from episode 1
+2025-03-05 11:15:40,562 - INFO - Current epsilon: 0.100
+2025-03-05 11:15:40,562 - INFO - Starting training with device: cuda
+2025-03-05 11:15:40,562 - INFO - Model parameters: 3394954
+2025-03-05 11:15:40,766 - INFO - New highest tile achieved: 2 (Episode 2)
+2025-03-05 11:15:40,766 - INFO - New highest tile achieved: 4 (Episode 2)
+2025-03-05 11:15:40,786 - INFO - New highest tile achieved: 8 (Episode 2)
+2025-03-05 11:15:40,858 - INFO - New highest tile achieved: 16 (Episode 2)
+2025-03-05 11:15:40,931 - INFO - New highest tile achieved: 32 (Episode 2)
+2025-03-05 11:15:41,046 - INFO - New highest tile achieved: 64 (Episode 2)
+2025-03-05 11:15:41,371 - INFO - New best score: 1781.7749973118307 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 11:15:41,934 - INFO - New highest tile achieved: 128 (Episode 3)
+2025-03-05 11:15:42,286 - INFO - New best score: 3087.887496685981 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 11:15:43,369 - INFO - New best score: 3689.687493884564 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 11:16:01,321 - INFO - New highest tile achieved: 256 (Episode 16)
+2025-03-05 11:16:01,955 - INFO - New best score: 5571.193738847972 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 11:16:08,725 - INFO - New best score: 5673.165615934133 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 11:17:45,107 - INFO - New best score: 6226.09373958707 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 11:18:20,489 - INFO - Episode 100/50000 - Avg Reward: 2768.14 - Avg Max Tile: 113.45 - Epsilon: 0.100 - Beta: 0.401
+2025-03-05 11:21:01,296 - INFO - Episode 200/50000 - Avg Reward: 2791.80 - Avg Max Tile: 118.72 - Epsilon: 0.100 - Beta: 0.401
+2025-03-05 11:22:14,863 - INFO - New highest tile achieved: 512 (Episode 244)
+2025-03-05 11:22:16,061 - INFO - New best score: 8041.97499014735 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 11:23:42,500 - INFO - Episode 300/50000 - Avg Reward: 2811.57 - Avg Max Tile: 123.84 - Epsilon: 0.100 - Beta: 0.402
+2025-03-05 11:26:22,305 - INFO - Episode 400/50000 - Avg Reward: 2770.25 - Avg Max Tile: 118.88 - Epsilon: 0.100 - Beta: 0.402
+2025-03-05 11:28:51,815 - INFO - Episode 500/50000 - Avg Reward: 2528.76 - Avg Max Tile: 107.52 - Epsilon: 0.100 - Beta: 0.403
+2025-03-05 11:31:35,278 - INFO - Episode 600/50000 - Avg Reward: 2785.58 - Avg Max Tile: 119.68 - Epsilon: 0.100 - Beta: 0.404
+2025-03-05 11:34:24,272 - INFO - Episode 700/50000 - Avg Reward: 2884.78 - Avg Max Tile: 124.96 - Epsilon: 0.100 - Beta: 0.404
+2025-03-05 11:37:03,319 - INFO - Episode 800/50000 - Avg Reward: 2628.61 - Avg Max Tile: 108.48 - Epsilon: 0.100 - Beta: 0.405
+2025-03-05 11:39:37,300 - INFO - Episode 900/50000 - Avg Reward: 2579.21 - Avg Max Tile: 111.20 - Epsilon: 0.100 - Beta: 0.405
+2025-03-05 11:42:25,186 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_1000.pt
+2025-03-05 11:42:25,186 - INFO - Episode 1000/50000 - Avg Reward: 2820.63 - Avg Max Tile: 122.24 - Epsilon: 0.100 - Beta: 0.406
+2025-03-05 11:45:05,868 - INFO - Episode 1100/50000 - Avg Reward: 2807.89 - Avg Max Tile: 119.68 - Epsilon: 0.100 - Beta: 0.407
+2025-03-05 11:48:01,486 - INFO - Episode 1200/50000 - Avg Reward: 3040.88 - Avg Max Tile: 132.48 - Epsilon: 0.100 - Beta: 0.407
+2025-03-05 11:50:38,839 - INFO - Episode 1300/50000 - Avg Reward: 2720.38 - Avg Max Tile: 121.44 - Epsilon: 0.100 - Beta: 0.408
+2025-03-05 11:53:29,685 - INFO - Episode 1400/50000 - Avg Reward: 2886.43 - Avg Max Tile: 121.92 - Epsilon: 0.100 - Beta: 0.408
+2025-03-05 11:56:03,424 - INFO - Episode 1500/50000 - Avg Reward: 2556.60 - Avg Max Tile: 109.12 - Epsilon: 0.100 - Beta: 0.409
+2025-03-05 11:58:54,123 - INFO - Episode 1600/50000 - Avg Reward: 2886.16 - Avg Max Tile: 123.68 - Epsilon: 0.100 - Beta: 0.410
+2025-03-05 12:01:39,289 - INFO - Episode 1700/50000 - Avg Reward: 2778.67 - Avg Max Tile: 119.68 - Epsilon: 0.100 - Beta: 0.410
+2025-03-05 12:04:26,656 - INFO - Episode 1800/50000 - Avg Reward: 2891.89 - Avg Max Tile: 130.40 - Epsilon: 0.100 - Beta: 0.411
+2025-03-05 12:07:08,616 - INFO - Episode 1900/50000 - Avg Reward: 2693.82 - Avg Max Tile: 113.28 - Epsilon: 0.100 - Beta: 0.411
+2025-03-05 12:10:02,932 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_2000.pt
+2025-03-05 12:10:02,932 - INFO - Episode 2000/50000 - Avg Reward: 2908.77 - Avg Max Tile: 126.72 - Epsilon: 0.100 - Beta: 0.412
+2025-03-05 12:10:53,734 - INFO - New best score: 8202.134363359217 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 12:11:39,839 - INFO - New best score: 8497.553115448356 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 12:12:58,148 - INFO - Episode 2100/50000 - Avg Reward: 2997.32 - Avg Max Tile: 131.20 - Epsilon: 0.100 - Beta: 0.413
+2025-03-05 12:15:42,172 - INFO - Episode 2200/50000 - Avg Reward: 2804.07 - Avg Max Tile: 122.24 - Epsilon: 0.100 - Beta: 0.413
+2025-03-05 12:18:27,573 - INFO - Episode 2300/50000 - Avg Reward: 2769.87 - Avg Max Tile: 118.08 - Epsilon: 0.100 - Beta: 0.414
+2025-03-05 12:21:07,195 - INFO - New best score: 8534.337485402822 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 12:21:20,042 - INFO - Episode 2400/50000 - Avg Reward: 2870.45 - Avg Max Tile: 125.76 - Epsilon: 0.100 - Beta: 0.414
+2025-03-05 12:23:14,792 - INFO - New best score: 8590.412485092878 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 12:24:12,581 - INFO - Episode 2500/50000 - Avg Reward: 2949.45 - Avg Max Tile: 131.04 - Epsilon: 0.100 - Beta: 0.415
+2025-03-05 12:27:00,371 - INFO - Episode 2600/50000 - Avg Reward: 2847.42 - Avg Max Tile: 124.80 - Epsilon: 0.100 - Beta: 0.416
+2025-03-05 12:29:49,960 - INFO - Episode 2700/50000 - Avg Reward: 2869.33 - Avg Max Tile: 124.00 - Epsilon: 0.100 - Beta: 0.416
+2025-03-05 12:32:28,795 - INFO - Episode 2800/50000 - Avg Reward: 2617.92 - Avg Max Tile: 112.00 - Epsilon: 0.100 - Beta: 0.417
+2025-03-05 12:35:13,454 - INFO - Episode 2900/50000 - Avg Reward: 2804.35 - Avg Max Tile: 121.28 - Epsilon: 0.100 - Beta: 0.417
+2025-03-05 12:38:05,467 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_3000.pt
+2025-03-05 12:38:05,467 - INFO - Episode 3000/50000 - Avg Reward: 2881.27 - Avg Max Tile: 126.72 - Epsilon: 0.100 - Beta: 0.418
+2025-03-05 12:40:42,843 - INFO - Episode 3100/50000 - Avg Reward: 2700.39 - Avg Max Tile: 113.60 - Epsilon: 0.100 - Beta: 0.419
+2025-03-05 12:43:34,478 - INFO - Episode 3200/50000 - Avg Reward: 2930.96 - Avg Max Tile: 126.56 - Epsilon: 0.100 - Beta: 0.419
+2025-03-05 12:46:14,757 - INFO - Episode 3300/50000 - Avg Reward: 2700.32 - Avg Max Tile: 116.48 - Epsilon: 0.100 - Beta: 0.420
+2025-03-05 12:49:11,966 - INFO - Episode 3400/50000 - Avg Reward: 3014.82 - Avg Max Tile: 129.60 - Epsilon: 0.100 - Beta: 0.420
+2025-03-05 12:51:57,451 - INFO - Episode 3500/50000 - Avg Reward: 2791.39 - Avg Max Tile: 121.28 - Epsilon: 0.100 - Beta: 0.421
+2025-03-05 12:54:49,475 - INFO - Episode 3600/50000 - Avg Reward: 2906.27 - Avg Max Tile: 126.72 - Epsilon: 0.100 - Beta: 0.422
+2025-03-05 12:57:31,745 - INFO - Episode 3700/50000 - Avg Reward: 2715.67 - Avg Max Tile: 117.44 - Epsilon: 0.100 - Beta: 0.422
+2025-03-05 13:00:16,116 - INFO - Episode 3800/50000 - Avg Reward: 2744.17 - Avg Max Tile: 117.76 - Epsilon: 0.100 - Beta: 0.423
+2025-03-05 13:03:11,184 - INFO - Episode 3900/50000 - Avg Reward: 2947.04 - Avg Max Tile: 128.64 - Epsilon: 0.100 - Beta: 0.423
+2025-03-05 13:05:57,738 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_4000.pt
+2025-03-05 13:05:57,754 - INFO - Episode 4000/50000 - Avg Reward: 2712.43 - Avg Max Tile: 113.60 - Epsilon: 0.100 - Beta: 0.424
+2025-03-05 13:08:35,954 - INFO - Episode 4100/50000 - Avg Reward: 2737.95 - Avg Max Tile: 116.16 - Epsilon: 0.100 - Beta: 0.425
+2025-03-05 13:11:20,710 - INFO - Episode 4200/50000 - Avg Reward: 2833.75 - Avg Max Tile: 124.00 - Epsilon: 0.100 - Beta: 0.425
+2025-03-05 13:14:10,089 - INFO - Episode 4300/50000 - Avg Reward: 2824.37 - Avg Max Tile: 121.92 - Epsilon: 0.100 - Beta: 0.426
+2025-03-05 13:16:58,365 - INFO - Episode 4400/50000 - Avg Reward: 2847.78 - Avg Max Tile: 122.24 - Epsilon: 0.100 - Beta: 0.426
+2025-03-05 13:19:37,424 - INFO - Episode 4500/50000 - Avg Reward: 2615.45 - Avg Max Tile: 106.56 - Epsilon: 0.100 - Beta: 0.427
+2025-03-05 13:22:34,248 - INFO - Episode 4600/50000 - Avg Reward: 3027.17 - Avg Max Tile: 136.00 - Epsilon: 0.100 - Beta: 0.428
+2025-03-05 13:25:20,114 - INFO - Episode 4700/50000 - Avg Reward: 2803.33 - Avg Max Tile: 120.32 - Epsilon: 0.100 - Beta: 0.428
+2025-03-05 13:28:12,964 - INFO - Episode 4800/50000 - Avg Reward: 2897.29 - Avg Max Tile: 124.16 - Epsilon: 0.100 - Beta: 0.429
+2025-03-05 13:31:02,795 - INFO - Episode 4900/50000 - Avg Reward: 2842.89 - Avg Max Tile: 120.32 - Epsilon: 0.100 - Beta: 0.429
+2025-03-05 13:33:42,693 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_5000.pt
+2025-03-05 13:33:42,693 - INFO - Episode 5000/50000 - Avg Reward: 2633.29 - Avg Max Tile: 111.68 - Epsilon: 0.100 - Beta: 0.430
+2025-03-05 13:36:16,032 - INFO - Episode 5100/50000 - Avg Reward: 2647.92 - Avg Max Tile: 115.20 - Epsilon: 0.100 - Beta: 0.431
+2025-03-05 13:38:56,433 - INFO - Episode 5200/50000 - Avg Reward: 2668.75 - Avg Max Tile: 114.56 - Epsilon: 0.100 - Beta: 0.431
+2025-03-05 13:41:47,171 - INFO - Episode 5300/50000 - Avg Reward: 2843.51 - Avg Max Tile: 119.68 - Epsilon: 0.100 - Beta: 0.432
+2025-03-05 13:44:41,534 - INFO - Episode 5400/50000 - Avg Reward: 2979.24 - Avg Max Tile: 132.16 - Epsilon: 0.100 - Beta: 0.432
+2025-03-05 13:47:26,599 - INFO - Episode 5500/50000 - Avg Reward: 2795.07 - Avg Max Tile: 120.00 - Epsilon: 0.100 - Beta: 0.433
+2025-03-05 13:50:19,428 - INFO - Episode 5600/50000 - Avg Reward: 2913.10 - Avg Max Tile: 124.00 - Epsilon: 0.100 - Beta: 0.434
+2025-03-05 13:53:05,950 - INFO - Episode 5700/50000 - Avg Reward: 2807.05 - Avg Max Tile: 122.24 - Epsilon: 0.100 - Beta: 0.434
+2025-03-05 13:53:30,701 - INFO - New best score: 8833.593736749888 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 13:55:53,727 - INFO - Episode 5800/50000 - Avg Reward: 2846.94 - Avg Max Tile: 122.56 - Epsilon: 0.100 - Beta: 0.435
+2025-03-05 13:58:43,618 - INFO - Episode 5900/50000 - Avg Reward: 2881.43 - Avg Max Tile: 126.08 - Epsilon: 0.100 - Beta: 0.435
+2025-03-05 14:01:40,055 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_6000.pt
+2025-03-05 14:01:40,055 - INFO - Episode 6000/50000 - Avg Reward: 2956.17 - Avg Max Tile: 129.60 - Epsilon: 0.100 - Beta: 0.436
+2025-03-05 14:04:08,709 - INFO - Episode 6100/50000 - Avg Reward: 2534.33 - Avg Max Tile: 105.44 - Epsilon: 0.100 - Beta: 0.437
+2025-03-05 14:06:45,485 - INFO - Episode 6200/50000 - Avg Reward: 2568.95 - Avg Max Tile: 107.68 - Epsilon: 0.100 - Beta: 0.437
+2025-03-05 14:09:29,214 - INFO - Episode 6300/50000 - Avg Reward: 2734.43 - Avg Max Tile: 117.12 - Epsilon: 0.100 - Beta: 0.438
+2025-03-05 14:12:21,603 - INFO - Episode 6400/50000 - Avg Reward: 2916.11 - Avg Max Tile: 125.76 - Epsilon: 0.100 - Beta: 0.438
+2025-03-05 14:15:01,338 - INFO - Episode 6500/50000 - Avg Reward: 2644.57 - Avg Max Tile: 112.32 - Epsilon: 0.100 - Beta: 0.439
+2025-03-05 14:17:47,418 - INFO - Episode 6600/50000 - Avg Reward: 2765.87 - Avg Max Tile: 117.12 - Epsilon: 0.100 - Beta: 0.440
+2025-03-05 14:20:33,762 - INFO - Episode 6700/50000 - Avg Reward: 2778.09 - Avg Max Tile: 118.88 - Epsilon: 0.100 - Beta: 0.440
+2025-03-05 14:23:16,121 - INFO - Episode 6800/50000 - Avg Reward: 2740.60 - Avg Max Tile: 118.72 - Epsilon: 0.100 - Beta: 0.441
+2025-03-05 14:26:11,677 - INFO - Episode 6900/50000 - Avg Reward: 3025.95 - Avg Max Tile: 135.36 - Epsilon: 0.100 - Beta: 0.441
+2025-03-05 14:28:52,876 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_7000.pt
+2025-03-05 14:28:52,876 - INFO - Episode 7000/50000 - Avg Reward: 2613.40 - Avg Max Tile: 109.28 - Epsilon: 0.100 - Beta: 0.442
+2025-03-05 14:31:30,884 - INFO - Episode 7100/50000 - Avg Reward: 2787.24 - Avg Max Tile: 122.88 - Epsilon: 0.100 - Beta: 0.443
+2025-03-05 14:34:20,959 - INFO - Episode 7200/50000 - Avg Reward: 2867.24 - Avg Max Tile: 124.64 - Epsilon: 0.100 - Beta: 0.443
+2025-03-05 14:36:54,429 - INFO - Episode 7300/50000 - Avg Reward: 2513.98 - Avg Max Tile: 103.52 - Epsilon: 0.100 - Beta: 0.444
+2025-03-05 14:39:47,612 - INFO - Episode 7400/50000 - Avg Reward: 2916.99 - Avg Max Tile: 122.88 - Epsilon: 0.100 - Beta: 0.444
+2025-03-05 14:42:32,973 - INFO - Episode 7500/50000 - Avg Reward: 2788.96 - Avg Max Tile: 118.08 - Epsilon: 0.100 - Beta: 0.445
+2025-03-05 14:45:30,534 - INFO - Episode 7600/50000 - Avg Reward: 2984.30 - Avg Max Tile: 128.96 - Epsilon: 0.100 - Beta: 0.446
+2025-03-05 14:48:29,380 - INFO - Episode 7700/50000 - Avg Reward: 2993.92 - Avg Max Tile: 129.60 - Epsilon: 0.100 - Beta: 0.446
+2025-03-05 14:51:21,668 - INFO - Episode 7800/50000 - Avg Reward: 2922.06 - Avg Max Tile: 129.92 - Epsilon: 0.100 - Beta: 0.447
+2025-03-05 14:54:13,252 - INFO - Episode 7900/50000 - Avg Reward: 2918.93 - Avg Max Tile: 127.36 - Epsilon: 0.100 - Beta: 0.447
+2025-03-05 14:54:30,719 - INFO - New best score: 8990.724985745552 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 14:57:02,121 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_8000.pt
+2025-03-05 14:57:02,121 - INFO - Episode 8000/50000 - Avg Reward: 2826.55 - Avg Max Tile: 120.80 - Epsilon: 0.100 - Beta: 0.448
+2025-03-05 14:57:10,344 - INFO - New best score: 10505.66873091459 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-05 14:59:48,693 - INFO - Episode 8100/50000 - Avg Reward: 2806.99 - Avg Max Tile: 124.16 - Epsilon: 0.100 - Beta: 0.449
+2025-03-05 15:02:35,546 - INFO - Episode 8200/50000 - Avg Reward: 2855.11 - Avg Max Tile: 126.08 - Epsilon: 0.100 - Beta: 0.449
+2025-03-05 15:05:19,722 - INFO - Episode 8300/50000 - Avg Reward: 2717.66 - Avg Max Tile: 114.56 - Epsilon: 0.100 - Beta: 0.450
+2025-03-05 15:08:11,272 - INFO - Episode 8400/50000 - Avg Reward: 2860.25 - Avg Max Tile: 123.20 - Epsilon: 0.100 - Beta: 0.450
+2025-03-05 15:10:56,824 - INFO - Episode 8500/50000 - Avg Reward: 2769.40 - Avg Max Tile: 117.44 - Epsilon: 0.100 - Beta: 0.451
+2025-03-05 15:13:42,281 - INFO - Episode 8600/50000 - Avg Reward: 2765.75 - Avg Max Tile: 117.76 - Epsilon: 0.100 - Beta: 0.452
+2025-03-05 15:16:29,568 - INFO - Episode 8700/50000 - Avg Reward: 2762.64 - Avg Max Tile: 115.84 - Epsilon: 0.100 - Beta: 0.452
+2025-03-05 15:19:14,754 - INFO - Episode 8800/50000 - Avg Reward: 2734.97 - Avg Max Tile: 115.20 - Epsilon: 0.100 - Beta: 0.453
+2025-03-05 15:21:59,163 - INFO - Episode 8900/50000 - Avg Reward: 2746.20 - Avg Max Tile: 117.92 - Epsilon: 0.100 - Beta: 0.453
+2025-03-05 15:24:56,450 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_9000.pt
+2025-03-05 15:24:56,450 - INFO - Episode 9000/50000 - Avg Reward: 2931.41 - Avg Max Tile: 123.84 - Epsilon: 0.100 - Beta: 0.454
+2025-03-05 15:27:39,158 - INFO - Episode 9100/50000 - Avg Reward: 2816.08 - Avg Max Tile: 120.64 - Epsilon: 0.100 - Beta: 0.455
+2025-03-05 15:30:31,085 - INFO - Episode 9200/50000 - Avg Reward: 2920.16 - Avg Max Tile: 128.00 - Epsilon: 0.100 - Beta: 0.455
+2025-03-05 15:33:17,818 - INFO - Episode 9300/50000 - Avg Reward: 2808.29 - Avg Max Tile: 124.00 - Epsilon: 0.100 - Beta: 0.456
+2025-03-05 15:36:02,342 - INFO - Episode 9400/50000 - Avg Reward: 2750.82 - Avg Max Tile: 118.24 - Epsilon: 0.100 - Beta: 0.456
+2025-03-05 15:39:00,341 - INFO - Episode 9500/50000 - Avg Reward: 3020.62 - Avg Max Tile: 131.52 - Epsilon: 0.100 - Beta: 0.457
+2025-03-05 15:41:46,238 - INFO - Episode 9600/50000 - Avg Reward: 2792.66 - Avg Max Tile: 121.60 - Epsilon: 0.100 - Beta: 0.458
+2025-03-05 15:44:36,308 - INFO - Episode 9700/50000 - Avg Reward: 2847.84 - Avg Max Tile: 121.92 - Epsilon: 0.100 - Beta: 0.458
+2025-03-05 15:47:33,572 - INFO - Episode 9800/50000 - Avg Reward: 3046.37 - Avg Max Tile: 139.20 - Epsilon: 0.100 - Beta: 0.459
+2025-03-05 15:50:16,763 - INFO - Episode 9900/50000 - Avg Reward: 2709.13 - Avg Max Tile: 114.56 - Epsilon: 0.100 - Beta: 0.459
+2025-03-05 15:53:09,252 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_10000.pt
+2025-03-05 15:53:09,252 - INFO - Episode 10000/50000 - Avg Reward: 2860.39 - Avg Max Tile: 123.20 - Epsilon: 0.100 - Beta: 0.460
+2025-03-05 15:55:47,844 - INFO - Episode 10100/50000 - Avg Reward: 2774.44 - Avg Max Tile: 119.04 - Epsilon: 0.100 - Beta: 0.461
+2025-03-05 15:58:34,413 - INFO - Episode 10200/50000 - Avg Reward: 2822.47 - Avg Max Tile: 124.80 - Epsilon: 0.100 - Beta: 0.461
+2025-03-05 16:01:11,134 - INFO - Episode 10300/50000 - Avg Reward: 2594.70 - Avg Max Tile: 108.48 - Epsilon: 0.100 - Beta: 0.462
+2025-03-05 16:04:16,399 - INFO - Episode 10400/50000 - Avg Reward: 3192.06 - Avg Max Tile: 143.36 - Epsilon: 0.100 - Beta: 0.462
+2025-03-05 16:07:01,952 - INFO - Episode 10500/50000 - Avg Reward: 2782.68 - Avg Max Tile: 119.68 - Epsilon: 0.100 - Beta: 0.463
+2025-03-05 16:09:50,817 - INFO - Episode 10600/50000 - Avg Reward: 2809.58 - Avg Max Tile: 117.76 - Epsilon: 0.100 - Beta: 0.464
+2025-03-05 16:12:40,072 - INFO - Episode 10700/50000 - Avg Reward: 2866.81 - Avg Max Tile: 125.12 - Epsilon: 0.100 - Beta: 0.464
+2025-03-05 16:15:27,624 - INFO - Episode 10800/50000 - Avg Reward: 2822.19 - Avg Max Tile: 122.88 - Epsilon: 0.100 - Beta: 0.465
+2025-03-05 16:18:15,069 - INFO - Episode 10900/50000 - Avg Reward: 2840.89 - Avg Max Tile: 125.28 - Epsilon: 0.100 - Beta: 0.465
+2025-03-05 16:21:07,260 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_11000.pt
+2025-03-05 16:21:07,276 - INFO - Episode 11000/50000 - Avg Reward: 2855.93 - Avg Max Tile: 121.76 - Epsilon: 0.100 - Beta: 0.466
+2025-03-05 16:23:43,215 - INFO - Episode 11100/50000 - Avg Reward: 2729.79 - Avg Max Tile: 119.36 - Epsilon: 0.100 - Beta: 0.467
+2025-03-05 16:26:24,835 - INFO - Episode 11200/50000 - Avg Reward: 2727.92 - Avg Max Tile: 117.44 - Epsilon: 0.100 - Beta: 0.467
+2025-03-05 16:29:05,657 - INFO - Episode 11300/50000 - Avg Reward: 2687.13 - Avg Max Tile: 111.84 - Epsilon: 0.100 - Beta: 0.468
+2025-03-05 16:32:02,437 - INFO - Episode 11400/50000 - Avg Reward: 2979.46 - Avg Max Tile: 128.32 - Epsilon: 0.100 - Beta: 0.468
+2025-03-05 16:34:54,190 - INFO - Episode 11500/50000 - Avg Reward: 2889.47 - Avg Max Tile: 125.12 - Epsilon: 0.100 - Beta: 0.469
+2025-03-05 16:37:30,132 - INFO - Episode 11600/50000 - Avg Reward: 2576.51 - Avg Max Tile: 109.44 - Epsilon: 0.100 - Beta: 0.470
+2025-03-05 16:40:20,781 - INFO - Episode 11700/50000 - Avg Reward: 2945.22 - Avg Max Tile: 133.28 - Epsilon: 0.100 - Beta: 0.470
+2025-03-05 16:43:03,779 - INFO - Episode 11800/50000 - Avg Reward: 2732.82 - Avg Max Tile: 116.80 - Epsilon: 0.100 - Beta: 0.471
+2025-03-05 16:45:47,862 - INFO - Episode 11900/50000 - Avg Reward: 2751.64 - Avg Max Tile: 118.72 - Epsilon: 0.100 - Beta: 0.471
+2025-03-05 16:48:34,351 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_12000.pt
+2025-03-05 16:48:34,351 - INFO - Episode 12000/50000 - Avg Reward: 2715.93 - Avg Max Tile: 114.72 - Epsilon: 0.100 - Beta: 0.472
+2025-03-05 16:51:05,274 - INFO - Episode 12100/50000 - Avg Reward: 2582.30 - Avg Max Tile: 108.48 - Epsilon: 0.100 - Beta: 0.473
+2025-03-05 16:53:50,433 - INFO - Episode 12200/50000 - Avg Reward: 2792.18 - Avg Max Tile: 121.60 - Epsilon: 0.100 - Beta: 0.473
+2025-03-05 16:56:35,763 - INFO - Episode 12300/50000 - Avg Reward: 2745.01 - Avg Max Tile: 115.20 - Epsilon: 0.100 - Beta: 0.474
+2025-03-05 16:59:15,760 - INFO - Episode 12400/50000 - Avg Reward: 2701.71 - Avg Max Tile: 118.72 - Epsilon: 0.100 - Beta: 0.474
+2025-03-05 17:02:10,886 - INFO - Episode 12500/50000 - Avg Reward: 2965.77 - Avg Max Tile: 128.96 - Epsilon: 0.100 - Beta: 0.475
+2025-03-05 17:04:54,506 - INFO - Episode 12600/50000 - Avg Reward: 2768.40 - Avg Max Tile: 121.52 - Epsilon: 0.100 - Beta: 0.476
+2025-03-05 17:07:39,169 - INFO - Episode 12700/50000 - Avg Reward: 2744.96 - Avg Max Tile: 117.44 - Epsilon: 0.100 - Beta: 0.476
+2025-03-05 17:10:30,631 - INFO - Episode 12800/50000 - Avg Reward: 2872.99 - Avg Max Tile: 122.40 - Epsilon: 0.100 - Beta: 0.477
+2025-03-05 17:13:22,301 - INFO - Episode 12900/50000 - Avg Reward: 2932.45 - Avg Max Tile: 129.60 - Epsilon: 0.100 - Beta: 0.477
+2025-03-05 17:16:09,110 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_13000.pt
+2025-03-05 17:16:09,110 - INFO - Episode 13000/50000 - Avg Reward: 2738.15 - Avg Max Tile: 116.00 - Epsilon: 0.100 - Beta: 0.478
+2025-03-05 17:18:43,634 - INFO - Episode 13100/50000 - Avg Reward: 2674.18 - Avg Max Tile: 113.92 - Epsilon: 0.100 - Beta: 0.479
+2025-03-05 17:21:32,513 - INFO - Episode 13200/50000 - Avg Reward: 2909.05 - Avg Max Tile: 129.28 - Epsilon: 0.100 - Beta: 0.479
+2025-03-05 17:24:12,018 - INFO - Episode 13300/50000 - Avg Reward: 2662.09 - Avg Max Tile: 115.04 - Epsilon: 0.100 - Beta: 0.480
+2025-03-05 17:26:57,576 - INFO - Episode 13400/50000 - Avg Reward: 2799.43 - Avg Max Tile: 120.64 - Epsilon: 0.100 - Beta: 0.480
+2025-03-05 17:29:45,742 - INFO - Episode 13500/50000 - Avg Reward: 2837.31 - Avg Max Tile: 122.56 - Epsilon: 0.100 - Beta: 0.481
+2025-03-05 17:32:29,531 - INFO - Episode 13600/50000 - Avg Reward: 2777.54 - Avg Max Tile: 121.28 - Epsilon: 0.100 - Beta: 0.482
+2025-03-05 17:35:26,445 - INFO - Episode 13700/50000 - Avg Reward: 2968.18 - Avg Max Tile: 129.28 - Epsilon: 0.100 - Beta: 0.482
+2025-03-05 17:38:17,141 - INFO - Episode 13800/50000 - Avg Reward: 2852.89 - Avg Max Tile: 122.24 - Epsilon: 0.100 - Beta: 0.483
+2025-03-05 17:41:07,735 - INFO - Episode 13900/50000 - Avg Reward: 2830.91 - Avg Max Tile: 119.52 - Epsilon: 0.100 - Beta: 0.483
+2025-03-05 17:44:05,932 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_14000.pt
+2025-03-05 17:44:05,932 - INFO - Episode 14000/50000 - Avg Reward: 2936.36 - Avg Max Tile: 127.04 - Epsilon: 0.100 - Beta: 0.484
+2025-03-05 17:46:54,148 - INFO - Episode 14100/50000 - Avg Reward: 2956.00 - Avg Max Tile: 130.24 - Epsilon: 0.100 - Beta: 0.485
+2025-03-05 17:49:36,848 - INFO - Episode 14200/50000 - Avg Reward: 2784.53 - Avg Max Tile: 122.88 - Epsilon: 0.100 - Beta: 0.485
+2025-03-05 17:52:34,815 - INFO - Episode 14300/50000 - Avg Reward: 2998.09 - Avg Max Tile: 129.28 - Epsilon: 0.100 - Beta: 0.486
+2025-03-05 17:55:28,107 - INFO - Episode 14400/50000 - Avg Reward: 2912.81 - Avg Max Tile: 125.92 - Epsilon: 0.100 - Beta: 0.486
+2025-03-05 17:58:18,522 - INFO - Episode 14500/50000 - Avg Reward: 2914.59 - Avg Max Tile: 128.96 - Epsilon: 0.100 - Beta: 0.487
+2025-03-05 18:01:03,850 - INFO - Episode 14600/50000 - Avg Reward: 2748.42 - Avg Max Tile: 117.92 - Epsilon: 0.100 - Beta: 0.488
+2025-03-05 18:03:44,418 - INFO - Episode 14700/50000 - Avg Reward: 2702.36 - Avg Max Tile: 118.72 - Epsilon: 0.100 - Beta: 0.488
+2025-03-05 18:06:30,632 - INFO - Episode 14800/50000 - Avg Reward: 2790.20 - Avg Max Tile: 120.64 - Epsilon: 0.100 - Beta: 0.489
+2025-03-05 18:09:28,731 - INFO - Episode 14900/50000 - Avg Reward: 3075.04 - Avg Max Tile: 136.64 - Epsilon: 0.100 - Beta: 0.489
+2025-03-05 18:12:15,723 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_15000.pt
+2025-03-05 18:12:15,723 - INFO - Episode 15000/50000 - Avg Reward: 2719.83 - Avg Max Tile: 116.16 - Epsilon: 0.100 - Beta: 0.490
+2025-03-05 18:14:50,612 - INFO - Episode 15100/50000 - Avg Reward: 2699.38 - Avg Max Tile: 118.08 - Epsilon: 0.100 - Beta: 0.491
+2025-03-05 18:17:28,753 - INFO - Episode 15200/50000 - Avg Reward: 2701.95 - Avg Max Tile: 117.92 - Epsilon: 0.100 - Beta: 0.491
+2025-03-05 18:20:09,791 - INFO - Episode 15300/50000 - Avg Reward: 2802.53 - Avg Max Tile: 124.80 - Epsilon: 0.100 - Beta: 0.492
+2025-03-05 18:22:44,170 - INFO - Episode 15400/50000 - Avg Reward: 2670.41 - Avg Max Tile: 115.36 - Epsilon: 0.100 - Beta: 0.492
+2025-03-05 18:25:24,830 - INFO - Episode 15500/50000 - Avg Reward: 2683.08 - Avg Max Tile: 111.36 - Epsilon: 0.100 - Beta: 0.493
+2025-03-05 18:28:11,294 - INFO - Episode 15600/50000 - Avg Reward: 2933.03 - Avg Max Tile: 132.48 - Epsilon: 0.100 - Beta: 0.494
+2025-03-05 18:30:48,919 - INFO - Episode 15700/50000 - Avg Reward: 2679.06 - Avg Max Tile: 114.72 - Epsilon: 0.100 - Beta: 0.494
+2025-03-05 18:33:31,854 - INFO - Episode 15800/50000 - Avg Reward: 2758.04 - Avg Max Tile: 115.20 - Epsilon: 0.100 - Beta: 0.495
+2025-03-05 18:36:06,711 - INFO - Episode 15900/50000 - Avg Reward: 2603.30 - Avg Max Tile: 109.44 - Epsilon: 0.100 - Beta: 0.495
+2025-03-05 18:38:48,126 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_16000.pt
+2025-03-05 18:38:48,126 - INFO - Episode 16000/50000 - Avg Reward: 2736.49 - Avg Max Tile: 122.08 - Epsilon: 0.100 - Beta: 0.496
+2025-03-05 18:41:26,750 - INFO - Episode 16100/50000 - Avg Reward: 2728.98 - Avg Max Tile: 119.36 - Epsilon: 0.100 - Beta: 0.497
+2025-03-05 18:44:21,585 - INFO - Episode 16200/50000 - Avg Reward: 3037.65 - Avg Max Tile: 135.04 - Epsilon: 0.100 - Beta: 0.497
+2025-03-05 18:46:59,895 - INFO - Episode 16300/50000 - Avg Reward: 2658.91 - Avg Max Tile: 110.56 - Epsilon: 0.100 - Beta: 0.498
+2025-03-05 18:49:54,579 - INFO - Episode 16400/50000 - Avg Reward: 3043.22 - Avg Max Tile: 133.76 - Epsilon: 0.100 - Beta: 0.498
+2025-03-05 18:52:32,209 - INFO - Episode 16500/50000 - Avg Reward: 2645.22 - Avg Max Tile: 110.72 - Epsilon: 0.100 - Beta: 0.499
+2025-03-05 18:55:14,336 - INFO - Episode 16600/50000 - Avg Reward: 2802.61 - Avg Max Tile: 121.28 - Epsilon: 0.100 - Beta: 0.500
+2025-03-05 18:57:54,013 - INFO - Episode 16700/50000 - Avg Reward: 2747.79 - Avg Max Tile: 117.44 - Epsilon: 0.100 - Beta: 0.500
+2025-03-05 19:00:23,969 - INFO - Episode 16800/50000 - Avg Reward: 2540.20 - Avg Max Tile: 108.48 - Epsilon: 0.100 - Beta: 0.501
+2025-03-05 19:03:08,446 - INFO - Episode 16900/50000 - Avg Reward: 2767.41 - Avg Max Tile: 115.84 - Epsilon: 0.100 - Beta: 0.501
+2025-03-05 19:05:49,250 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_17000.pt
+2025-03-05 19:05:49,252 - INFO - Episode 17000/50000 - Avg Reward: 2674.37 - Avg Max Tile: 112.64 - Epsilon: 0.100 - Beta: 0.502
+2025-03-05 19:08:29,202 - INFO - Episode 17100/50000 - Avg Reward: 2881.43 - Avg Max Tile: 124.16 - Epsilon: 0.100 - Beta: 0.503
+2025-03-05 19:11:05,837 - INFO - Episode 17200/50000 - Avg Reward: 2621.13 - Avg Max Tile: 111.68 - Epsilon: 0.100 - Beta: 0.503
+2025-03-05 19:13:55,205 - INFO - Episode 17300/50000 - Avg Reward: 2862.49 - Avg Max Tile: 121.60 - Epsilon: 0.100 - Beta: 0.504
+2025-03-05 19:16:43,754 - INFO - Episode 17400/50000 - Avg Reward: 2761.82 - Avg Max Tile: 116.80 - Epsilon: 0.100 - Beta: 0.504
+2025-03-05 19:20:23,137 - INFO - Loading model from models/dueling_dqn/dueling_dqn_per_best.pt
+2025-03-05 19:21:12,741 - INFO - Loading model from models/dueling_dqn/dueling_dqn_per_best.pt
+2025-03-05 19:22:00,520 - INFO - Loading model from models/dueling_dqn/dueling_dqn_per_best.pt
+2025-03-05 19:22:03,584 - INFO - Creating enhanced MCTS agent with 200 simulations
+2025-03-05 19:22:03,584 - INFO - 
+Evaluating regular agent...
+2025-03-05 19:22:04,640 - INFO - Game 1/10 completed: Max Tile = 128
+2025-03-05 19:22:05,171 - INFO - Game 2/10 completed: Max Tile = 32
+2025-03-05 19:22:05,735 - INFO - Game 3/10 completed: Max Tile = 64
+2025-03-05 19:22:06,484 - INFO - Game 4/10 completed: Max Tile = 64
+2025-03-05 19:22:15,026 - INFO - Loading model from models/dueling_dqn/dueling_dqn_per_best.pt
+2025-03-05 19:22:17,990 - INFO - Creating enhanced MCTS agent with 200 simulations
+2025-03-05 19:22:17,990 - INFO - 
+Evaluating regular agent...
+2025-03-05 19:22:19,028 - INFO - Game 1/5 completed: Max Tile = 128
+2025-03-05 19:22:19,573 - INFO - Game 2/5 completed: Max Tile = 32
+2025-03-05 19:22:20,075 - INFO - Game 3/5 completed: Max Tile = 64
+2025-03-05 19:22:20,687 - INFO - Game 4/5 completed: Max Tile = 64
+2025-03-05 19:22:21,555 - INFO - Game 5/5 completed: Max Tile = 128
+2025-03-05 19:22:21,555 - INFO - ========================================
+2025-03-05 19:22:21,555 - INFO - Evaluation over 5 games:
+2025-03-05 19:22:21,555 - INFO - Average Max Tile: 83.2
+2025-03-05 19:22:21,555 - INFO - Average Score: 943.2
+2025-03-05 19:22:21,555 - INFO - Average Steps: 105.8
+2025-03-05 19:22:21,555 - INFO - Best Max Tile: 128
+2025-03-05 19:22:21,555 - INFO - Tile distribution:
+2025-03-05 19:22:21,555 - INFO -   32: 1 games (20.0%)
+2025-03-05 19:22:21,555 - INFO -   64: 2 games (40.0%)
+2025-03-05 19:22:21,555 - INFO -   128: 2 games (40.0%)
+2025-03-05 19:22:21,555 - INFO - Average steps to achieve tile:
+2025-03-05 19:22:21,555 - INFO - 
+Evaluating enhanced MCTS agent...
+2025-03-05 19:32:15,256 - INFO - Game 1/5 completed: Max Tile = 64
+2025-03-05 20:08:00,529 - INFO - Game 2/5 completed: Max Tile = 128
+2025-03-05 20:15:03,908 - INFO - Game 3/5 completed: Max Tile = 64
+2025-03-05 21:42:37,971 - INFO - Game 4/5 completed: Max Tile = 512
+2025-03-05 22:00:20,816 - INFO - Game 5/5 completed: Max Tile = 64
+2025-03-05 22:00:20,816 - INFO - ========================================
+2025-03-05 22:00:20,816 - INFO - Evaluation over 5 games:
+2025-03-05 22:00:20,816 - INFO - Average Max Tile: 166.4
+2025-03-05 22:00:20,816 - INFO - Average Score: 1881.6
+2025-03-05 22:00:20,816 - INFO - Average Steps: 159.6
+2025-03-05 22:00:20,816 - INFO - Best Max Tile: 512
+2025-03-05 22:00:20,816 - INFO - Tile distribution:
+2025-03-05 22:00:20,816 - INFO -   64: 3 games (60.0%)
+2025-03-05 22:00:20,816 - INFO -   128: 1 games (20.0%)
+2025-03-05 22:00:20,816 - INFO -   512: 1 games (20.0%)
+2025-03-05 22:00:20,816 - INFO - Average steps to achieve tile:
+2025-03-05 22:00:20,816 - INFO - 
+==================================================
+2025-03-05 22:00:20,816 - INFO - COMPARISON RESULTS:
+2025-03-05 22:00:20,816 - INFO - Average Max Tile: Regular = 83.2, Enhanced MCTS = 166.4
+2025-03-05 22:00:20,816 - INFO - Average Score: Regular = 943.2, Enhanced MCTS = 1881.6
+2025-03-05 22:00:20,816 - INFO - Best Max Tile: Regular = 128, Enhanced MCTS = 512
+2025-03-05 22:00:20,816 - INFO - 
+Regular Agent Tile Distribution:
+2025-03-05 22:00:20,816 - INFO -   32: 1 games (20.0%)
+2025-03-05 22:00:20,816 - INFO -   64: 2 games (40.0%)
+2025-03-05 22:00:20,816 - INFO -   128: 2 games (40.0%)
+2025-03-05 22:00:20,816 - INFO - 
+Enhanced MCTS Agent Tile Distribution:
+2025-03-05 22:00:20,825 - INFO -   64: 3 games (60.0%)
+2025-03-05 22:00:20,825 - INFO -   128: 1 games (20.0%)
+2025-03-05 22:00:20,825 - INFO -   512: 1 games (20.0%)
+2025-03-05 22:00:20,825 - INFO - 
+==================================================
+2025-03-05 22:00:20,826 - INFO - RUNNING SIMULATION COUNT COMPARISON
+2025-03-05 22:00:20,826 - INFO - 
+Evaluating with 50 simulations...
+2025-03-05 22:11:26,427 - INFO - Game 1/2 completed: Max Tile = 256
+2025-03-05 22:19:22,828 - INFO - Game 2/2 completed: Max Tile = 128
+2025-03-05 22:19:22,828 - INFO - ========================================
+2025-03-05 22:19:22,828 - INFO - Evaluation over 2 games:
+2025-03-05 22:19:22,828 - INFO - Average Max Tile: 192.0
+2025-03-05 22:19:22,828 - INFO - Average Score: 2098.0
+2025-03-05 22:19:22,828 - INFO - Average Steps: 184.5
+2025-03-05 22:19:22,828 - INFO - Best Max Tile: 256
+2025-03-05 22:19:22,828 - INFO - Tile distribution:
+2025-03-05 22:19:22,828 - INFO -   128: 1 games (50.0%)
+2025-03-05 22:19:22,828 - INFO -   256: 1 games (50.0%)
+2025-03-05 22:19:22,828 - INFO - Average steps to achieve tile:
+2025-03-05 22:19:22,828 - INFO - 
+Evaluating with 100 simulations...
+2025-03-05 22:26:52,093 - INFO - Game 1/2 completed: Max Tile = 64
+2025-03-05 22:37:34,048 - INFO - Game 2/2 completed: Max Tile = 128
+2025-03-05 22:37:34,048 - INFO - ========================================
+2025-03-05 22:37:34,049 - INFO - Evaluation over 2 games:
+2025-03-05 22:37:34,050 - INFO - Average Max Tile: 96.0
+2025-03-05 22:37:34,050 - INFO - Average Score: 1208.0
+2025-03-05 22:37:34,050 - INFO - Average Steps: 126.5
+2025-03-05 22:37:34,050 - INFO - Best Max Tile: 128
+2025-03-05 22:37:34,051 - INFO - Tile distribution:
+2025-03-05 22:37:34,051 - INFO -   64: 1 games (50.0%)
+2025-03-05 22:37:34,051 - INFO -   128: 1 games (50.0%)
+2025-03-05 22:37:34,051 - INFO - Average steps to achieve tile:
+2025-03-05 22:37:34,052 - INFO - 
+Evaluating with 200 simulations...
+2025-03-05 23:09:17,031 - INFO - Game 1/2 completed: Max Tile = 128
+2025-03-05 23:15:46,411 - INFO - Loading model from models/dueling_dqn/dueling_dqn_per_best.pt
+2025-03-05 23:15:49,377 - INFO - Creating enhanced MCTS agent with 200 simulations
+2025-03-05 23:15:49,377 - INFO - 
+Evaluating regular agent...
+2025-03-05 23:15:50,398 - INFO - Game 1/5 completed: Max Tile = 128
+2025-03-05 23:15:50,906 - INFO - Game 2/5 completed: Max Tile = 32
+2025-03-05 23:15:51,395 - INFO - Game 3/5 completed: Max Tile = 64
+2025-03-05 23:15:51,997 - INFO - Game 4/5 completed: Max Tile = 64
+2025-03-05 23:15:52,855 - INFO - Game 5/5 completed: Max Tile = 128
+2025-03-05 23:15:52,855 - INFO - ========================================
+2025-03-05 23:15:52,855 - INFO - Evaluation over 5 games:
+2025-03-05 23:15:52,855 - INFO - Average Max Tile: 83.2
+2025-03-05 23:15:52,855 - INFO - Average Score: 943.2
+2025-03-05 23:15:52,855 - INFO - Average Steps: 105.8
+2025-03-05 23:15:52,855 - INFO - Best Max Tile: 128
+2025-03-05 23:15:52,855 - INFO - Tile distribution:
+2025-03-05 23:15:52,855 - INFO -   32: 1 games (20.0%)
+2025-03-05 23:15:52,855 - INFO -   64: 2 games (40.0%)
+2025-03-05 23:15:52,855 - INFO -   128: 2 games (40.0%)
+2025-03-05 23:15:52,855 - INFO - Average steps to achieve tile:
+2025-03-05 23:15:52,855 - INFO - 
+Evaluating enhanced MCTS agent...
+2025-03-05 23:16:34,651 - INFO - Loading model from models/dueling_dqn/dueling_dqn_per_best.pt
+2025-03-05 23:16:37,393 - INFO - Creating enhanced MCTS agent with 20 simulations
+2025-03-05 23:16:37,393 - INFO - 
+Evaluating regular agent...
+2025-03-05 23:16:38,413 - INFO - Game 1/5 completed: Max Tile = 128
+2025-03-05 23:16:38,933 - INFO - Game 2/5 completed: Max Tile = 32
+2025-03-05 23:16:39,422 - INFO - Game 3/5 completed: Max Tile = 64
+2025-03-05 23:16:40,032 - INFO - Game 4/5 completed: Max Tile = 64
+2025-03-05 23:16:40,880 - INFO - Game 5/5 completed: Max Tile = 128
+2025-03-05 23:16:40,880 - INFO - ========================================
+2025-03-05 23:16:40,880 - INFO - Evaluation over 5 games:
+2025-03-05 23:16:40,880 - INFO - Average Max Tile: 83.2
+2025-03-05 23:16:40,880 - INFO - Average Score: 943.2
+2025-03-05 23:16:40,880 - INFO - Average Steps: 105.8
+2025-03-05 23:16:40,880 - INFO - Best Max Tile: 128
+2025-03-05 23:16:40,880 - INFO - Tile distribution:
+2025-03-05 23:16:40,880 - INFO -   32: 1 games (20.0%)
+2025-03-05 23:16:40,880 - INFO -   64: 2 games (40.0%)
+2025-03-05 23:16:40,880 - INFO -   128: 2 games (40.0%)
+2025-03-05 23:16:40,880 - INFO - Average steps to achieve tile:
+2025-03-05 23:16:40,880 - INFO - 
+Evaluating enhanced MCTS agent...
+2025-03-05 23:26:57,465 - INFO - Loading model from models/dueling_dqn/dueling_dqn_per_best.pt
+2025-03-05 23:27:00,440 - INFO - Creating enhanced MCTS agent with 20 simulations
+2025-03-05 23:27:00,441 - INFO - 
+Evaluating regular agent...
+2025-03-05 23:27:01,487 - INFO - Game 1/1 completed: Max Tile = 128
+2025-03-05 23:27:01,488 - INFO - ========================================
+2025-03-05 23:27:01,488 - INFO - Evaluation over 1 games:
+2025-03-05 23:27:01,489 - INFO - Average Max Tile: 128.0
+2025-03-05 23:27:01,489 - INFO - Average Score: 1208.0
+2025-03-05 23:27:01,489 - INFO - Average Steps: 126.0
+2025-03-05 23:27:01,489 - INFO - Best Max Tile: 128
+2025-03-05 23:27:01,490 - INFO - Tile distribution:
+2025-03-05 23:27:01,490 - INFO -   128: 1 games (100.0%)
+2025-03-05 23:27:01,490 - INFO - Average steps to achieve tile:
+2025-03-05 23:27:01,491 - INFO - 
+Evaluating enhanced MCTS agent...
+2025-03-05 23:28:35,779 - INFO - Loading model from models/dueling_dqn/dueling_dqn_per_best.pt
+2025-03-05 23:28:38,759 - INFO - Creating enhanced MCTS agent with 20 simulations
+2025-03-05 23:28:38,760 - INFO - 
+Evaluating regular agent...
+2025-03-05 23:28:39,890 - INFO - Game 1/1 completed: Max Tile = 128
+2025-03-05 23:28:39,891 - INFO - ========================================
+2025-03-05 23:28:39,891 - INFO - Evaluation over 1 games:
+2025-03-05 23:28:39,892 - INFO - Average Max Tile: 128.0
+2025-03-05 23:28:39,892 - INFO - Average Score: 1208.0
+2025-03-05 23:28:39,892 - INFO - Average Steps: 126.0
+2025-03-05 23:28:39,892 - INFO - Best Max Tile: 128
+2025-03-05 23:28:39,892 - INFO - Tile distribution:
+2025-03-05 23:28:39,892 - INFO -   128: 1 games (100.0%)
+2025-03-05 23:28:39,892 - INFO - Average steps to achieve tile:
+2025-03-05 23:28:39,893 - INFO - 
+Evaluating enhanced MCTS agent...

@@ -48,7 +48,11 @@ class Game2048:
     def reset(self):
         self.board = np.zeros((self.size, self.size), dtype=np.int32)
         self.score = 0
-        self.previous_max_tile = 0
+        # Reset random seed if one was provided
+        if self.seed is not None:
+            np.random.seed(self.seed + np.random.randint(10000))  # Add random offset to get different sequences
+            random.seed(self.seed + np.random.randint(10000))
+        # Add initial tiles
         self.add_random_tile()
         self.add_random_tile()
         return self.board.copy()

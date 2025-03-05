@@ -90,8 +90,8 @@ def main(checkpoint_path, num_games=5, mcts_simulations=200, run_comparison=Fals
     
     # Load model
     logging.info(f"Loading model from {checkpoint_path}")
-    checkpoint = torch.load(checkpoint_path, map_location=device)
-    agent = DQNAgent()
+    checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    agent = DQNAgent(hidden_dim=512)
     agent.load_state_dict(checkpoint['model_state_dict'])
     agent.eval()
     
