@@ -51,6 +51,7 @@ def train_dqn(args):
     highest_tile = 0
     beta_start = 0.4
     beta_frames = 100000
+    MIN_TILE_TO_LOG = 128  # Minimum tile value to log
 
     # Load checkpoint if specified
     if args.resume_from:
@@ -112,6 +113,7 @@ def train_dqn(args):
         done = False
         episode_reward = 0
         max_tile = 0
+        new_max_achieved = False  # Flag to track if a new max tile was achieved in this episode
         
         # Calculate current beta for PER
         beta = min(1.0, beta_start + episode * (1.0 - beta_start) / beta_frames)
@@ -138,12 +140,17 @@ def train_dqn(args):
             current_max_tile = np.max(env.board)
             max_tile = max(max_tile, current_max_tile)
             
-            # Check for new highest tile
+            # Check for new highest tile but don't log it yet
             if current_max_tile > highest_tile:
                 highest_tile = current_max_tile
-                logging.info(f"New highest tile achieved: {highest_tile} (Episode {episode + 1})")
+                new_max_achieved = True
             
             state = next_state
+        
+        # Log max tile achievement at the end of the episode
+        if new_max_achieved and highest_tile >= MIN_TILE_TO_LOG:
+            logging.info(f"New highest tile achieved: {highest_tile} (Episode {episode + 1})")
+            logging.info(f"Final board state for new max tile {highest_tile}:\n{np.array2string(env.board, separator=', ')}")
         
         # Record episode statistics
         episode_rewards.append(episode_reward)
@@ -172,6 +179,7 @@ def train_dqn(args):
             }
             torch.save(checkpoint, best_model_path)
             logging.info(f"New best score: {best_score} - Model saved to {best_model_path}")
+            logging.info(f"Final board state for new best score {best_score}:\n{np.array2string(env.board, separator=', ')}")
         
         # Save periodic checkpoint with statistics
         if (episode + 1) % args.save_freq == 0:

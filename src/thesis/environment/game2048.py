@@ -30,9 +30,7 @@ class Game2048:
     def __init__(self, size: int = 4, seed: Optional[int] = None):
         self.size = size
         self.seed = seed
-        if seed is not None:
-            np.random.seed(seed)
-            random.seed(seed)
+        self.rng = np.random.RandomState(seed)  # Create a dedicated RNG instance
         self.reset()
         self.previous_max_tile = 0
         # Factor for the corner and border heuristic bonus
@@ -48,10 +46,9 @@ class Game2048:
     def reset(self):
         self.board = np.zeros((self.size, self.size), dtype=np.int32)
         self.score = 0
-        # Reset random seed if one was provided
+        # If a seed was provided, create a new random sequence
         if self.seed is not None:
-            np.random.seed(self.seed + np.random.randint(10000))  # Add random offset to get different sequences
-            random.seed(self.seed + np.random.randint(10000))
+            self.rng = np.random.RandomState(self.seed)
         # Add initial tiles
         self.add_random_tile()
         self.add_random_tile()
@@ -60,8 +57,9 @@ class Game2048:
     def add_random_tile(self) -> None:
         empty_cells = list(zip(*np.where(self.board == 0)))
         if empty_cells:
-            cell = random.choice(empty_cells)
-            self.board[cell] = 2 if random.random() < 0.8 else 4
+            index = self.rng.randint(0, len(empty_cells))
+            cell = empty_cells[index]
+            self.board[cell] = 2 if self.rng.random() < 0.8 else 4
 
     def get_possible_moves(self) -> List[int]:
         moves = []
@@ -147,6 +145,8 @@ class Game2048:
     def step(self, action):
         old_board = self.board.copy()
         old_max_tile = np.max(old_board)
+        old_empty_count = np.sum(old_board == 0)
+        
         new_board, score_gain, valid_move = self._move(self.board, action)
         
         if valid_move:
@@ -155,61 +155,74 @@ class Game2048:
             self.add_random_tile()
         
         new_max_tile = int(np.max(self.board))
+        new_empty_count = np.sum(self.board == 0)
         
-        # --- REWARD CALCULATION ---
-        # Base reward from merged tiles
+        # --- ENHANCED REWARD CALCULATION ---
+        # Base reward: score from merging tiles
         reward = score_gain
         
-        # IMPROVEMENT 1: Exponential rewards for higher tiles
-        # Give exponentially higher rewards for creating new max tiles
+        # IMPROVED: Relative improvement reward for new max tiles
         if new_max_tile > old_max_tile:
-            # log2(new_max_tile) is the power of 2 for the tile (e.g., 8=3, 16=4, etc.)
-            # This makes rewards grow exponentially with tile value
-            reward += 10 * math.log2(new_max_tile) ** 2
+            # Reward is proportional to the level-up achieved
+            reward += 200 * (math.log2(new_max_tile) - math.log2(old_max_tile))
         
-        # IMPROVEMENT 2: Better penalties
+        # Penalty for invalid moves
         if not valid_move:
-            reward -= 4  # Increased penalty for invalid moves
+            reward -= 10
         
+        # Game over penalty
         if self.is_game_over():
-            # Scale game over penalty with board state - less penalty if you have high tiles
-            highest_power = math.log2(new_max_tile) if new_max_tile > 0 else 0
-            reward -= max(200 - highest_power * 10, 50)  # Lower penalty for higher achievements
+            reward -= 100
         
-        # IMPROVEMENT 3: Enhanced strategic rewards
-        # Reward for empty tiles (space to maneuver)
-        empty_count = np.sum(self.board == 0)
-        empty_bonus = 0.5 * empty_count
+        # Reward for maintaining open spaces (critical for maneuverability)
+        # We compare to previous state to encourage moves that maintain or increase empty cells
+        empty_cells_diff = new_empty_count - old_empty_count
+        if empty_cells_diff >= 0:
+            reward += 2.0 * empty_cells_diff  # Bonus for maintaining or increasing empty cells
         
-        # Improved monotonicity - reward organized boards
-        mono_bonus = 0.05 * compute_monotonicity(self.board)
+        # Strategic reward: potential high-value merges
+        potential_merges_bonus = self.count_potential_high_value_merges()
+        reward += potential_merges_bonus
         
-        # Enhanced corner placement - more significant reward
-        corner_bonus = 0.2 * self.corner_heuristic()
-        
-        # IMPROVEMENT 4: Snaking pattern bonus (common in expert play)
-        snake_bonus = 0.1 * self.compute_snake_pattern()
-        
-        # IMPROVEMENT 5: Merge potential bonus
-        merge_potential = 0.1 * self.compute_merge_potential()
-        
-        # Add all components
-        reward += empty_bonus + mono_bonus + corner_bonus + snake_bonus + merge_potential
+        # Strategic board organization: monotonicity
+        mono_score = compute_monotonicity(self.board)
+        reward += 0.2 * mono_score
         
         info = {
             'score': self.score,
             'max_tile': new_max_tile,
             'valid_move': valid_move,
-            'empty_cells': empty_count,
+            'empty_cells': new_empty_count,
             'merge_score': score_gain,
-            'empty_bonus': empty_bonus,
-            'monotonicity_bonus': mono_bonus,
-            'corner_bonus': corner_bonus,
-            'snake_bonus': snake_bonus,
-            'merge_potential': merge_potential
+            'monotonicity': mono_score,
+            'potential_merges': potential_merges_bonus
         }
         
         return self.board.copy(), reward, self.is_game_over(), info
+        
+    def count_potential_high_value_merges(self):
+        """Count the number of potential merges for high-value tiles"""
+        board = self.board.copy()
+        bonus = 0
+        
+        # Check for adjacent same values (horizontally and vertically)
+        for i in range(self.size):
+            for j in range(self.size):
+                if board[i, j] == 0:
+                    continue
+                    
+                # Value-based weight: higher tiles get exponentially more weight
+                value_weight = math.log2(board[i, j]) if board[i, j] > 0 else 0
+                
+                # Check right
+                if j < self.size - 1 and board[i, j] == board[i, j + 1] and board[i, j] >= 64:
+                    bonus += value_weight * 2.0
+                
+                # Check down
+                if i < self.size - 1 and board[i, j] == board[i + 1, j] and board[i, j] >= 64:
+                    bonus += value_weight * 2.0
+        
+        return bonus
 
     def compute_snake_pattern(self):
         """
