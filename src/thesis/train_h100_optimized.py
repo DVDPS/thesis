@@ -334,14 +334,14 @@ def train_distributed_ppo(rank, world_size, args):
                         f.write(f"{episode},{max_tile_reached},{elapsed_time:.2f}\n")
             
             # Count max tiles
-            if episode_max_tile in max_tile_counts:
-                max_tile_counts[episode_max_tile] += 1
+            if str(episode_max_tile) in max_tile_counts:
+                max_tile_counts[str(episode_max_tile)] += 1
                 if str(episode_max_tile) in max_tile_episodes:
                     max_tile_episodes[str(episode_max_tile)].append(episode)
                 else:
                     max_tile_episodes[str(episode_max_tile)] = [episode]
             else:
-                max_tile_counts[episode_max_tile] = 1
+                max_tile_counts[str(episode_max_tile)] = 1
                 max_tile_episodes[str(episode_max_tile)] = [episode]
             
             # Record episode metrics
@@ -554,10 +554,13 @@ def train_distributed_ppo(rank, world_size, args):
             
             # Log final max tile statistics
             logging.info(f"Final Max Tile Reached: {max_tile_reached}")
-            # Convert all keys to strings for JSON serialization
+            
+            # Ensure max_tile_counts uses string keys for JSON serialization
+            # This is already done in the episode loop, but let's make sure here as well
             max_tile_counts_json = {str(k): v for k, v in max_tile_counts.items()}
             logging.info(f"Max Tile Distribution: {json.dumps(max_tile_counts_json)}")
-            # max_tile_episodes already has string keys now
+            
+            # max_tile_episodes already has string keys
             logging.info(f"Max Tile Episodes: {json.dumps(max_tile_episodes)}")
             
             # Save final model
@@ -569,7 +572,7 @@ def train_distributed_ppo(rank, world_size, args):
             plot_training_curves(
                 episode_rewards, episode_max_tiles, 
                 evaluation_scores, evaluation_max_tiles,
-                losses, max_tile_counts, args.output_dir
+                losses, max_tile_counts_json, args.output_dir
             )
         
         # Clean up distributed environment
@@ -681,7 +684,7 @@ def plot_training_curves(rewards, max_tiles, eval_scores, eval_max_tiles, losses
         eval_scores: List of evaluation scores
         eval_max_tiles: List of evaluation max tiles
         losses: List of training losses
-        max_tile_counts: Dictionary of max tile counts
+        max_tile_counts: Dictionary of max tile counts (with string keys)
         output_dir: Directory to save plots
     """
     try:
@@ -728,8 +731,9 @@ def plot_training_curves(rewards, max_tiles, eval_scores, eval_max_tiles, losses
         # Plot max tile distribution
         plt.subplot(3, 2, 6)
         if max_tile_counts:
-            tiles = sorted(max_tile_counts.keys())
-            counts = [max_tile_counts[tile] for tile in tiles]
+            # Convert string keys back to integers for sorting
+            tiles = sorted([int(k) for k in max_tile_counts.keys()])
+            counts = [max_tile_counts[str(tile)] for tile in tiles]
             plt.bar([str(v) for v in tiles], counts)
             plt.xlabel('Tile Value')
             plt.ylabel('Count')
