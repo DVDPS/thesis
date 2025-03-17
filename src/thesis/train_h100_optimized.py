@@ -39,13 +39,47 @@ def setup(rank, world_size):
     """
     try:
         logging.info(f"Rank {rank}: Starting setup process")
-        # Use a random port to avoid conflicts - use a higher range to avoid common ports
-        base_port = 35000 + np.random.randint(0, 1000)  # Random base port between 35000-36000
-        port = base_port + rank
-        os.environ['MASTER_ADDR'] = 'localhost'
-        os.environ['MASTER_PORT'] = str(port)
         
-        logging.info(f"Rank {rank}: Set MASTER_ADDR=localhost, MASTER_PORT={port}")
+        # Use a completely different port range to avoid conflicts
+        import socket
+        import random
+        
+        def is_port_available(port):
+            """Check if a port is available"""
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                try:
+                    s.bind(('localhost', port))
+                    return True
+                except socket.error:
+                    return False
+        
+        # Find an available port in a higher range
+        base_port = random.randint(45000, 55000)
+        port = None
+        
+        # Try to find an available port
+        for attempt in range(100):  # Try up to 100 different ports
+            test_port = base_port + attempt
+            if is_port_available(test_port):
+                port = test_port
+                break
+        
+        if port is None:
+            raise RuntimeError(f"Rank {rank}: Could not find an available port after 100 attempts")
+        
+        # Use the same port for all ranks to ensure they can communicate
+        if rank == 0:
+            # Only rank 0 selects the port, others will use the same
+            os.environ['MASTER_PORT'] = str(port)
+        else:
+            # Other ranks wait for rank 0 to select the port
+            # In a real distributed setting, this would be communicated via a file or other means
+            # For simplicity in this single-node multi-GPU setup, we'll use a fixed offset
+            os.environ['MASTER_PORT'] = str(port + rank)
+            
+        os.environ['MASTER_ADDR'] = 'localhost'
+        
+        logging.info(f"Rank {rank}: Set MASTER_ADDR=localhost, MASTER_PORT={os.environ['MASTER_PORT']}")
         
         # Set NCCL environment variables for better debugging and performance
         os.environ['NCCL_DEBUG'] = 'INFO'
@@ -61,41 +95,39 @@ def setup(rank, world_size):
         # Initialize the process group with timeout and a different backend as fallback
         logging.info(f"Rank {rank}: Attempting to initialize process group with NCCL backend")
         
-        # Try multiple ports if the first one fails
-        max_retries = 3
-        for retry in range(max_retries):
+        # Try multiple backends if the first one fails
+        backends = ["nccl", "gloo"]
+        success = False
+        
+        for backend in backends:
             try:
-                if retry > 0:
-                    # Try a different port on retry
-                    port = base_port + rank + retry * 100
-                    os.environ['MASTER_PORT'] = str(port)
-                    logging.info(f"Rank {rank}: Retry {retry+1}/{max_retries} with port {port}")
-                
-                dist.init_process_group("nccl", rank=rank, world_size=world_size, timeout=datetime.timedelta(minutes=30))
-                logging.info(f"Rank {rank}: Successfully initialized process group with NCCL backend")
+                logging.info(f"Rank {rank}: Trying to initialize with {backend} backend")
+                dist.init_process_group(
+                    backend, 
+                    rank=rank, 
+                    world_size=world_size, 
+                    timeout=datetime.timedelta(minutes=30)
+                )
+                logging.info(f"Rank {rank}: Successfully initialized process group with {backend} backend")
+                success = True
                 break
             except Exception as e:
-                if retry == max_retries - 1:
-                    logging.warning(f"Rank {rank}: NCCL initialization failed after {max_retries} retries: {e}, falling back to gloo backend")
-                    try:
-                        logging.info(f"Rank {rank}: Attempting to initialize process group with gloo backend")
-                        # Try a completely different port for gloo
-                        gloo_port = 40000 + np.random.randint(0, 1000) + rank
-                        os.environ['MASTER_PORT'] = str(gloo_port)
-                        logging.info(f"Rank {rank}: Using port {gloo_port} for gloo backend")
-                        
-                        dist.init_process_group("gloo", rank=rank, world_size=world_size, timeout=datetime.timedelta(minutes=30))
-                        logging.info(f"Rank {rank}: Successfully initialized process group with gloo backend")
-                    except Exception as e2:
-                        logging.error(f"Rank {rank}: Gloo initialization also failed: {e2}")
-                        raise
-                else:
-                    logging.warning(f"Rank {rank}: NCCL initialization failed on attempt {retry+1}: {e}, retrying...")
+                logging.warning(f"Rank {rank}: {backend} initialization failed: {e}")
+                
+                # Try a different port if this one failed
+                if backend == backends[0]:  # Only try a different port after the first backend fails
+                    new_port = int(os.environ['MASTER_PORT']) + 1000
+                    if is_port_available(new_port):
+                        os.environ['MASTER_PORT'] = str(new_port)
+                        logging.info(f"Rank {rank}: Trying again with port {new_port}")
+        
+        if not success:
+            raise RuntimeError(f"Rank {rank}: Failed to initialize process group with any backend")
         
         # Set device for this process
         logging.info(f"Rank {rank}: Setting CUDA device to {rank}")
         torch.cuda.set_device(rank)
-        logging.info(f"Rank {rank}: Process initialized successfully on port {port}")
+        logging.info(f"Rank {rank}: Process initialized successfully on port {os.environ['MASTER_PORT']}")
     except Exception as e:
         logging.error(f"Error in setup for rank {rank}: {e}")
         raise
