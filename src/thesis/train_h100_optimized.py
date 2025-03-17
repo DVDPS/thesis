@@ -38,26 +38,40 @@ def setup(rank, world_size):
     Initialize the distributed environment.
     """
     try:
+        logging.info(f"Rank {rank}: Starting setup process")
         # Use a random port to avoid conflicts
         port = 29500 + rank
         os.environ['MASTER_ADDR'] = 'localhost'
         os.environ['MASTER_PORT'] = str(port)
+        
+        logging.info(f"Rank {rank}: Set MASTER_ADDR=localhost, MASTER_PORT={port}")
         
         # Set NCCL environment variables for better debugging and performance
         os.environ['NCCL_DEBUG'] = 'INFO'
         os.environ['NCCL_SOCKET_IFNAME'] = 'lo'  # Use loopback interface
         os.environ['NCCL_IB_DISABLE'] = '1'  # Disable InfiniBand
         
+        logging.info(f"Rank {rank}: Set NCCL environment variables")
+        
         # Initialize the process group with timeout and a different backend as fallback
+        logging.info(f"Rank {rank}: Attempting to initialize process group with NCCL backend")
         try:
             dist.init_process_group("nccl", rank=rank, world_size=world_size, timeout=datetime.timedelta(minutes=30))
+            logging.info(f"Rank {rank}: Successfully initialized process group with NCCL backend")
         except Exception as e:
-            logging.warning(f"NCCL initialization failed: {e}, falling back to gloo backend")
-            dist.init_process_group("gloo", rank=rank, world_size=world_size, timeout=datetime.timedelta(minutes=30))
+            logging.warning(f"Rank {rank}: NCCL initialization failed: {e}, falling back to gloo backend")
+            try:
+                logging.info(f"Rank {rank}: Attempting to initialize process group with gloo backend")
+                dist.init_process_group("gloo", rank=rank, world_size=world_size, timeout=datetime.timedelta(minutes=30))
+                logging.info(f"Rank {rank}: Successfully initialized process group with gloo backend")
+            except Exception as e2:
+                logging.error(f"Rank {rank}: Gloo initialization also failed: {e2}")
+                raise
         
         # Set device for this process
+        logging.info(f"Rank {rank}: Setting CUDA device to {rank}")
         torch.cuda.set_device(rank)
-        logging.info(f"Process {rank} initialized successfully on port {port}")
+        logging.info(f"Rank {rank}: Process initialized successfully on port {port}")
     except Exception as e:
         logging.error(f"Error in setup for rank {rank}: {e}")
         raise
@@ -120,11 +134,16 @@ def train_distributed_ppo(rank, world_size, args):
         args: Command-line arguments
     """
     try:
+        print(f"Rank {rank}: Starting train_distributed_ppo function")
+        
         # Setup the distributed environment
+        print(f"Rank {rank}: About to call setup function")
         setup(rank, world_size)
+        print(f"Rank {rank}: Setup function completed successfully")
         
         # Create output directory
         if rank == 0:
+            print(f"Rank {rank}: Creating output directory {args.output_dir}")
             os.makedirs(args.output_dir, exist_ok=True)
             # Configure logging for rank 0 only (to avoid file conflicts)
             file_handler = logging.FileHandler(os.path.join(args.output_dir, 'training.log'), encoding='utf-8')
@@ -134,23 +153,29 @@ def train_distributed_ppo(rank, world_size, args):
             max_tile_log_path = os.path.join(args.output_dir, 'max_tile_log.txt')
             with open(max_tile_log_path, 'w') as f:
                 f.write("episode,max_tile,time\n")
+            print(f"Rank {rank}: Created log files")
         
         # Set random seeds for reproducibility
+        print(f"Rank {rank}: Setting random seed to {args.seed + rank}")
         set_seeds(args.seed + rank)  # Different seed per process
         
         # Log device and arguments
         device = torch.device(f"cuda:{rank}")
+        print(f"Rank {rank}: Using device: {device}")
         logging.info(f"Rank {rank} using device: {device}")
         if rank == 0:
             logging.info(f"Using {world_size} GPUs")
             logging.info(f"Arguments: {args}")
             logging.info(f"Training for {args.episodes} episodes")
+            print(f"Rank {rank}: Logged training parameters")
         
         # Create environment (each process has its own)
+        print(f"Rank {rank}: Creating Game2048 environment")
         env = Game2048()
         
         # Create agent with smaller batch size for stability
         actual_batch_size = args.batch_size // world_size  # Scale batch size per GPU
+        print(f"Rank {rank}: Creating PPO agent with batch size {actual_batch_size}")
         logging.info(f"Rank {rank} using batch size: {actual_batch_size}")
         
         agent = PPOAgent(
@@ -699,6 +724,7 @@ def main():
     parser.add_argument("--target-kl", type=float, default=0.01, help="Target KL divergence")
     parser.add_argument("--grad-accumulation-steps", type=int, default=4, help="Gradient accumulation steps")
     parser.add_argument("--single-gpu", action="store_true", help="Force single GPU training")
+    parser.add_argument("--timeout", type=int, default=120, help="Timeout in seconds for distributed initialization")
     
     # Logging and evaluation
     parser.add_argument("--log-interval", type=int, default=10, help="Episodes between logging")
@@ -723,14 +749,39 @@ def main():
     if use_distributed:
         print(f"Using {world_size} GPUs for distributed training")
         
-        # Try distributed training
+        # Try distributed training with timeout
         try:
-            mp.spawn(
-                train_distributed_ppo,
-                args=(world_size, args),
-                nprocs=world_size,
-                join=True
-            )
+            print("Spawning processes for distributed training...")
+            
+            # Create a process for distributed training
+            import multiprocessing
+            import signal
+            
+            def timeout_handler(signum, frame):
+                print(f"Distributed training initialization timed out after {args.timeout} seconds")
+                raise TimeoutError("Distributed training initialization timed out")
+            
+            # Set timeout
+            signal.signal(signal.SIGALRM, timeout_handler)
+            signal.alarm(args.timeout)
+            
+            try:
+                mp.spawn(
+                    train_distributed_ppo,
+                    args=(world_size, args),
+                    nprocs=world_size,
+                    join=True
+                )
+                # Cancel the alarm if training completes successfully
+                signal.alarm(0)
+                print("Distributed training completed successfully")
+            except TimeoutError:
+                print("Timeout occurred during distributed training initialization")
+                raise
+            finally:
+                # Cancel the alarm in case of any other exception
+                signal.alarm(0)
+                
         except Exception as e:
             logging.error(f"Distributed training failed: {e}")
             logging.info("Falling back to single GPU training")
