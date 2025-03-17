@@ -48,75 +48,63 @@ find_free_port() {
 echo "Setting up environment for training on H100 GPUs..."
 cleanup
 
-# Set up Python path
-export PYTHONPATH=$PYTHONPATH:$(pwd)
-echo "PYTHONPATH set to: $PYTHONPATH"
+# Clean up environment variables that might interfere with distributed training
+unset MASTER_PORT
+unset MASTER_ADDR
+unset WORLD_SIZE
+unset RANK
+unset LOCAL_RANK
 
-# Set environment variables for better NCCL performance
-export NCCL_DEBUG=INFO
-export NCCL_SOCKET_IFNAME=lo
-export NCCL_IB_DISABLE=1
-export NCCL_P2P_DISABLE=0
-export NCCL_BLOCKING_WAIT=1
-export TORCH_NCCL_BLOCKING_WAIT=1  # Updated name for this env var
-export TORCH_DISTRIBUTED_DEBUG=INFO
+# Set PYTHONPATH to include the current directory
+export PYTHONPATH=${PYTHONPATH}:$(pwd)
+echo "PYTHONPATH set to: ${PYTHONPATH}"
 
-# Get number of available GPUs
-NUM_GPUS=$(nvidia-smi --list-gpus | wc -l)
-echo "Detected $NUM_GPUS GPUs"
+# Select a random port in a higher range (60000-65000) to avoid conflicts
+PORT=$(( 60000 + RANDOM % 5000 ))
+echo "Using port: ${PORT}"
 
-# First, try distributed training if we have multiple GPUs
+# Set environment variables for distributed training
+export MASTER_PORT=${PORT}
+export MASTER_ADDR="localhost"
+export NCCL_IB_DISABLE=1 # Disable Infiniband for better stability on VMs
+echo "Using MASTER_PORT=${MASTER_PORT} and MASTER_ADDR=${MASTER_ADDR}"
+
+# Count available GPUs
+NUM_GPUS=$(nvidia-smi --query-gpu=name --format=csv,noheader | wc -l)
+echo "Detected ${NUM_GPUS} GPUs"
+
 if [ $NUM_GPUS -gt 1 ]; then
-    echo "Attempting distributed training with $NUM_GPUS GPUs..."
+    echo "Attempting distributed training with ${NUM_GPUS} GPUs..."
     
-    # Get a free port (only the port number will be output)
-    PORT=$(find_free_port)
-    echo "Using port: $PORT"
-    export MASTER_PORT=$PORT
-    export MASTER_ADDR="localhost"
-    
-    echo "Using MASTER_PORT=$MASTER_PORT and MASTER_ADDR=$MASTER_ADDR"
-    
-    # Start distributed training
-    echo "Starting distributed training with $NUM_GPUS GPUs..."
-    python3 -m src.thesis.train_h100_optimized \
+    # Run the training script with distributed settings
+    # Increase timeout and add parameters for stability
+    python -u src/thesis/train_h100_optimized.py \
         --batch-size 4096 \
         --learning-rate 3e-4 \
         --episodes 20000 \
-        --eval-interval 100 \
-        --log-interval 10 \
+        --clip-ratio 0.2 \
+        --gamma 0.99 \
+        --gae-lambda 0.95 \
         --grad-accumulation-steps 4 \
-        --output-dir "h100_ppo_results" \
-        --timeout 300  # 5 minutes timeout
+        --timeout 300 \
+        --eval-interval 100 \
+        --eval-episodes 5
+else
+    echo "Only 1 GPU detected, running in single-GPU mode..."
     
-    DIST_STATUS=$?
-    if [ $DIST_STATUS -eq 0 ]; then
-        echo "Distributed training completed successfully!"
-        exit 0
-    else
-        echo "Distributed training failed with status $DIST_STATUS"
-        echo "Falling back to single GPU training..."
-        cleanup
-    fi
+    # Run the training script in single-GPU mode
+    python -u src/thesis/train_h100_optimized.py \
+        --batch-size 2048 \
+        --learning-rate 3e-4 \
+        --episodes 20000 \
+        --single-gpu \
+        --clip-ratio 0.2 \
+        --gamma 0.99 \
+        --gae-lambda 0.95 \
+        --grad-accumulation-steps 4 \
+        --eval-interval 100 \
+        --eval-episodes 5
 fi
-
-# If distributed training failed or we only have 1 GPU, use single GPU mode
-echo "Starting single GPU training..."
-# Get a new free port
-PORT=$(find_free_port)
-echo "Using port: $PORT"
-export MASTER_PORT=$PORT
-export MASTER_ADDR="localhost"
-
-python3 -m src.thesis.train_h100_optimized \
-    --batch-size 4096 \
-    --learning-rate 3e-4 \
-    --episodes 20000 \
-    --eval-interval 100 \
-    --log-interval 10 \
-    --grad-accumulation-steps 4 \
-    --output-dir "h100_ppo_results" \
-    --single-gpu
 
 # Final cleanup
 cleanup

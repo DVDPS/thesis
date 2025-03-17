@@ -23,6 +23,7 @@ from tqdm import tqdm
 from src.thesis.environment.game2048 import Game2048, preprocess_state_onehot
 from src.thesis.agents.ppo_agent import PPOAgent
 from src.thesis.config import set_seeds
+import random
 
 # Set up logging
 logging.basicConfig(
@@ -334,7 +335,9 @@ def train_distributed_ppo(rank, world_size, args):
                             max_tile_reached = global_max_tile
                             logging.info(f"Rank {rank}: Updated max tile to {max_tile_reached} from another process")
                     except Exception as e:
+                        # Just log the error but continue training - don't let this stop the training
                         logging.error(f"Error syncing max tile: {e}")
+                        # Continue with local max_tile_reached without synchronization
                 
                 if rank == 0:
                     logging.info(f"New max tile reached: {max_tile_reached} at episode {episode} (time: {elapsed_time:.2f}s)")
@@ -805,13 +808,23 @@ def main():
             print("Set MASTER_ADDR=localhost")
             
         if 'MASTER_PORT' not in os.environ:
-            os.environ['MASTER_PORT'] = '65432'
-            print(f"Set MASTER_PORT=65432")
+            # Use a random port in the higher range to avoid conflicts
+            port = random.randint(60000, 65000)
+            os.environ['MASTER_PORT'] = str(port)
+            print(f"Set MASTER_PORT={port}")
         
         print(f"Using MASTER_ADDR={os.environ['MASTER_ADDR']}, MASTER_PORT={os.environ['MASTER_PORT']}")
         
         # Try distributed training
         try:
+            # First, make sure there are no orphaned processes that might cause port conflicts
+            try:
+                import subprocess
+                subprocess.run(["pkill", "-f", "train_h100_optimized"], check=False)
+                time.sleep(2)  # Give time for processes to terminate
+            except Exception as e:
+                print(f"Warning: Error during cleanup: {e}")
+            
             # We'll use multiprocessing.spawn instead of torch.multiprocessing.spawn
             # for better control and error handling
             import multiprocessing as python_mp
@@ -850,7 +863,16 @@ def main():
                     print("Distributed training completed successfully")
                 except TimeoutError:
                     print("Timeout occurred during distributed training initialization")
-                    raise
+                    # Fall back to single GPU training
+                    args.single_gpu = True
+                    use_distributed = False
+                    print("Falling back to single GPU training due to timeout")
+                except Exception as e:
+                    print(f"Error in distributed training: {e}")
+                    # Fall back to single GPU training
+                    args.single_gpu = True
+                    use_distributed = False
+                    print("Falling back to single GPU training due to error")
                 finally:
                     # Cancel the alarm in case of any other exception
                     signal.alarm(0)
@@ -860,14 +882,12 @@ def main():
                 import threading
                 import time
                 
-                class TimeoutError(Exception):
-                    pass
-                
+                # Function to run in a separate thread
                 def run_with_timeout(timeout_seconds):
                     # Flag to indicate if the function completed
                     completed = [False]
+                    error = [None]
                     
-                    # Function to run in a separate thread
                     def target_fn():
                         try:
                             torch_spawn(
@@ -878,8 +898,8 @@ def main():
                             )
                             completed[0] = True
                         except Exception as e:
+                            error[0] = e
                             print(f"Error in distributed training: {e}")
-                            raise
                     
                     # Start the thread
                     thread = threading.Thread(target=target_fn)
@@ -890,7 +910,10 @@ def main():
                     thread.join(timeout_seconds)
                     
                     if not completed[0]:
-                        raise TimeoutError(f"Function timed out after {timeout_seconds} seconds")
+                        if error[0]:
+                            raise error[0]
+                        else:
+                            raise TimeoutError(f"Function timed out after {timeout_seconds} seconds")
                 
                 try:
                     print("Spawning processes for distributed training with manual timeout...")
@@ -898,7 +921,16 @@ def main():
                     print("Distributed training completed successfully")
                 except TimeoutError:
                     print("Timeout occurred during distributed training initialization")
-                    raise
+                    # Fall back to single GPU training
+                    args.single_gpu = True
+                    use_distributed = False
+                    print("Falling back to single GPU training due to timeout")
+                except Exception as e:
+                    print(f"Error in distributed training: {e}")
+                    # Fall back to single GPU training
+                    args.single_gpu = True
+                    use_distributed = False
+                    print("Falling back to single GPU training due to error")
                 
         except Exception as e:
             logging.error(f"Distributed training failed: {e}")
@@ -907,10 +939,10 @@ def main():
             # Clean up any orphaned processes
             try:
                 import subprocess
-                subprocess.run(["pkill", "-f", "train_h100_optimized"])
+                subprocess.run(["pkill", "-f", "train_h100_optimized"], check=False)
                 time.sleep(2)
-            except:
-                pass
+            except Exception as cleanup_error:
+                print(f"Warning: Error during cleanup: {cleanup_error}")
             
             # Fall back to single GPU training
             args.single_gpu = True
@@ -920,7 +952,11 @@ def main():
     if not use_distributed:
         print("Running with single GPU training")
         # Run on a single GPU
-        train_distributed_ppo(0, 1, args)
+        try:
+            train_distributed_ppo(0, 1, args)
+        except Exception as e:
+            print(f"Error in single GPU training: {e}")
+            raise
 
 if __name__ == "__main__":
     main() 

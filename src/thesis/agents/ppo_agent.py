@@ -279,21 +279,24 @@ class PPOAgent:
         # Convert logits to probabilities
         policy = F.softmax(policy_logits, dim=1)
         
+        # Always create the distribution object for consistency
+        dist = torch.distributions.Categorical(policy)
+        
         # Select action
         if deterministic:
             # Deterministic action selection
             action = torch.argmax(policy, dim=1).item()
-            # Set a default log_prob value for deterministic actions
-            log_prob = 0.0  # This won't be used for updates, just for compatibility
+            # Get log_prob from the distribution, even though we chose deterministically
+            log_prob = dist.log_prob(torch.tensor([action], device=device)).item()
         else:
             # Stochastic action selection
             try:
-                # Create a categorical distribution and sample from it
-                dist = torch.distributions.Categorical(policy)
+                # Sample from the already created distribution
                 action = dist.sample().item()
                 log_prob = dist.log_prob(torch.tensor([action], device=device)).item()
-            except:
+            except Exception as e:
                 # Fallback if distribution has issues
+                print(f"Error sampling from distribution: {e}")
                 action = torch.argmax(policy, dim=1).item()
                 log_prob = torch.log(policy[0, action] + 1e-10).item()
         
