@@ -18,6 +18,7 @@ import time
 import argparse
 import matplotlib.pyplot as plt
 import json
+import datetime
 from tqdm import tqdm
 from src.thesis.environment.game2048 import Game2048, preprocess_state_onehot
 from src.thesis.agents.ppo_agent import PPOAgent
@@ -117,6 +118,11 @@ def train_distributed_ppo(rank, world_size, args):
             # Configure logging for rank 0 only (to avoid file conflicts)
             file_handler = logging.FileHandler(os.path.join(args.output_dir, 'training.log'), encoding='utf-8')
             logging.getLogger().addHandler(file_handler)
+            
+            # Create a separate log file just for max tile tracking
+            max_tile_log_path = os.path.join(args.output_dir, 'max_tile_log.txt')
+            with open(max_tile_log_path, 'w') as f:
+                f.write("episode,max_tile,time\n")
         
         # Set random seeds for reproducibility
         set_seeds(args.seed + rank)  # Different seed per process
@@ -127,6 +133,7 @@ def train_distributed_ppo(rank, world_size, args):
         if rank == 0:
             logging.info(f"Using {world_size} GPUs")
             logging.info(f"Arguments: {args}")
+            logging.info(f"Training for {args.episodes} episodes")
         
         # Create environment (each process has its own)
         env = Game2048()
@@ -181,6 +188,7 @@ def train_distributed_ppo(rank, world_size, args):
         # Max tile tracking
         max_tile_reached = 0
         max_tile_counts = {}
+        max_tile_episodes = {}  # Track which episodes reached each max tile
         
         # Main training loop
         if rank == 0:
@@ -254,14 +262,20 @@ def train_distributed_ppo(rank, world_size, args):
             # Update max tile tracking
             if episode_max_tile > max_tile_reached:
                 max_tile_reached = episode_max_tile
+                elapsed_time = time.time() - start_time
                 if rank == 0:
-                    logging.info(f"New max tile reached: {max_tile_reached} at episode {episode}")
+                    logging.info(f"New max tile reached: {max_tile_reached} at episode {episode} (time: {elapsed_time:.2f}s)")
+                    # Log to the dedicated max tile log file
+                    with open(os.path.join(args.output_dir, 'max_tile_log.txt'), 'a') as f:
+                        f.write(f"{episode},{max_tile_reached},{elapsed_time:.2f}\n")
             
             # Count max tiles
             if episode_max_tile in max_tile_counts:
                 max_tile_counts[episode_max_tile] += 1
+                max_tile_episodes[episode_max_tile].append(episode)
             else:
                 max_tile_counts[episode_max_tile] = 1
+                max_tile_episodes[episode_max_tile] = [episode]
             
             # Record episode metrics
             episode_rewards.append(episode_reward)
@@ -418,12 +432,14 @@ def train_distributed_ppo(rank, world_size, args):
                     avg_length = np.mean(all_lengths)
                     avg_loss = np.mean(all_losses)
                     
+                    elapsed_time = time.time() - start_time
                     logging.info(f"Episode {episode}/{args.episodes} | "
                                 f"Avg Reward: {avg_reward:.1f} | "
                                 f"Avg Max Tile: {avg_max_tile:.1f} | "
                                 f"Avg Length: {avg_length:.1f} | "
                                 f"Avg Loss: {avg_loss:.6f} | "
-                                f"Max Tile Reached: {max_tile_reached}")
+                                f"Max Tile Reached: {max_tile_reached} | "
+                                f"Time: {elapsed_time:.2f}s")
                     
                     # Log max tile distribution
                     if max_tile_counts:
@@ -466,6 +482,11 @@ def train_distributed_ppo(rank, world_size, args):
             
             logging.info(f"Training completed in {total_time:.2f} seconds")
             logging.info(f"Average steps per second: {steps_per_sec:.1f}")
+            
+            # Log final max tile statistics
+            logging.info(f"Final Max Tile Reached: {max_tile_reached}")
+            logging.info(f"Max Tile Distribution: {json.dumps(max_tile_counts)}")
+            logging.info(f"Max Tile Episodes: {json.dumps({str(k): v for k, v in max_tile_episodes.items()})}")
             
             # Save final model
             final_path = os.path.join(args.output_dir, "final_model.pt")
@@ -698,6 +719,4 @@ def main():
         logging.error(f"Error in main process: {e}")
 
 if __name__ == "__main__":
-    # Add missing import
-    import datetime
     main() 
