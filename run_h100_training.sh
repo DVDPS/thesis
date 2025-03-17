@@ -20,19 +20,27 @@ cleanup() {
 
 # Function to find an available port
 find_free_port() {
-    local port
-    for i in {1..10}; do
-        port=$((RANDOM % 5000 + 60000))
-        echo "Trying port: $port"
-        # Check if port is in use
-        if ! netstat -tuln | grep -q ":$port "; then
-            echo "Found free port: $port"
-            echo $port
-            return 0
-        fi
-        echo "Port $port is in use, trying another one"
-    done
-    echo "Could not find a free port after 10 attempts"
+    # Check if netstat is available
+    if command -v netstat &> /dev/null; then
+        local port
+        for i in {1..10}; do
+            port=$((RANDOM % 5000 + 60000))
+            # Check if port is in use (quietly)
+            if ! netstat -tuln | grep -q ":$port "; then
+                # Only return the port number, no other text
+                echo "$port"
+                return 0
+            fi
+        done
+    else
+        # Fallback: just use a random port without checking
+        local port=$((RANDOM % 5000 + 60000))
+        echo "$port"
+        return 0
+    fi
+    
+    # If we get here, we couldn't find a free port
+    echo "65432"  # Return a default port as last resort
     return 1
 }
 
@@ -61,8 +69,9 @@ echo "Detected $NUM_GPUS GPUs"
 if [ $NUM_GPUS -gt 1 ]; then
     echo "Attempting distributed training with $NUM_GPUS GPUs..."
     
-    # Get a free port
+    # Get a free port (only the port number will be output)
     PORT=$(find_free_port)
+    echo "Using port: $PORT"
     export MASTER_PORT=$PORT
     export MASTER_ADDR="localhost"
     
@@ -95,6 +104,7 @@ fi
 echo "Starting single GPU training..."
 # Get a new free port
 PORT=$(find_free_port)
+echo "Using port: $PORT"
 export MASTER_PORT=$PORT
 export MASTER_ADDR="localhost"
 

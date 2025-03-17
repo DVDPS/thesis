@@ -43,8 +43,17 @@ def setup(rank, world_size):
         # Simple approach using environment variables that should already be set
         # This avoids the complexity of port selection which was causing issues
         if 'MASTER_PORT' in os.environ:
-            port = os.environ['MASTER_PORT']
-            logging.info(f"Rank {rank}: Using MASTER_PORT from environment: {port}")
+            port_str = os.environ['MASTER_PORT']
+            try:
+                # Try to clean the port string and convert to int
+                port_str = port_str.strip()
+                port = int(port_str)
+                logging.info(f"Rank {rank}: Using MASTER_PORT from environment: {port}")
+            except ValueError:
+                # If there's an issue with the port, use a default
+                port = 65432
+                os.environ['MASTER_PORT'] = str(port)
+                logging.info(f"Rank {rank}: Invalid port in environment, using default: {port}")
         else:
             # Use a consistent high port number for all ranks
             port = 65432
