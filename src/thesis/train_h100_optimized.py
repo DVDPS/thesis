@@ -39,8 +39,9 @@ def setup(rank, world_size):
     """
     try:
         logging.info(f"Rank {rank}: Starting setup process")
-        # Use a random port to avoid conflicts
-        port = 29500 + rank
+        # Use a random port to avoid conflicts - use a higher range to avoid common ports
+        base_port = 35000 + np.random.randint(0, 1000)  # Random base port between 35000-36000
+        port = base_port + rank
         os.environ['MASTER_ADDR'] = 'localhost'
         os.environ['MASTER_PORT'] = str(port)
         
@@ -51,22 +52,45 @@ def setup(rank, world_size):
         os.environ['NCCL_SOCKET_IFNAME'] = 'lo'  # Use loopback interface
         os.environ['NCCL_IB_DISABLE'] = '1'  # Disable InfiniBand
         
+        # Add more NCCL settings for better stability
+        os.environ['NCCL_BLOCKING_WAIT'] = '1'  # Use blocking wait
+        os.environ['NCCL_ASYNC_ERROR_HANDLING'] = '1'  # Enable async error handling
+        
         logging.info(f"Rank {rank}: Set NCCL environment variables")
         
         # Initialize the process group with timeout and a different backend as fallback
         logging.info(f"Rank {rank}: Attempting to initialize process group with NCCL backend")
-        try:
-            dist.init_process_group("nccl", rank=rank, world_size=world_size, timeout=datetime.timedelta(minutes=30))
-            logging.info(f"Rank {rank}: Successfully initialized process group with NCCL backend")
-        except Exception as e:
-            logging.warning(f"Rank {rank}: NCCL initialization failed: {e}, falling back to gloo backend")
+        
+        # Try multiple ports if the first one fails
+        max_retries = 3
+        for retry in range(max_retries):
             try:
-                logging.info(f"Rank {rank}: Attempting to initialize process group with gloo backend")
-                dist.init_process_group("gloo", rank=rank, world_size=world_size, timeout=datetime.timedelta(minutes=30))
-                logging.info(f"Rank {rank}: Successfully initialized process group with gloo backend")
-            except Exception as e2:
-                logging.error(f"Rank {rank}: Gloo initialization also failed: {e2}")
-                raise
+                if retry > 0:
+                    # Try a different port on retry
+                    port = base_port + rank + retry * 100
+                    os.environ['MASTER_PORT'] = str(port)
+                    logging.info(f"Rank {rank}: Retry {retry+1}/{max_retries} with port {port}")
+                
+                dist.init_process_group("nccl", rank=rank, world_size=world_size, timeout=datetime.timedelta(minutes=30))
+                logging.info(f"Rank {rank}: Successfully initialized process group with NCCL backend")
+                break
+            except Exception as e:
+                if retry == max_retries - 1:
+                    logging.warning(f"Rank {rank}: NCCL initialization failed after {max_retries} retries: {e}, falling back to gloo backend")
+                    try:
+                        logging.info(f"Rank {rank}: Attempting to initialize process group with gloo backend")
+                        # Try a completely different port for gloo
+                        gloo_port = 40000 + np.random.randint(0, 1000) + rank
+                        os.environ['MASTER_PORT'] = str(gloo_port)
+                        logging.info(f"Rank {rank}: Using port {gloo_port} for gloo backend")
+                        
+                        dist.init_process_group("gloo", rank=rank, world_size=world_size, timeout=datetime.timedelta(minutes=30))
+                        logging.info(f"Rank {rank}: Successfully initialized process group with gloo backend")
+                    except Exception as e2:
+                        logging.error(f"Rank {rank}: Gloo initialization also failed: {e2}")
+                        raise
+                else:
+                    logging.warning(f"Rank {rank}: NCCL initialization failed on attempt {retry+1}: {e}, retrying...")
         
         # Set device for this process
         logging.info(f"Rank {rank}: Setting CUDA device to {rank}")

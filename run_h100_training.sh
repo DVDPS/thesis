@@ -5,10 +5,19 @@
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 
 # Kill any existing processes that might be using the ports
+echo "Killing any existing training processes..."
 pkill -f train_h100_optimized
+pkill -f "python3 -m src.thesis"
+pkill -f "torch.distributed"
 
-# Wait a moment for processes to terminate
-sleep 2
+# Kill any processes using the common ports
+for port in $(seq 29500 29510) $(seq 35000 35100) $(seq 40000 40100); do
+  fuser -k $port/tcp 2>/dev/null
+done
+
+# Wait longer for processes to terminate
+echo "Waiting for processes to terminate..."
+sleep 5
 
 # Try to run with distributed training first
 echo "Attempting distributed training across all GPUs..."
