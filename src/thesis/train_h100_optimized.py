@@ -40,94 +40,47 @@ def setup(rank, world_size):
     try:
         logging.info(f"Rank {rank}: Starting setup process")
         
-        # Use a completely different port range to avoid conflicts
-        import socket
-        import random
-        
-        def is_port_available(port):
-            """Check if a port is available"""
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                try:
-                    s.bind(('localhost', port))
-                    return True
-                except socket.error:
-                    return False
-        
-        # Find an available port in a higher range
-        base_port = random.randint(45000, 55000)
-        port = None
-        
-        # Try to find an available port
-        for attempt in range(100):  # Try up to 100 different ports
-            test_port = base_port + attempt
-            if is_port_available(test_port):
-                port = test_port
-                break
-        
-        if port is None:
-            raise RuntimeError(f"Rank {rank}: Could not find an available port after 100 attempts")
-        
-        # Use the same port for all ranks to ensure they can communicate
-        if rank == 0:
-            # Only rank 0 selects the port, others will use the same
-            os.environ['MASTER_PORT'] = str(port)
+        # Simple approach using environment variables that should already be set
+        # This avoids the complexity of port selection which was causing issues
+        if 'MASTER_PORT' in os.environ:
+            port = os.environ['MASTER_PORT']
+            logging.info(f"Rank {rank}: Using MASTER_PORT from environment: {port}")
         else:
-            # Other ranks wait for rank 0 to select the port
-            # In a real distributed setting, this would be communicated via a file or other means
-            # For simplicity in this single-node multi-GPU setup, we'll use a fixed offset
-            os.environ['MASTER_PORT'] = str(port + rank)
-            
+            # Use a consistent high port number for all ranks
+            port = 65432
+            os.environ['MASTER_PORT'] = str(port)
+            logging.info(f"Rank {rank}: Set MASTER_PORT={port}")
+        
+        # Always use localhost as master address
         os.environ['MASTER_ADDR'] = 'localhost'
-        
-        logging.info(f"Rank {rank}: Set MASTER_ADDR=localhost, MASTER_PORT={os.environ['MASTER_PORT']}")
-        
-        # Set NCCL environment variables for better debugging and performance
-        os.environ['NCCL_DEBUG'] = 'INFO'
-        os.environ['NCCL_SOCKET_IFNAME'] = 'lo'  # Use loopback interface
-        os.environ['NCCL_IB_DISABLE'] = '1'  # Disable InfiniBand
-        
-        # Add more NCCL settings for better stability
-        os.environ['NCCL_BLOCKING_WAIT'] = '1'  # Use blocking wait
-        os.environ['NCCL_ASYNC_ERROR_HANDLING'] = '1'  # Enable async error handling
-        
-        logging.info(f"Rank {rank}: Set NCCL environment variables")
-        
-        # Initialize the process group with timeout and a different backend as fallback
-        logging.info(f"Rank {rank}: Attempting to initialize process group with NCCL backend")
-        
-        # Try multiple backends if the first one fails
-        backends = ["nccl", "gloo"]
-        success = False
-        
-        for backend in backends:
-            try:
-                logging.info(f"Rank {rank}: Trying to initialize with {backend} backend")
-                dist.init_process_group(
-                    backend, 
-                    rank=rank, 
-                    world_size=world_size, 
-                    timeout=datetime.timedelta(minutes=30)
-                )
-                logging.info(f"Rank {rank}: Successfully initialized process group with {backend} backend")
-                success = True
-                break
-            except Exception as e:
-                logging.warning(f"Rank {rank}: {backend} initialization failed: {e}")
-                
-                # Try a different port if this one failed
-                if backend == backends[0]:  # Only try a different port after the first backend fails
-                    new_port = int(os.environ['MASTER_PORT']) + 1000
-                    if is_port_available(new_port):
-                        os.environ['MASTER_PORT'] = str(new_port)
-                        logging.info(f"Rank {rank}: Trying again with port {new_port}")
-        
-        if not success:
-            raise RuntimeError(f"Rank {rank}: Failed to initialize process group with any backend")
+        logging.info(f"Rank {rank}: Set MASTER_ADDR=localhost")
         
         # Set device for this process
-        logging.info(f"Rank {rank}: Setting CUDA device to {rank}")
-        torch.cuda.set_device(rank)
-        logging.info(f"Rank {rank}: Process initialized successfully on port {os.environ['MASTER_PORT']}")
+        device = torch.device(f"cuda:{rank}")
+        torch.cuda.set_device(device)
+        logging.info(f"Rank {rank}: Set device to {device}")
+        
+        # Initialize the process group with extended timeout
+        backend = "nccl"  # Use NCCL for GPU communication
+        timeout = datetime.timedelta(minutes=30)
+        init_method = f"env://"  # Use environment variables
+        
+        logging.info(f"Rank {rank}: Initializing process group with {backend} backend")
+        logging.info(f"Rank {rank}: World size: {world_size}, Rank: {rank}")
+        
+        # Initialize process group with clear parameters
+        dist.init_process_group(
+            backend=backend,
+            init_method=init_method,
+            world_size=world_size,
+            rank=rank,
+            timeout=timeout
+        )
+        
+        # Sync to make sure everyone is initialized
+        torch.distributed.barrier()
+        logging.info(f"Rank {rank}: Process initialized successfully")
+        
     except Exception as e:
         logging.error(f"Error in setup for rank {rank}: {e}")
         raise
@@ -355,6 +308,25 @@ def train_distributed_ppo(rank, world_size, args):
             if episode_max_tile > max_tile_reached:
                 max_tile_reached = episode_max_tile
                 elapsed_time = time.time() - start_time
+                
+                # Try to sync max tile across processes
+                if world_size > 1:
+                    try:
+                        # Convert to tensor for communication
+                        max_tile_tensor = torch.tensor(max_tile_reached, device=device)
+                        # List to store max tiles from all processes
+                        max_tiles_list = [torch.zeros_like(max_tile_tensor) for _ in range(world_size)]
+                        # Gather max tiles from all processes
+                        dist.all_gather(max_tiles_list, max_tile_tensor)
+                        # Find the absolute maximum across all processes
+                        global_max_tile = max([t.item() for t in max_tiles_list])
+                        
+                        if global_max_tile > max_tile_reached:
+                            max_tile_reached = global_max_tile
+                            logging.info(f"Rank {rank}: Updated max tile to {max_tile_reached} from another process")
+                    except Exception as e:
+                        logging.error(f"Error syncing max tile: {e}")
+                
                 if rank == 0:
                     logging.info(f"New max tile reached: {max_tile_reached} at episode {episode} (time: {elapsed_time:.2f}s)")
                     # Log to the dedicated max tile log file
@@ -364,10 +336,13 @@ def train_distributed_ppo(rank, world_size, args):
             # Count max tiles
             if episode_max_tile in max_tile_counts:
                 max_tile_counts[episode_max_tile] += 1
-                max_tile_episodes[episode_max_tile].append(episode)
+                if str(episode_max_tile) in max_tile_episodes:
+                    max_tile_episodes[str(episode_max_tile)].append(episode)
+                else:
+                    max_tile_episodes[str(episode_max_tile)] = [episode]
             else:
                 max_tile_counts[episode_max_tile] = 1
-                max_tile_episodes[episode_max_tile] = [episode]
+                max_tile_episodes[str(episode_max_tile)] = [episode]
             
             # Record episode metrics
             episode_rewards.append(episode_reward)
@@ -535,7 +510,9 @@ def train_distributed_ppo(rank, world_size, args):
                     
                     # Log max tile distribution
                     if max_tile_counts:
-                        logging.info(f"Max Tile Distribution: {json.dumps(max_tile_counts)}")
+                        # Convert all keys to strings for JSON serialization
+                        max_tile_counts_json = {str(k): v for k, v in max_tile_counts.items()}
+                        logging.info(f"Max Tile Distribution: {json.dumps(max_tile_counts_json)}")
                 except Exception as e:
                     logging.error(f"Error in logging for rank {rank}, episode {episode}: {e}")
             
@@ -577,8 +554,11 @@ def train_distributed_ppo(rank, world_size, args):
             
             # Log final max tile statistics
             logging.info(f"Final Max Tile Reached: {max_tile_reached}")
-            logging.info(f"Max Tile Distribution: {json.dumps(max_tile_counts)}")
-            logging.info(f"Max Tile Episodes: {json.dumps({str(k): v for k, v in max_tile_episodes.items()})}")
+            # Convert all keys to strings for JSON serialization
+            max_tile_counts_json = {str(k): v for k, v in max_tile_counts.items()}
+            logging.info(f"Max Tile Distribution: {json.dumps(max_tile_counts_json)}")
+            # max_tile_episodes already has string keys now
+            logging.info(f"Max Tile Episodes: {json.dumps(max_tile_episodes)}")
             
             # Save final model
             final_path = os.path.join(args.output_dir, "final_model.pt")
@@ -794,6 +774,7 @@ def main():
     
     # Get the number of available GPUs
     world_size = torch.cuda.device_count()
+    print(f"Detected {world_size} GPUs")
     
     if world_size == 0:
         print("No GPUs available. Running on CPU.")
@@ -803,44 +784,120 @@ def main():
     use_distributed = world_size > 1 and not args.single_gpu
     
     if use_distributed:
-        print(f"Using {world_size} GPUs for distributed training")
+        print(f"Preparing for distributed training across {world_size} GPUs")
         
-        # Try distributed training with timeout
+        # Set required environment variables if not already set
+        if 'MASTER_ADDR' not in os.environ:
+            os.environ['MASTER_ADDR'] = 'localhost'
+            print("Set MASTER_ADDR=localhost")
+            
+        if 'MASTER_PORT' not in os.environ:
+            os.environ['MASTER_PORT'] = '65432'
+            print(f"Set MASTER_PORT=65432")
+        
+        print(f"Using MASTER_ADDR={os.environ['MASTER_ADDR']}, MASTER_PORT={os.environ['MASTER_PORT']}")
+        
+        # Try distributed training
         try:
-            print("Spawning processes for distributed training...")
+            # We'll use multiprocessing.spawn instead of torch.multiprocessing.spawn
+            # for better control and error handling
+            import multiprocessing as python_mp
+            from torch.multiprocessing import spawn as torch_spawn
             
-            # Create a process for distributed training
-            import multiprocessing
-            import signal
-            
-            def timeout_handler(signum, frame):
-                print(f"Distributed training initialization timed out after {args.timeout} seconds")
-                raise TimeoutError("Distributed training initialization timed out")
-            
-            # Set timeout
-            signal.signal(signal.SIGALRM, timeout_handler)
-            signal.alarm(args.timeout)
-            
+            # Only use signal-based timeout on Linux systems
+            is_linux = True
             try:
-                mp.spawn(
-                    train_distributed_ppo,
-                    args=(world_size, args),
-                    nprocs=world_size,
-                    join=True
-                )
-                # Cancel the alarm if training completes successfully
-                signal.alarm(0)
-                print("Distributed training completed successfully")
-            except TimeoutError:
-                print("Timeout occurred during distributed training initialization")
-                raise
-            finally:
-                # Cancel the alarm in case of any other exception
-                signal.alarm(0)
+                import signal
+                # Test if SIGALRM is available (Linux/Unix only)
+                signal.SIGALRM
+            except (ImportError, AttributeError):
+                is_linux = False
+            
+            if is_linux:
+                print("Using SIGALRM-based timeout")
+                
+                def timeout_handler(signum, frame):
+                    print(f"Distributed training initialization timed out after {args.timeout} seconds")
+                    raise TimeoutError("Distributed training initialization timed out")
+                
+                # Set timeout
+                signal.signal(signal.SIGALRM, timeout_handler)
+                signal.alarm(args.timeout)
+                
+                try:
+                    print("Spawning processes for distributed training...")
+                    torch_spawn(
+                        train_distributed_ppo,
+                        args=(world_size, args),
+                        nprocs=world_size,
+                        join=True
+                    )
+                    # Cancel the alarm if training completes successfully
+                    signal.alarm(0)
+                    print("Distributed training completed successfully")
+                except TimeoutError:
+                    print("Timeout occurred during distributed training initialization")
+                    raise
+                finally:
+                    # Cancel the alarm in case of any other exception
+                    signal.alarm(0)
+            else:
+                print("Using manual timeout without SIGALRM")
+                # For systems without SIGALRM, use a manual timeout approach
+                import threading
+                import time
+                
+                class TimeoutError(Exception):
+                    pass
+                
+                def run_with_timeout(timeout_seconds):
+                    # Flag to indicate if the function completed
+                    completed = [False]
+                    
+                    # Function to run in a separate thread
+                    def target_fn():
+                        try:
+                            torch_spawn(
+                                train_distributed_ppo,
+                                args=(world_size, args),
+                                nprocs=world_size,
+                                join=True
+                            )
+                            completed[0] = True
+                        except Exception as e:
+                            print(f"Error in distributed training: {e}")
+                            raise
+                    
+                    # Start the thread
+                    thread = threading.Thread(target=target_fn)
+                    thread.daemon = True  # Allow the thread to be killed when the main program exits
+                    thread.start()
+                    
+                    # Wait for the thread to complete or timeout
+                    thread.join(timeout_seconds)
+                    
+                    if not completed[0]:
+                        raise TimeoutError(f"Function timed out after {timeout_seconds} seconds")
+                
+                try:
+                    print("Spawning processes for distributed training with manual timeout...")
+                    run_with_timeout(args.timeout)
+                    print("Distributed training completed successfully")
+                except TimeoutError:
+                    print("Timeout occurred during distributed training initialization")
+                    raise
                 
         except Exception as e:
             logging.error(f"Distributed training failed: {e}")
             logging.info("Falling back to single GPU training")
+            
+            # Clean up any orphaned processes
+            try:
+                import subprocess
+                subprocess.run(["pkill", "-f", "train_h100_optimized"])
+                time.sleep(2)
+            except:
+                pass
             
             # Fall back to single GPU training
             args.single_gpu = True
@@ -848,7 +905,7 @@ def main():
     
     # If not using distributed training or if distributed training failed
     if not use_distributed:
-        print("Using single GPU training")
+        print("Running with single GPU training")
         # Run on a single GPU
         train_distributed_ppo(0, 1, args)
 
