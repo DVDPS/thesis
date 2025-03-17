@@ -38,15 +38,26 @@ def setup(rank, world_size):
     Initialize the distributed environment.
     """
     try:
+        # Use a random port to avoid conflicts
+        port = 29500 + rank
         os.environ['MASTER_ADDR'] = 'localhost'
-        os.environ['MASTER_PORT'] = '12355'
+        os.environ['MASTER_PORT'] = str(port)
         
-        # Initialize the process group with timeout
-        dist.init_process_group("nccl", rank=rank, world_size=world_size, timeout=datetime.timedelta(minutes=30))
+        # Set NCCL environment variables for better debugging and performance
+        os.environ['NCCL_DEBUG'] = 'INFO'
+        os.environ['NCCL_SOCKET_IFNAME'] = 'lo'  # Use loopback interface
+        os.environ['NCCL_IB_DISABLE'] = '1'  # Disable InfiniBand
+        
+        # Initialize the process group with timeout and a different backend as fallback
+        try:
+            dist.init_process_group("nccl", rank=rank, world_size=world_size, timeout=datetime.timedelta(minutes=30))
+        except Exception as e:
+            logging.warning(f"NCCL initialization failed: {e}, falling back to gloo backend")
+            dist.init_process_group("gloo", rank=rank, world_size=world_size, timeout=datetime.timedelta(minutes=30))
         
         # Set device for this process
         torch.cuda.set_device(rank)
-        logging.info(f"Process {rank} initialized successfully")
+        logging.info(f"Process {rank} initialized successfully on port {port}")
     except Exception as e:
         logging.error(f"Error in setup for rank {rank}: {e}")
         raise
@@ -687,6 +698,7 @@ def main():
     parser.add_argument("--update-epochs", type=int, default=4, help="Number of update epochs")
     parser.add_argument("--target-kl", type=float, default=0.01, help="Target KL divergence")
     parser.add_argument("--grad-accumulation-steps", type=int, default=4, help="Gradient accumulation steps")
+    parser.add_argument("--single-gpu", action="store_true", help="Force single GPU training")
     
     # Logging and evaluation
     parser.add_argument("--log-interval", type=int, default=10, help="Episodes between logging")
@@ -705,18 +717,33 @@ def main():
         print("No GPUs available. Running on CPU.")
         world_size = 1
     
-    print(f"Using {world_size} GPUs for distributed training")
+    # Check if we should use distributed training
+    use_distributed = world_size > 1 and not args.single_gpu
     
-    # Spawn processes
-    try:
-        mp.spawn(
-            train_distributed_ppo,
-            args=(world_size, args),
-            nprocs=world_size,
-            join=True
-        )
-    except Exception as e:
-        logging.error(f"Error in main process: {e}")
+    if use_distributed:
+        print(f"Using {world_size} GPUs for distributed training")
+        
+        # Try distributed training
+        try:
+            mp.spawn(
+                train_distributed_ppo,
+                args=(world_size, args),
+                nprocs=world_size,
+                join=True
+            )
+        except Exception as e:
+            logging.error(f"Distributed training failed: {e}")
+            logging.info("Falling back to single GPU training")
+            
+            # Fall back to single GPU training
+            args.single_gpu = True
+            use_distributed = False
+    
+    # If not using distributed training or if distributed training failed
+    if not use_distributed:
+        print("Using single GPU training")
+        # Run on a single GPU
+        train_distributed_ppo(0, 1, args)
 
 if __name__ == "__main__":
     main() 
