@@ -313,30 +313,21 @@ class PPOAgent:
             self.valid_masks.append(torch.ones(4, device=device))
     
     def compute_advantages(self, next_value=0.0):
-        """
-        Compute advantages using Generalized Advantage Estimation (GAE).
-        
-        Args:
-            next_value: Value estimate for the final state
-        """
-        # Convert lists to tensors
+    # Convert rewards, values, and dones to torch tensors
         rewards = torch.tensor(self.rewards, dtype=torch.float, device=device)
+    # Append next_value to values for bootstrapping
         values = torch.tensor(self.values + [next_value], dtype=torch.float, device=device)
         dones = torch.tensor(self.dones, dtype=torch.float, device=device)
-        
-        # Initialize advantage array
+
         advantages = torch.zeros_like(rewards)
-        
-        # Compute GAE
-        gae = 0
+        gae = 0.0
+    # Iterate backwards over the rewards to compute GAE
         for t in reversed(range(len(rewards))):
-            delta = rewards[t] + self.gamma * values[t+1] * (1 - dones[t]) - values[t]
+            delta = rewards[t] + self.gamma * values[t + 1] * (1 - dones[t]) - values[t]
             gae = delta + self.gamma * self.gae_lambda * (1 - dones[t]) * gae
             advantages[t] = gae
-        
-        # Compute returns
+
         returns = advantages + values[:-1]
-        
         return advantages, returns
     
     def update(self, next_value=0.0):
