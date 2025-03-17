@@ -18,14 +18,44 @@ class PrioritizedReplayBuffer:
         self.pos = 0
         self.priorities = np.zeros((capacity,), dtype=np.float32)
 
+    def __len__(self):
+        return len(self.buffer)
+
     def push(self, state, action, reward, next_state, done):
-        max_prio = self.priorities.max() if self.buffer else 1.0
-        if len(self.buffer) < self.capacity:
-            self.buffer.append((state, action, reward, next_state, done))
-        else:
-            self.buffer[self.pos] = (state, action, reward, next_state, done)
-        self.priorities[self.pos] = max_prio
-        self.pos = (self.pos + 1) % self.capacity
+        # Validate transition components
+        try:
+            if not isinstance(state, (np.ndarray, list)):
+                logging.error(f"Invalid state type: {type(state)}")
+                return
+            if not isinstance(action, (int, np.integer)):
+                logging.error(f"Invalid action type: {type(action)}")
+                return
+            if not isinstance(reward, (float, int, np.floating, np.integer)):
+                logging.error(f"Invalid reward type: {type(reward)}")
+                return
+            if not isinstance(next_state, (np.ndarray, list)):
+                logging.error(f"Invalid next_state type: {type(next_state)}")
+                return
+            if not isinstance(done, bool):
+                logging.error(f"Invalid done type: {type(done)}")
+                return
+                
+            # Create and validate transition
+            transition = (state, action, reward, next_state, done)
+            if len(transition) != 5:
+                logging.error(f"Invalid transition length: {len(transition)}")
+                return
+                
+            max_prio = self.priorities.max() if self.buffer else 1.0
+            if len(self.buffer) < self.capacity:
+                self.buffer.append(transition)
+            else:
+                self.buffer[self.pos] = transition
+            self.priorities[self.pos] = max_prio
+            self.pos = (self.pos + 1) % self.capacity
+        except Exception as e:
+            logging.error(f"Error pushing transition: {str(e)}")
+            return
 
     def sample(self, batch_size, beta=0.4):
         if len(self.buffer) == self.capacity:
@@ -34,7 +64,7 @@ class PrioritizedReplayBuffer:
             prios = self.priorities[:self.pos]
         
         # Ensure priorities are positive and handle zero-sum case
-        prios = np.maximum(prios, 1e-8)  # Minimum priority of 1e-8
+        prios = np.maximum(prios, 1e-8)
         
         try:
             # Calculate probabilities with numerical stability
@@ -42,37 +72,58 @@ class PrioritizedReplayBuffer:
             probs_sum = np.sum(probs)
             
             if not np.isfinite(probs_sum) or probs_sum <= 0:
-                # If sum is invalid, use uniform distribution
                 probs = np.ones(len(self.buffer)) / len(self.buffer)
             else:
-                # Normalize probabilities safely
                 probs = np.divide(probs, probs_sum, out=np.zeros_like(probs), where=probs_sum!=0)
-                # Ensure no NaN values
                 probs = np.nan_to_num(probs, nan=1.0/len(self.buffer))
-                # Re-normalize if needed
                 probs = probs / np.sum(probs)
             
-            # Sample indices
             indices = np.random.choice(len(self.buffer), batch_size, p=probs)
-            
-            # Calculate weights with protection against division by zero
             weights = np.power(len(self.buffer) * np.maximum(probs[indices], 1e-10), -beta)
             weights = weights / np.maximum(np.max(weights), 1e-10)
             
-            samples = [self.buffer[idx] for idx in indices]
-            return samples, indices, torch.tensor(weights, dtype=torch.float32, device=device)
+            # Validate and collect samples
+            samples = []
+            valid_indices = []
+            for idx in indices:
+                transition = self.buffer[idx]
+                try:
+                    if len(transition) != 5:
+                        logging.error(f"Invalid transition at index {idx}: {transition}")
+                        continue
+                    state, action, reward, next_state, done = transition
+                    if not all(x is not None for x in transition):
+                        logging.error(f"None values in transition at index {idx}")
+                        continue
+                    samples.append(transition)
+                    valid_indices.append(idx)
+                except Exception as e:
+                    logging.error(f"Error processing transition at index {idx}: {str(e)}")
+                    continue
+            
+            if len(samples) != batch_size:
+                logging.warning(f"Got {len(samples)} valid samples, expected {batch_size}")
+                # Pad with duplicates if necessary
+                while len(samples) < batch_size:
+                    idx = np.random.choice(len(valid_indices))
+                    samples.append(samples[idx])
+                    valid_indices.append(valid_indices[idx])
+            
+            return samples, valid_indices, torch.tensor(weights[:len(valid_indices)], dtype=torch.float32, device=device)
             
         except Exception as e:
-            # Fallback to uniform sampling if any numerical issues occur
-            logging.warning(f"Falling back to uniform sampling due to: {str(e)}")
-            indices = np.random.choice(len(self.buffer), batch_size)
-            weights = np.ones(batch_size)
-            samples = [self.buffer[idx] for idx in indices]
-            return samples, indices, torch.tensor(weights, dtype=torch.float32, device=device)
+            logging.error(f"Error during sampling: {str(e)}")
+            raise e
 
     def update_priorities(self, batch_indices, batch_priorities):
-        for idx, prio in zip(batch_indices, batch_priorities):
-            self.priorities[idx] = max(1e-8, prio)  # Ensure minimum priority
+        try:
+            for idx, prio in zip(batch_indices, batch_priorities):
+                if 0 <= idx < self.capacity:
+                    self.priorities[idx] = max(1e-8, prio)
+                else:
+                    logging.error(f"Invalid index for priority update: {idx}")
+        except Exception as e:
+            logging.error(f"Error updating priorities: {str(e)}")
 
 #############################################
 # Residual Block                            #
@@ -103,7 +154,7 @@ class DQNAgent(nn.Module):
       - A prioritized replay buffer for better sample efficiency
       - Mixed precision training (using torch.cuda.amp) to reduce memory usage and enable larger batch sizes
     """
-    def __init__(self, board_size=4, hidden_dim=256, input_channels=16,
+    def __init__(self, board_size=4, hidden_dim=1024, input_channels=16,
                  buffer_size=100000, batch_size=512, gamma=0.99,
                  epsilon_start=1.0, epsilon_end=0.1, epsilon_decay=0.995,
                  target_update_freq=1000, update_freq=4, learning_rate=0.0001,
@@ -129,31 +180,42 @@ class DQNAgent(nn.Module):
             self.replay_buffer = PrioritizedReplayBuffer(buffer_size)
 
         # --- Convolutional Feature Extraction ---
-        self.conv1 = nn.Conv2d(input_channels, 64, kernel_size=3, padding='same')
-        self.bn1 = nn.BatchNorm2d(64)
-        self.res_blocks = nn.ModuleList([ResidualBlock(64) for _ in range(4)])
-        self.conv2 = nn.Conv2d(64, 128, kernel_size=3, padding='same')
-        self.bn2 = nn.BatchNorm2d(128)
-        self.skip_conv = nn.Conv2d(input_channels, 128, kernel_size=1)
-        self.skip_bn = nn.BatchNorm2d(128)
+        self.conv1 = nn.Conv2d(input_channels, 256, kernel_size=3, padding='same')
+        self.bn1 = nn.BatchNorm2d(256)
+        # Increase number of residual blocks from 6 to 8
+        self.res_blocks = nn.ModuleList([ResidualBlock(256) for _ in range(8)])
+        self.conv2 = nn.Conv2d(256, 512, kernel_size=3, padding='same')
+        self.bn2 = nn.BatchNorm2d(512)
+        self.skip_conv = nn.Conv2d(input_channels, 512, kernel_size=1)
+        self.skip_bn = nn.BatchNorm2d(512)
         
-        conv_output_size = 128 * board_size * board_size
+        conv_output_size = 512 * board_size * board_size
         self.fc1 = nn.Linear(conv_output_size, hidden_dim)
         self.bn_fc1 = nn.BatchNorm1d(hidden_dim)
-        self.dropout1 = nn.Dropout(0.2)
+        self.dropout1 = nn.Dropout(0.3)  # Increased dropout for better regularization
         
         # --- Dueling Architecture: Advantage and Value Streams ---
         self.fc_adv = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim // 2),
             nn.BatchNorm1d(hidden_dim // 2),
             nn.ReLU(),
-            nn.Linear(hidden_dim // 2, 4)  # Output: advantage for each of 4 actions
+            nn.Dropout(0.2),
+            nn.Linear(hidden_dim // 2, hidden_dim // 4),
+            nn.BatchNorm1d(hidden_dim // 4),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(hidden_dim // 4, 4)  # Output: advantage for each of 4 actions
         )
         self.fc_val = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim // 2),
             nn.BatchNorm1d(hidden_dim // 2),
             nn.ReLU(),
-            nn.Linear(hidden_dim // 2, 1)  # Output: state-value
+            nn.Dropout(0.2),
+            nn.Linear(hidden_dim // 2, hidden_dim // 4),
+            nn.BatchNorm1d(hidden_dim // 4),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(hidden_dim // 4, 1)  # Output: state-value
         )
 
         self.apply(self._init_weights)
@@ -240,49 +302,74 @@ class DQNAgent(nn.Module):
             next_state = next_state.cpu().numpy()
         self.replay_buffer.push(state, action, reward, next_state, done)
     
-    def update(self, beta=0.4):
-        if self.is_target_network:
-            return 0.0
-        self.step_count += 1
-        if self.step_count % self.update_freq != 0:
-            return 0.0
-        if len(self.replay_buffer.buffer) < self.batch_size:
-            return 0.0
+    def update(self, beta=0.4, batch_size=None):
+        """Update the network weights using experience replay."""
+        if self.update_count % self.update_freq != 0:
+            self.update_count += 1
+            return None
+
+        # Use provided batch size or default to self.batch_size
+        current_batch_size = batch_size if batch_size is not None else self.batch_size
         
-        batch, indices, weights = self.replay_buffer.sample(self.batch_size, beta=beta)
-        states, actions, rewards, next_states, dones = zip(*batch)
-        states = torch.tensor(np.array(states), dtype=torch.float, device=device)
-        actions = torch.tensor(np.array(actions), dtype=torch.long, device=device)
-        rewards = torch.tensor(np.array(rewards), dtype=torch.float, device=device)
-        next_states = torch.tensor(np.array(next_states), dtype=torch.float, device=device)
-        dones = torch.tensor(np.array(dones), dtype=torch.float, device=device)
+        if len(self.replay_buffer) < current_batch_size:
+            return None
         
-        # Use mixed precision for forward and loss computation
-        with torch.amp.autocast('cuda'):
-            current_q_values, _ = self(states)
-            current_q_values = current_q_values.gather(1, actions.unsqueeze(1)).squeeze(1)
-            with torch.no_grad():
-                next_q_values, _ = self.target_network(next_states)
-                online_q_values, _ = self(next_states)
-                best_actions = torch.argmax(online_q_values, dim=1)
-                max_next_q_values = next_q_values.gather(1, best_actions.unsqueeze(1)).squeeze(1)
-                target_q_values = rewards + (1 - dones) * self.gamma * max_next_q_values
-            loss = (F.smooth_l1_loss(current_q_values, target_q_values, reduction='none') * weights).mean()
-        
-        self.optimizer.zero_grad()
-        self.scaler.scale(loss).backward()
-        torch.nn.utils.clip_grad_norm_(self.parameters(), 1.0)
-        self.scaler.step(self.optimizer)
-        self.scaler.update()
-        
-        self.update_count += 1
-        if self.update_count % self.target_update_freq == 0:
-            self.update_target_network()
+        try:
+            # Sample from replay buffer with current batch size
+            transitions, indices, weights = self.replay_buffer.sample(current_batch_size, beta)
             
-        self.epsilon = max(self.epsilon_end, self.epsilon * self.epsilon_decay)
-        td_errors = torch.abs(current_q_values - target_q_values).detach().cpu().numpy() + 1e-6
-        self.replay_buffer.update_priorities(indices, td_errors)
-        return loss.item()
+            # Convert transitions to numpy arrays
+            states = []
+            actions = []
+            rewards = []
+            next_states = []
+            dones = []
+            
+            for transition in transitions:
+                state, action, reward, next_state, done = transition
+                states.append(state)
+                actions.append(action)
+                rewards.append(reward)
+                next_states.append(next_state)
+                dones.append(done)
+            
+            # Convert to tensors
+            states = torch.tensor(np.array(states), dtype=torch.float, device=device)
+            actions = torch.tensor(np.array(actions), dtype=torch.long, device=device)
+            rewards = torch.tensor(np.array(rewards), dtype=torch.float, device=device)
+            next_states = torch.tensor(np.array(next_states), dtype=torch.float, device=device)
+            dones = torch.tensor(np.array(dones), dtype=torch.float, device=device)
+            
+            # Use mixed precision for forward and loss computation
+            with torch.amp.autocast('cuda'):
+                current_q_values, _ = self(states)
+                current_q_values = current_q_values.gather(1, actions.unsqueeze(1)).squeeze(1)
+                with torch.no_grad():
+                    next_q_values, _ = self.target_network(next_states)
+                    online_q_values, _ = self(next_states)
+                    best_actions = torch.argmax(online_q_values, dim=1)
+                    max_next_q_values = next_q_values.gather(1, best_actions.unsqueeze(1)).squeeze(1)
+                    target_q_values = rewards + (1 - dones) * self.gamma * max_next_q_values
+                loss = (F.smooth_l1_loss(current_q_values, target_q_values, reduction='none') * weights).mean()
+            
+            self.optimizer.zero_grad()
+            self.scaler.scale(loss).backward()
+            torch.nn.utils.clip_grad_norm_(self.parameters(), 1.0)
+            self.scaler.step(self.optimizer)
+            self.scaler.update()
+            
+            self.update_count += 1
+            if self.update_count % self.target_update_freq == 0:
+                self.update_target_network()
+                
+            self.epsilon = max(self.epsilon_end, self.epsilon * self.epsilon_decay)
+            td_errors = torch.abs(current_q_values - target_q_values).detach().cpu().numpy() + 1e-6
+            self.replay_buffer.update_priorities(indices, td_errors)
+            return loss.item()
+            
+        except Exception as e:
+            logging.error(f"Error in update: {str(e)}")
+            return None
     
     def update_target_network(self):
         if not self.is_target_network:

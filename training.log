@@ -4182,3 +4182,1253 @@ Evaluating enhanced MCTS agent...
  [128,  16,  32,   8],
  [  4,   2,  16,   4],
  [  8,   4,   8,   2]]
+2025-03-06 12:03:24,316 - INFO - Starting training with device: cuda
+2025-03-06 12:03:24,317 - INFO - Model parameters: 3394954
+2025-03-06 12:03:24,588 - INFO - New highest tile achieved: 128 (Episode 1)
+2025-03-06 12:03:24,588 - INFO - Final board state for new max tile 128:
+[[  4,   2,   4,   2],
+ [ 64,   4,   8,   4],
+ [128,  16,   2,   8],
+ [  4,   8,   4,   2]]
+2025-03-06 12:03:24,639 - INFO - New best score: 1270.79998421669 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-06 12:03:24,639 - INFO - Final board state for new best score 1270.79998421669:
+[[  4,   2,   4,   2],
+ [ 64,   4,   8,   4],
+ [128,  16,   2,   8],
+ [  4,   8,   4,   2]]
+2025-03-06 12:03:28,032 - INFO - New best score: 1387.3999814391136 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-06 12:03:28,033 - INFO - Final board state for new best score 1387.3999814391136:
+[[  2,   8, 128,   4],
+ [ 16,  32,   2,  16],
+ [  8,  16,  64,   4],
+ [  2,   8,   4,   2]]
+2025-03-06 12:03:32,832 - INFO - New best score: 1389.9999850988388 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-06 12:03:32,832 - INFO - Final board state for new best score 1389.9999850988388:
+[[  2,   4,  16,   2],
+ [  4,   2,  32,  16],
+ [  8,  16, 128,   8],
+ [  4,   2,   4,   2]]
+2025-03-06 12:03:34,427 - INFO - New highest tile achieved: 256 (Episode 13)
+2025-03-06 12:03:34,428 - INFO - Final board state for new max tile 256:
+[[  2,  16,   2,   4],
+ [ 16, 256,   4,   2],
+ [  4,  32,   2,  64],
+ [  2,   8,   4,   2]]
+2025-03-06 12:03:34,534 - INFO - New best score: 1899.599972486496 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-06 12:03:34,534 - INFO - Final board state for new best score 1899.599972486496:
+[[  2,  16,   2,   4],
+ [ 16, 256,   4,   2],
+ [  4,  32,   2,  64],
+ [  2,   8,   4,   2]]
+2025-03-06 12:03:47,482 - INFO - New best score: 2125.1999764442444 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-06 12:03:47,483 - INFO - Final board state for new best score 2125.1999764442444:
+[[  2,   8,  16,   4],
+ [  8, 256,   8,   2],
+ [  4,   2,  16,   4],
+ [  2,  16,   8,   2]]
+2025-03-06 12:04:12,863 - INFO - New best score: 2206.999960899353 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-06 12:04:12,863 - INFO - Final board state for new best score 2206.999960899353:
+[[  4,   2,   4, 128],
+ [  2,  16,  64,   4],
+ [  8, 256,  32,   2],
+ [  4,   2,  16,   4]]
+2025-03-06 12:05:15,493 - INFO - New best score: 2370.199966430664 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-06 12:05:15,494 - INFO - Final board state for new best score 2370.199966430664:
+[[  8,  64,   4,   2],
+ [  4, 128,  16,   8],
+ [  2, 256,   8,   4],
+ [  4,  16,   4,   2]]
+2025-03-06 12:05:24,116 - INFO - Episode 100/10000 - Avg Reward: 1210.76 - Avg Max Tile: 105.28 - Epsilon: 0.267 - Beta: 0.401
+2025-03-06 12:05:36,302 - INFO - New best score: 2631.3999503850937 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-06 12:05:36,302 - INFO - Final board state for new best score 2631.3999503850937:
+[[256,   8,   2,   4],
+ [  8, 256,  32,   8],
+ [  4,  64,   8,  16],
+ [ 16,   8,   4,   2]]
+2025-03-06 12:07:22,502 - INFO - New best score: 2942.599976539612 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-06 12:07:22,503 - INFO - Final board state for new best score 2942.599976539612:
+[[256,   8,   4,   2],
+ [  4,   2, 128,   8],
+ [ 64,  32,   8,   4],
+ [  4,  16,   4,   2]]
+2025-03-06 12:07:56,432 - INFO - New highest tile achieved: 512 (Episode 191)
+2025-03-06 12:07:56,433 - INFO - Final board state for new max tile 512:
+[[  8,   4,  64,   4],
+ [512,  16,   8,   2],
+ [  8,  32,   4,   8],
+ [  4,  16,   2,   4]]
+2025-03-06 12:07:57,171 - INFO - New best score: 3719.1999609470367 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-06 12:07:57,172 - INFO - Final board state for new best score 3719.1999609470367:
+[[  8,   4,  64,   4],
+ [512,  16,   8,   2],
+ [  8,  32,   4,   8],
+ [  4,  16,   2,   4]]
+2025-03-06 12:08:13,096 - INFO - Episode 200/10000 - Avg Reward: 1468.50 - Avg Max Tile: 126.40 - Epsilon: 0.051 - Beta: 0.401
+2025-03-06 12:11:27,634 - INFO - Episode 300/10000 - Avg Reward: 1663.86 - Avg Max Tile: 145.28 - Epsilon: 0.050 - Beta: 0.402
+2025-03-06 12:14:34,698 - INFO - Episode 400/10000 - Avg Reward: 1593.93 - Avg Max Tile: 136.96 - Epsilon: 0.050 - Beta: 0.402
+2025-03-06 12:17:38,683 - INFO - Episode 500/10000 - Avg Reward: 1552.92 - Avg Max Tile: 129.28 - Epsilon: 0.050 - Beta: 0.403
+2025-03-06 12:18:51,939 - INFO - New best score: 3757.999966979027 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-06 12:18:51,939 - INFO - Final board state for new best score 3757.999966979027:
+[[512,  16,   8,   2],
+ [  8,  32,  16,   8],
+ [  2,   4,   8,   4],
+ [ 16,   8,   4,   2]]
+2025-03-06 12:19:28,190 - INFO - New best score: 5022.399933934212 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-06 12:19:28,191 - INFO - Final board state for new best score 5022.399933934212:
+[[512,  64,   4,  16],
+ [  8, 256,  32,   8],
+ [ 32,  64,   8,   4],
+ [  2,  32,  16,   2]]
+2025-03-06 12:20:57,396 - INFO - Episode 600/10000 - Avg Reward: 1654.22 - Avg Max Tile: 142.08 - Epsilon: 0.050 - Beta: 0.404
+2025-03-06 12:24:03,452 - INFO - Episode 700/10000 - Avg Reward: 1551.12 - Avg Max Tile: 126.72 - Epsilon: 0.050 - Beta: 0.404
+2025-03-06 12:26:59,522 - INFO - Episode 800/10000 - Avg Reward: 1433.28 - Avg Max Tile: 115.52 - Epsilon: 0.050 - Beta: 0.405
+2025-03-06 12:30:09,131 - INFO - Episode 900/10000 - Avg Reward: 1559.18 - Avg Max Tile: 131.84 - Epsilon: 0.050 - Beta: 0.405
+2025-03-06 12:33:40,290 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_1000.pt
+2025-03-06 12:33:40,291 - INFO - Episode 1000/10000 - Avg Reward: 1638.99 - Avg Max Tile: 133.60 - Epsilon: 0.050 - Beta: 0.406
+2025-03-06 12:36:44,536 - INFO - Episode 1100/10000 - Avg Reward: 1519.86 - Avg Max Tile: 125.76 - Epsilon: 0.050 - Beta: 0.407
+2025-03-06 12:40:40,374 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_1000.pt
+2025-03-06 12:40:41,570 - INFO - Resuming from episode 1000
+2025-03-06 12:40:41,571 - INFO - Previous best score: 5022.399933934212
+2025-03-06 12:40:41,571 - INFO - Previous highest tile: 512
+2025-03-06 12:40:41,571 - INFO - Current epsilon: 0.050
+2025-03-06 12:40:41,571 - INFO - Starting training with device: cuda
+2025-03-06 12:40:41,572 - INFO - Model parameters: 3394954
+2025-03-06 12:40:41,572 - INFO - Episode 1000: Reset epsilon to 0.3 to encourage exploration
+2025-03-06 12:44:10,136 - INFO - Episode 1100/10000 - Avg Reward: 1433.26 - Avg Max Tile: 126.72 - Epsilon: 0.058 - Beta: 0.407
+2025-03-06 12:44:29,859 - INFO - New best score: 5120.799956679344 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-06 12:44:29,860 - INFO - Final board state for new best score 5120.799956679344:
+[[512,   8,   2,   4],
+ [  4, 256,  16,   2],
+ [  8,   4,   2,   4],
+ [  2,  32,   4,   2]]
+2025-03-06 12:48:07,149 - INFO - Episode 1200/10000 - Avg Reward: 1614.55 - Avg Max Tile: 136.80 - Epsilon: 0.050 - Beta: 0.407
+2025-03-06 12:52:03,183 - INFO - Episode 1300/10000 - Avg Reward: 1625.05 - Avg Max Tile: 141.60 - Epsilon: 0.050 - Beta: 0.408
+2025-03-06 12:56:03,258 - INFO - Episode 1400/10000 - Avg Reward: 1588.53 - Avg Max Tile: 135.68 - Epsilon: 0.050 - Beta: 0.408
+2025-03-06 13:00:05,088 - INFO - Episode 1500/10000 - Avg Reward: 1622.83 - Avg Max Tile: 140.00 - Epsilon: 0.050 - Beta: 0.409
+2025-03-06 13:01:27,191 - INFO - New best score: 5234.399943590164 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-06 13:01:27,192 - INFO - Final board state for new best score 5234.399943590164:
+[[512, 256,  64,  16],
+ [ 16,  32,  16,   2],
+ [  4,  16,   8,   4],
+ [  2,   8,   4,   2]]
+2025-03-06 13:04:20,501 - INFO - Episode 1600/10000 - Avg Reward: 1670.20 - Avg Max Tile: 141.92 - Epsilon: 0.050 - Beta: 0.410
+2025-03-06 13:08:06,204 - INFO - Episode 1700/10000 - Avg Reward: 1512.44 - Avg Max Tile: 130.56 - Epsilon: 0.050 - Beta: 0.410
+2025-03-06 13:11:54,615 - INFO - Episode 1800/10000 - Avg Reward: 1530.46 - Avg Max Tile: 125.28 - Epsilon: 0.050 - Beta: 0.411
+2025-03-06 13:15:50,006 - INFO - Episode 1900/10000 - Avg Reward: 1552.38 - Avg Max Tile: 131.20 - Epsilon: 0.050 - Beta: 0.411
+2025-03-06 13:19:51,373 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_2000.pt
+2025-03-06 13:19:51,374 - INFO - Episode 2000/10000 - Avg Reward: 1576.35 - Avg Max Tile: 131.20 - Epsilon: 0.050 - Beta: 0.412
+2025-03-06 13:19:51,374 - INFO - Episode 2000: Reset epsilon to 0.3 to encourage exploration
+2025-03-06 13:23:01,065 - INFO - Episode 2100/10000 - Avg Reward: 1291.25 - Avg Max Tile: 108.80 - Epsilon: 0.067 - Beta: 0.413
+2025-03-06 13:26:54,185 - INFO - Episode 2200/10000 - Avg Reward: 1571.55 - Avg Max Tile: 134.88 - Epsilon: 0.050 - Beta: 0.413
+2025-03-06 13:30:34,609 - INFO - Episode 2300/10000 - Avg Reward: 1464.07 - Avg Max Tile: 121.12 - Epsilon: 0.050 - Beta: 0.414
+2025-03-06 13:34:35,566 - INFO - Episode 2400/10000 - Avg Reward: 1591.73 - Avg Max Tile: 135.36 - Epsilon: 0.050 - Beta: 0.414
+2025-03-06 13:38:39,118 - INFO - Episode 2500/10000 - Avg Reward: 1659.80 - Avg Max Tile: 142.72 - Epsilon: 0.050 - Beta: 0.415
+2025-03-06 13:42:35,943 - INFO - Episode 2600/10000 - Avg Reward: 1543.40 - Avg Max Tile: 132.48 - Epsilon: 0.050 - Beta: 0.416
+2025-03-06 13:46:42,268 - INFO - Episode 2700/10000 - Avg Reward: 1627.79 - Avg Max Tile: 138.24 - Epsilon: 0.050 - Beta: 0.416
+2025-03-06 13:50:32,616 - INFO - Episode 2800/10000 - Avg Reward: 1544.86 - Avg Max Tile: 127.04 - Epsilon: 0.050 - Beta: 0.417
+2025-03-06 13:54:17,704 - INFO - Episode 2900/10000 - Avg Reward: 1496.68 - Avg Max Tile: 122.40 - Epsilon: 0.050 - Beta: 0.417
+2025-03-06 13:58:19,680 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_3000.pt
+2025-03-06 13:58:19,680 - INFO - Episode 3000/10000 - Avg Reward: 1557.23 - Avg Max Tile: 129.60 - Epsilon: 0.050 - Beta: 0.418
+2025-03-06 13:58:19,681 - INFO - Episode 3000: Reset epsilon to 0.3 to encourage exploration
+2025-03-06 14:01:32,743 - INFO - Episode 3100/10000 - Avg Reward: 1337.76 - Avg Max Tile: 112.96 - Epsilon: 0.066 - Beta: 0.419
+2025-03-06 14:05:37,412 - INFO - Episode 3200/10000 - Avg Reward: 1628.62 - Avg Max Tile: 137.92 - Epsilon: 0.050 - Beta: 0.419
+2025-03-06 14:09:28,800 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_3000.pt
+2025-03-06 14:09:30,678 - INFO - Resuming from episode 3000
+2025-03-06 14:09:30,678 - INFO - Previous best score: 5234.399943590164
+2025-03-06 14:09:30,679 - INFO - Previous highest tile: 512
+2025-03-06 14:09:30,679 - INFO - Current epsilon: 0.050
+2025-03-06 14:09:30,679 - INFO - Starting training with device: cuda
+2025-03-06 14:09:30,680 - INFO - Model parameters: 3394954
+2025-03-06 14:09:30,680 - INFO - Episode 3000: Reset epsilon to 0.5 to encourage exploration (using slower decay rate: 0.9998)
+2025-03-06 14:12:24,152 - INFO - Episode 3100/10000 - Avg Reward: 1189.30 - Avg Max Tile: 97.92 - Epsilon: 0.124 - Beta: 0.419
+2025-03-06 14:16:10,847 - INFO - Episode 3199: Returning to normal epsilon decay rate after 200 episodes of exploration
+2025-03-06 14:16:14,337 - INFO - Episode 3200/10000 - Avg Reward: 1557.00 - Avg Max Tile: 135.68 - Epsilon: 0.050 - Beta: 0.419
+2025-03-06 14:20:31,527 - INFO - Episode 3300/10000 - Avg Reward: 1704.40 - Avg Max Tile: 143.36 - Epsilon: 0.050 - Beta: 0.420
+2025-03-06 14:24:39,446 - INFO - Episode 3400/10000 - Avg Reward: 1647.28 - Avg Max Tile: 137.92 - Epsilon: 0.050 - Beta: 0.420
+2025-03-06 14:28:42,912 - INFO - Episode 3500/10000 - Avg Reward: 1607.64 - Avg Max Tile: 133.76 - Epsilon: 0.050 - Beta: 0.421
+2025-03-06 14:32:34,338 - INFO - Episode 3600/10000 - Avg Reward: 1563.22 - Avg Max Tile: 132.48 - Epsilon: 0.050 - Beta: 0.422
+2025-03-06 14:36:23,341 - INFO - Episode 3700/10000 - Avg Reward: 1508.52 - Avg Max Tile: 126.08 - Epsilon: 0.050 - Beta: 0.422
+2025-03-06 14:40:14,305 - INFO - Episode 3800/10000 - Avg Reward: 1549.81 - Avg Max Tile: 129.44 - Epsilon: 0.050 - Beta: 0.423
+2025-03-06 14:44:08,168 - INFO - Episode 3900/10000 - Avg Reward: 1536.88 - Avg Max Tile: 128.32 - Epsilon: 0.050 - Beta: 0.423
+2025-03-06 14:48:13,606 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_4000.pt
+2025-03-06 14:48:13,606 - INFO - Episode 4000/10000 - Avg Reward: 1654.86 - Avg Max Tile: 146.88 - Epsilon: 0.050 - Beta: 0.424
+2025-03-06 14:48:13,606 - INFO - Episode 4000: Reset epsilon to 0.5 to encourage exploration (using slower decay rate: 0.9998)
+2025-03-06 14:51:16,019 - INFO - Episode 4100/10000 - Avg Reward: 1298.91 - Avg Max Tile: 112.80 - Epsilon: 0.113 - Beta: 0.425
+2025-03-06 14:54:56,804 - INFO - Episode 4199: Returning to normal epsilon decay rate after 200 episodes of exploration
+2025-03-06 14:54:59,239 - INFO - Episode 4200/10000 - Avg Reward: 1485.64 - Avg Max Tile: 124.16 - Epsilon: 0.050 - Beta: 0.425
+2025-03-06 14:59:01,714 - INFO - Episode 4300/10000 - Avg Reward: 1617.72 - Avg Max Tile: 138.88 - Epsilon: 0.050 - Beta: 0.426
+2025-03-06 15:03:03,922 - INFO - Episode 4400/10000 - Avg Reward: 1619.44 - Avg Max Tile: 138.40 - Epsilon: 0.050 - Beta: 0.426
+2025-03-06 15:06:51,202 - INFO - Episode 4500/10000 - Avg Reward: 1555.14 - Avg Max Tile: 131.84 - Epsilon: 0.050 - Beta: 0.427
+2025-03-06 15:09:50,098 - INFO - New best score: 5505.599947452545 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-06 15:09:50,098 - INFO - Final board state for new best score 5505.599947452545:
+[[512,   4,  64,  16],
+ [256, 128,  16,   4],
+ [  8,  64,   8,   2],
+ [  2,  16,   2,   4]]
+2025-03-06 15:11:08,304 - INFO - Episode 4600/10000 - Avg Reward: 1708.74 - Avg Max Tile: 149.12 - Epsilon: 0.050 - Beta: 0.428
+2025-03-06 15:14:55,820 - INFO - Episode 4700/10000 - Avg Reward: 1525.56 - Avg Max Tile: 130.08 - Epsilon: 0.050 - Beta: 0.428
+2025-03-06 15:18:58,880 - INFO - Episode 4800/10000 - Avg Reward: 1627.87 - Avg Max Tile: 138.88 - Epsilon: 0.050 - Beta: 0.429
+2025-03-06 15:22:53,258 - INFO - Episode 4900/10000 - Avg Reward: 1603.43 - Avg Max Tile: 139.52 - Epsilon: 0.050 - Beta: 0.429
+2025-03-06 15:26:49,161 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_5000.pt
+2025-03-06 15:26:49,161 - INFO - Episode 5000/10000 - Avg Reward: 1545.99 - Avg Max Tile: 133.44 - Epsilon: 0.050 - Beta: 0.430
+2025-03-06 15:26:49,162 - INFO - Episode 5000: Reset epsilon to 0.5 to encourage exploration (using slower decay rate: 0.9998)
+2025-03-06 15:29:50,906 - INFO - Episode 5100/10000 - Avg Reward: 1266.47 - Avg Max Tile: 108.16 - Epsilon: 0.114 - Beta: 0.431
+2025-03-06 15:33:36,012 - INFO - Episode 5199: Returning to normal epsilon decay rate after 200 episodes of exploration
+2025-03-06 15:33:38,070 - INFO - Episode 5200/10000 - Avg Reward: 1513.51 - Avg Max Tile: 128.32 - Epsilon: 0.050 - Beta: 0.431
+2025-03-06 15:37:40,507 - INFO - Episode 5300/10000 - Avg Reward: 1556.76 - Avg Max Tile: 130.56 - Epsilon: 0.050 - Beta: 0.432
+2025-03-06 15:41:29,384 - INFO - Episode 5400/10000 - Avg Reward: 1579.64 - Avg Max Tile: 131.52 - Epsilon: 0.050 - Beta: 0.432
+2025-03-06 15:45:11,284 - INFO - Episode 5500/10000 - Avg Reward: 1593.51 - Avg Max Tile: 133.12 - Epsilon: 0.050 - Beta: 0.433
+2025-03-06 15:48:34,901 - INFO - Episode 5600/10000 - Avg Reward: 1492.39 - Avg Max Tile: 126.40 - Epsilon: 0.050 - Beta: 0.434
+2025-03-06 15:52:03,237 - INFO - Episode 5700/10000 - Avg Reward: 1562.68 - Avg Max Tile: 131.20 - Epsilon: 0.050 - Beta: 0.434
+2025-03-06 15:55:41,977 - INFO - Episode 5800/10000 - Avg Reward: 1594.37 - Avg Max Tile: 136.64 - Epsilon: 0.050 - Beta: 0.435
+2025-03-06 15:59:05,009 - INFO - Episode 5900/10000 - Avg Reward: 1542.08 - Avg Max Tile: 132.16 - Epsilon: 0.050 - Beta: 0.435
+2025-03-06 16:03:13,987 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_6000.pt
+2025-03-06 16:03:13,987 - INFO - Episode 6000/10000 - Avg Reward: 1709.13 - Avg Max Tile: 150.08 - Epsilon: 0.050 - Beta: 0.436
+2025-03-06 16:03:13,988 - INFO - Episode 6000: Reset epsilon to 0.5 to encourage exploration (using slower decay rate: 0.9998)
+2025-03-06 16:07:35,991 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_6000.pt
+2025-03-06 16:07:37,883 - INFO - Resuming from episode 6000
+2025-03-06 16:07:37,884 - INFO - Previous best score: 5505.599947452545
+2025-03-06 16:07:37,884 - INFO - Previous highest tile: 512
+2025-03-06 16:07:37,884 - INFO - Current epsilon: 0.050
+2025-03-06 16:07:37,885 - INFO - Starting training with device: cuda
+2025-03-06 16:07:37,885 - INFO - Model parameters: 3394954
+2025-03-06 16:07:37,886 - INFO - Episode 6000: Reset epsilon to 0.5, learning rate to 2.5e-05, and batch size to 512
+2025-03-06 16:08:23,711 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_6000.pt
+2025-03-06 16:08:25,572 - INFO - Resuming from episode 6000
+2025-03-06 16:08:25,572 - INFO - Previous best score: 5505.599947452545
+2025-03-06 16:08:25,572 - INFO - Previous highest tile: 512
+2025-03-06 16:08:25,573 - INFO - Current epsilon: 0.050
+2025-03-06 16:08:25,573 - INFO - Starting training with device: cuda
+2025-03-06 16:08:25,573 - INFO - Model parameters: 3394954
+2025-03-06 16:08:25,574 - INFO - Episode 6000: Reset epsilon to 0.5, learning rate to 2.5e-05, and batch size to 512
+2025-03-06 16:09:29,861 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_6000.pt
+2025-03-06 16:09:31,736 - INFO - Resuming from episode 6000
+2025-03-06 16:09:31,737 - INFO - Previous best score: 5505.599947452545
+2025-03-06 16:09:31,737 - INFO - Previous highest tile: 512
+2025-03-06 16:09:31,737 - INFO - Current epsilon: 0.050
+2025-03-06 16:09:31,738 - INFO - Starting training with device: cuda
+2025-03-06 16:09:31,738 - INFO - Model parameters: 3394954
+2025-03-06 16:09:31,738 - INFO - Episode 6000: Reset epsilon to 0.5, learning rate to 2.5e-05, and batch size to 512
+2025-03-06 16:09:47,077 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_6000.pt
+2025-03-06 16:09:48,929 - INFO - Resuming from episode 6000
+2025-03-06 16:09:48,929 - INFO - Previous best score: 5505.599947452545
+2025-03-06 16:09:48,930 - INFO - Previous highest tile: 512
+2025-03-06 16:09:48,930 - INFO - Current epsilon: 0.050
+2025-03-06 16:09:48,930 - INFO - Starting training with device: cuda
+2025-03-06 16:09:48,930 - INFO - Model parameters: 3394954
+2025-03-06 16:09:48,932 - INFO - Episode 6000: Reset epsilon to 0.5, learning rate to 2.5e-05, and batch size to 512
+2025-03-06 16:10:49,742 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_6000.pt
+2025-03-06 16:10:51,615 - INFO - Resuming from episode 6000
+2025-03-06 16:10:51,615 - INFO - Previous best score: 5505.599947452545
+2025-03-06 16:10:51,616 - INFO - Previous highest tile: 512
+2025-03-06 16:10:51,616 - INFO - Current epsilon: 0.050
+2025-03-06 16:10:51,616 - INFO - Starting training with device: cuda
+2025-03-06 16:10:51,617 - INFO - Model parameters: 3394954
+2025-03-06 16:10:51,617 - INFO - Episode 6000: Reset epsilon to 0.5, learning rate to 2.5e-05, and batch size to 512
+2025-03-06 16:11:51,742 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_6000.pt
+2025-03-06 16:11:53,612 - INFO - Resuming from episode 6000
+2025-03-06 16:11:53,612 - INFO - Previous best score: 5505.599947452545
+2025-03-06 16:11:53,612 - INFO - Previous highest tile: 512
+2025-03-06 16:11:53,612 - INFO - Current epsilon: 0.050
+2025-03-06 16:11:53,612 - INFO - Starting training with device: cuda
+2025-03-06 16:11:53,613 - INFO - Model parameters: 3394954
+2025-03-06 16:11:53,614 - INFO - Episode 6000: Reset epsilon to 0.5, learning rate to 2.5e-05, and batch size to 512
+2025-03-06 16:14:39,714 - INFO - Episode 6100/10000 - Avg Reward: 1240.91 - Avg Max Tile: 107.04 - Epsilon: 0.122 - Beta: 0.437
+2025-03-06 16:18:05,783 - INFO - Episode 6199: Returning to normal epsilon decay rate with learning rate 5e-05 and batch size 1024
+2025-03-06 16:18:07,832 - INFO - Episode 6200/10000 - Avg Reward: 1517.29 - Avg Max Tile: 125.76 - Epsilon: 0.050 - Beta: 0.437
+2025-03-06 16:21:58,080 - INFO - Episode 6300/10000 - Avg Reward: 1585.66 - Avg Max Tile: 132.80 - Epsilon: 0.050 - Beta: 0.438
+2025-03-06 16:25:54,281 - INFO - Episode 6400/10000 - Avg Reward: 1579.24 - Avg Max Tile: 135.36 - Epsilon: 0.050 - Beta: 0.438
+2025-03-06 16:29:48,784 - INFO - Episode 6500/10000 - Avg Reward: 1565.77 - Avg Max Tile: 129.44 - Epsilon: 0.050 - Beta: 0.439
+2025-03-06 16:33:43,018 - INFO - Episode 6600/10000 - Avg Reward: 1520.70 - Avg Max Tile: 130.24 - Epsilon: 0.050 - Beta: 0.440
+2025-03-06 16:37:47,674 - INFO - Episode 6700/10000 - Avg Reward: 1639.67 - Avg Max Tile: 140.80 - Epsilon: 0.050 - Beta: 0.440
+2025-03-06 16:41:37,285 - INFO - Episode 6800/10000 - Avg Reward: 1580.66 - Avg Max Tile: 134.08 - Epsilon: 0.050 - Beta: 0.441
+2025-03-06 16:45:58,354 - INFO - Episode 6900/10000 - Avg Reward: 1681.03 - Avg Max Tile: 142.24 - Epsilon: 0.050 - Beta: 0.441
+2025-03-06 16:50:19,526 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_7000.pt
+2025-03-06 16:50:19,526 - INFO - Episode 7000/10000 - Avg Reward: 1591.99 - Avg Max Tile: 136.32 - Epsilon: 0.050 - Beta: 0.442
+2025-03-06 16:54:00,953 - INFO - Episode 7100/10000 - Avg Reward: 1482.47 - Avg Max Tile: 123.84 - Epsilon: 0.050 - Beta: 0.443
+2025-03-06 16:57:50,379 - INFO - Episode 7200/10000 - Avg Reward: 1559.68 - Avg Max Tile: 134.08 - Epsilon: 0.050 - Beta: 0.443
+2025-03-06 17:02:05,929 - INFO - Episode 7300/10000 - Avg Reward: 1720.90 - Avg Max Tile: 151.84 - Epsilon: 0.050 - Beta: 0.444
+2025-03-06 17:06:17,547 - INFO - Episode 7400/10000 - Avg Reward: 1718.44 - Avg Max Tile: 149.28 - Epsilon: 0.050 - Beta: 0.444
+2025-03-06 17:10:07,724 - INFO - Episode 7500/10000 - Avg Reward: 1555.75 - Avg Max Tile: 131.52 - Epsilon: 0.050 - Beta: 0.445
+2025-03-06 17:13:52,147 - INFO - Episode 7600/10000 - Avg Reward: 1517.64 - Avg Max Tile: 124.16 - Epsilon: 0.050 - Beta: 0.446
+2025-03-06 17:17:51,247 - INFO - Episode 7700/10000 - Avg Reward: 1620.23 - Avg Max Tile: 138.40 - Epsilon: 0.050 - Beta: 0.446
+2025-03-06 17:21:32,918 - INFO - Episode 7800/10000 - Avg Reward: 1487.36 - Avg Max Tile: 120.64 - Epsilon: 0.050 - Beta: 0.447
+2025-03-06 17:25:34,122 - INFO - Episode 7900/10000 - Avg Reward: 1634.19 - Avg Max Tile: 141.60 - Epsilon: 0.050 - Beta: 0.447
+2025-03-06 17:29:45,700 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_8000.pt
+2025-03-06 17:29:45,700 - INFO - Episode 8000/10000 - Avg Reward: 1659.10 - Avg Max Tile: 142.40 - Epsilon: 0.050 - Beta: 0.448
+2025-03-06 17:29:45,701 - INFO - Episode 8000: Reset epsilon to 0.5, learning rate to 2.5e-05, and batch size to 512
+2025-03-06 17:32:39,243 - INFO - Episode 8100/10000 - Avg Reward: 1311.94 - Avg Max Tile: 115.84 - Epsilon: 0.114 - Beta: 0.449
+2025-03-06 17:36:27,564 - INFO - Episode 8199: Returning to normal epsilon decay rate with learning rate 5e-05 and batch size 1024
+2025-03-06 17:36:29,349 - INFO - Episode 8200/10000 - Avg Reward: 1624.64 - Avg Max Tile: 141.60 - Epsilon: 0.050 - Beta: 0.449
+2025-03-06 17:40:26,136 - INFO - Episode 8300/10000 - Avg Reward: 1601.18 - Avg Max Tile: 136.96 - Epsilon: 0.050 - Beta: 0.450
+2025-03-06 17:44:16,192 - INFO - Episode 8400/10000 - Avg Reward: 1647.62 - Avg Max Tile: 143.68 - Epsilon: 0.050 - Beta: 0.450
+2025-03-06 17:47:59,864 - INFO - Episode 8500/10000 - Avg Reward: 1510.20 - Avg Max Tile: 126.72 - Epsilon: 0.050 - Beta: 0.451
+2025-03-06 17:51:53,169 - INFO - Episode 8600/10000 - Avg Reward: 1579.37 - Avg Max Tile: 133.76 - Epsilon: 0.050 - Beta: 0.452
+2025-03-06 17:55:57,180 - INFO - Episode 8700/10000 - Avg Reward: 1623.38 - Avg Max Tile: 141.12 - Epsilon: 0.050 - Beta: 0.452
+2025-03-06 17:59:47,395 - INFO - Episode 8800/10000 - Avg Reward: 1512.87 - Avg Max Tile: 125.12 - Epsilon: 0.050 - Beta: 0.453
+2025-03-06 18:03:48,357 - INFO - Episode 8900/10000 - Avg Reward: 1583.91 - Avg Max Tile: 135.68 - Epsilon: 0.050 - Beta: 0.453
+2025-03-06 18:08:07,253 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_9000.pt
+2025-03-06 18:08:07,255 - INFO - Episode 9000/10000 - Avg Reward: 1700.35 - Avg Max Tile: 146.24 - Epsilon: 0.050 - Beta: 0.454
+2025-03-06 18:12:03,884 - INFO - Episode 9100/10000 - Avg Reward: 1616.69 - Avg Max Tile: 136.32 - Epsilon: 0.050 - Beta: 0.455
+2025-03-06 18:16:09,678 - INFO - Episode 9200/10000 - Avg Reward: 1619.87 - Avg Max Tile: 139.52 - Epsilon: 0.050 - Beta: 0.455
+2025-03-06 18:20:02,780 - INFO - Episode 9300/10000 - Avg Reward: 1556.30 - Avg Max Tile: 131.84 - Epsilon: 0.050 - Beta: 0.456
+2025-03-06 18:23:44,061 - INFO - Episode 9400/10000 - Avg Reward: 1461.27 - Avg Max Tile: 117.76 - Epsilon: 0.050 - Beta: 0.456
+2025-03-06 18:27:42,722 - INFO - Episode 9500/10000 - Avg Reward: 1566.93 - Avg Max Tile: 134.72 - Epsilon: 0.050 - Beta: 0.457
+2025-03-06 18:31:47,362 - INFO - Episode 9600/10000 - Avg Reward: 1649.43 - Avg Max Tile: 136.00 - Epsilon: 0.050 - Beta: 0.458
+2025-03-06 18:35:46,632 - INFO - Episode 9700/10000 - Avg Reward: 1613.35 - Avg Max Tile: 137.28 - Epsilon: 0.050 - Beta: 0.458
+2025-03-06 18:36:27,782 - INFO - New best score: 5545.599947214127 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-06 18:36:27,783 - INFO - Final board state for new best score 5545.599947214127:
+[[512,   8,   4,   2],
+ [256,   4,  32,   8],
+ [128,  64,   8,   4],
+ [ 16,   8,   4,   2]]
+2025-03-06 18:39:49,857 - INFO - Episode 9800/10000 - Avg Reward: 1628.25 - Avg Max Tile: 141.76 - Epsilon: 0.050 - Beta: 0.459
+2025-03-06 18:43:33,269 - INFO - Episode 9900/10000 - Avg Reward: 1587.31 - Avg Max Tile: 135.04 - Epsilon: 0.050 - Beta: 0.459
+2025-03-06 18:47:42,222 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_10000.pt
+2025-03-06 18:47:42,222 - INFO - Episode 10000/10000 - Avg Reward: 1641.21 - Avg Max Tile: 140.16 - Epsilon: 0.050 - Beta: 0.460
+2025-03-06 18:47:49,066 - INFO - Training completed - Final model saved to models\dueling_dqn\dueling_dqn_per_final.pt
+2025-03-06 18:47:49,067 - INFO - Highest tile achieved during training: 512
+2025-03-06 18:48:44,740 - INFO - Loading model from models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-06 18:48:48,843 - INFO - Creating enhanced MCTS agent with 200 simulations
+2025-03-06 18:48:48,843 - INFO - 
+Evaluating regular agent...
+2025-03-06 18:48:50,357 - INFO - Game 1/20 completed: Max Tile = 256
+2025-03-06 18:48:51,892 - INFO - Game 2/20 completed: Max Tile = 256
+2025-03-06 18:48:53,827 - INFO - Game 3/20 completed: Max Tile = 256
+2025-03-06 18:48:54,548 - INFO - Game 4/20 completed: Max Tile = 64
+2025-03-06 18:48:54,946 - INFO - Game 5/20 completed: Max Tile = 32
+2025-03-06 18:48:55,501 - INFO - Game 6/20 completed: Max Tile = 32
+2025-03-06 18:48:57,052 - INFO - Game 7/20 completed: Max Tile = 256
+2025-03-06 18:48:57,927 - INFO - Game 8/20 completed: Max Tile = 128
+2025-03-06 18:48:59,178 - INFO - Game 9/20 completed: Max Tile = 128
+2025-03-06 18:49:00,308 - INFO - Game 10/20 completed: Max Tile = 256
+2025-03-06 18:49:01,126 - INFO - Game 11/20 completed: Max Tile = 128
+2025-03-06 18:49:02,328 - INFO - Game 12/20 completed: Max Tile = 128
+2025-03-06 18:49:02,980 - INFO - Game 13/20 completed: Max Tile = 64
+2025-03-06 18:49:03,690 - INFO - Game 14/20 completed: Max Tile = 64
+2025-03-06 18:49:04,865 - INFO - Game 15/20 completed: Max Tile = 256
+2025-03-06 18:49:05,612 - INFO - Game 16/20 completed: Max Tile = 64
+2025-03-06 18:49:06,467 - INFO - Game 17/20 completed: Max Tile = 128
+2025-03-06 18:49:08,368 - INFO - Game 18/20 completed: Max Tile = 256
+2025-03-06 18:49:09,740 - INFO - Game 19/20 completed: Max Tile = 256
+2025-03-06 18:49:10,776 - INFO - Game 20/20 completed: Max Tile = 128
+2025-03-06 18:49:10,777 - INFO - ========================================
+2025-03-06 18:49:10,777 - INFO - Evaluation over 20 games:
+2025-03-06 18:49:10,777 - INFO - Average Max Tile: 156.8
+2025-03-06 18:49:10,778 - INFO - Average Score: 1774.2
+2025-03-06 18:49:10,778 - INFO - Average Steps: 158.3
+2025-03-06 18:49:10,778 - INFO - Best Max Tile: 256
+2025-03-06 18:49:10,779 - INFO - Tile distribution:
+2025-03-06 18:49:10,779 - INFO -   32: 2 games (10.0%)
+2025-03-06 18:49:10,779 - INFO -   64: 4 games (20.0%)
+2025-03-06 18:49:10,780 - INFO -   128: 6 games (30.0%)
+2025-03-06 18:49:10,780 - INFO -   256: 8 games (40.0%)
+2025-03-06 18:49:10,781 - INFO - Average steps to achieve tile:
+2025-03-06 18:49:10,781 - INFO - 
+Evaluating enhanced MCTS agent...
+2025-03-06 19:02:00,288 - INFO - Game 1/20 completed: Max Tile = 64
+2025-03-06 20:10:07,195 - INFO - Game 2/20 completed: Max Tile = 256
+2025-03-06 20:27:58,787 - INFO - Game 3/20 completed: Max Tile = 128
+2025-03-06 20:34:32,129 - INFO - Game 4/20 completed: Max Tile = 64
+2025-03-06 21:05:18,327 - INFO - Game 5/20 completed: Max Tile = 128
+2025-03-06 21:46:45,036 - INFO - Game 6/20 completed: Max Tile = 256
+2025-03-06 22:10:20,460 - INFO - Game 7/20 completed: Max Tile = 128
+2025-03-07 12:12:28,964 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_10000.pt
+2025-03-07 12:12:30,829 - INFO - Resuming from episode 10000
+2025-03-07 12:12:30,829 - INFO - Previous best score: 5545.599947214127
+2025-03-07 12:12:30,829 - INFO - Previous highest tile: 512
+2025-03-07 12:12:30,829 - INFO - Current epsilon: 0.050
+2025-03-07 12:12:30,830 - INFO - Starting training with device: cuda
+2025-03-07 12:12:30,830 - INFO - Model parameters: 3394954
+2025-03-07 12:12:36,967 - INFO - Training completed - Final model saved to models\dueling_dqn\dueling_dqn_per_final.pt
+2025-03-07 12:12:36,967 - INFO - Highest tile achieved during training: 512
+2025-03-07 12:12:58,259 - INFO - Loading checkpoint from models\dueling_dqn\dueling_dqn_per_10000.pt
+2025-03-07 12:13:00,053 - INFO - Resuming from episode 10000
+2025-03-07 12:13:00,054 - INFO - Previous best score: 5545.599947214127
+2025-03-07 12:13:00,054 - INFO - Previous highest tile: 512
+2025-03-07 12:13:00,054 - INFO - Current epsilon: 0.050
+2025-03-07 12:13:00,054 - INFO - Starting training with device: cuda
+2025-03-07 12:13:00,055 - INFO - Model parameters: 3394954
+2025-03-07 12:13:00,055 - INFO - Episode 10000: Reset epsilon to 0.5, learning rate to 2.5e-05, and batch size to 512
+2025-03-07 12:15:49,175 - INFO - Episode 10100/25000 - Avg Reward: 1259.08 - Avg Max Tile: 106.24 - Epsilon: 0.115 - Beta: 0.461
+2025-03-07 12:19:13,456 - INFO - Episode 10199: Returning to normal epsilon decay rate with learning rate 5e-05 and batch size 1024
+2025-03-07 12:19:15,415 - INFO - Episode 10200/25000 - Avg Reward: 1468.69 - Avg Max Tile: 123.04 - Epsilon: 0.050 - Beta: 0.461
+2025-03-07 12:23:10,306 - INFO - Episode 10300/25000 - Avg Reward: 1616.82 - Avg Max Tile: 140.16 - Epsilon: 0.050 - Beta: 0.462
+2025-03-07 12:26:55,793 - INFO - Episode 10400/25000 - Avg Reward: 1569.70 - Avg Max Tile: 131.20 - Epsilon: 0.050 - Beta: 0.462
+2025-03-07 12:30:44,204 - INFO - Episode 10500/25000 - Avg Reward: 1641.32 - Avg Max Tile: 140.00 - Epsilon: 0.050 - Beta: 0.463
+2025-03-07 12:34:25,795 - INFO - Episode 10600/25000 - Avg Reward: 1522.80 - Avg Max Tile: 129.28 - Epsilon: 0.050 - Beta: 0.464
+2025-03-07 12:38:17,250 - INFO - Episode 10700/25000 - Avg Reward: 1620.55 - Avg Max Tile: 137.28 - Epsilon: 0.050 - Beta: 0.464
+2025-03-07 12:42:05,901 - INFO - Episode 10800/25000 - Avg Reward: 1576.68 - Avg Max Tile: 131.84 - Epsilon: 0.050 - Beta: 0.465
+2025-03-07 12:45:46,978 - INFO - Episode 10900/25000 - Avg Reward: 1517.89 - Avg Max Tile: 126.88 - Epsilon: 0.050 - Beta: 0.465
+2025-03-07 12:49:38,452 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_11000.pt
+2025-03-07 12:49:38,453 - INFO - Episode 11000/25000 - Avg Reward: 1567.57 - Avg Max Tile: 129.28 - Epsilon: 0.050 - Beta: 0.466
+2025-03-07 12:53:17,127 - INFO - Episode 11100/25000 - Avg Reward: 1514.39 - Avg Max Tile: 129.60 - Epsilon: 0.050 - Beta: 0.467
+2025-03-07 12:56:56,900 - INFO - Episode 11200/25000 - Avg Reward: 1510.03 - Avg Max Tile: 129.92 - Epsilon: 0.050 - Beta: 0.467
+2025-03-07 13:00:30,298 - INFO - Episode 11300/25000 - Avg Reward: 1535.35 - Avg Max Tile: 131.68 - Epsilon: 0.050 - Beta: 0.468
+2025-03-07 13:04:21,882 - INFO - Episode 11400/25000 - Avg Reward: 1641.02 - Avg Max Tile: 145.76 - Epsilon: 0.050 - Beta: 0.468
+2025-03-07 13:08:07,645 - INFO - Episode 11500/25000 - Avg Reward: 1577.99 - Avg Max Tile: 136.64 - Epsilon: 0.050 - Beta: 0.469
+2025-03-07 13:11:42,915 - INFO - Episode 11600/25000 - Avg Reward: 1494.60 - Avg Max Tile: 118.08 - Epsilon: 0.050 - Beta: 0.470
+2025-03-07 13:15:21,591 - INFO - Episode 11700/25000 - Avg Reward: 1565.12 - Avg Max Tile: 128.80 - Epsilon: 0.050 - Beta: 0.470
+2025-03-07 13:19:16,252 - INFO - Episode 11800/25000 - Avg Reward: 1632.73 - Avg Max Tile: 140.00 - Epsilon: 0.050 - Beta: 0.471
+2025-03-07 13:23:04,225 - INFO - Episode 11900/25000 - Avg Reward: 1525.00 - Avg Max Tile: 129.76 - Epsilon: 0.050 - Beta: 0.471
+2025-03-07 13:27:03,658 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_12000.pt
+2025-03-07 13:27:03,659 - INFO - Episode 12000/25000 - Avg Reward: 1605.17 - Avg Max Tile: 132.16 - Epsilon: 0.050 - Beta: 0.472
+2025-03-07 13:27:03,659 - INFO - Episode 12000: Reset epsilon to 0.5, learning rate to 2.5e-05, and batch size to 512
+2025-03-07 13:30:03,786 - INFO - Episode 12100/25000 - Avg Reward: 1388.86 - Avg Max Tile: 123.84 - Epsilon: 0.100 - Beta: 0.473
+2025-03-07 13:33:36,120 - INFO - Episode 12199: Returning to normal epsilon decay rate with learning rate 5e-05 and batch size 1024
+2025-03-07 13:33:38,881 - INFO - Episode 12200/25000 - Avg Reward: 1547.80 - Avg Max Tile: 127.68 - Epsilon: 0.050 - Beta: 0.473
+2025-03-07 13:37:32,042 - INFO - Episode 12300/25000 - Avg Reward: 1586.63 - Avg Max Tile: 133.76 - Epsilon: 0.050 - Beta: 0.474
+2025-03-07 13:41:05,585 - INFO - Episode 12400/25000 - Avg Reward: 1487.49 - Avg Max Tile: 122.40 - Epsilon: 0.050 - Beta: 0.474
+2025-03-07 13:44:52,266 - INFO - Episode 12500/25000 - Avg Reward: 1616.59 - Avg Max Tile: 139.52 - Epsilon: 0.050 - Beta: 0.475
+2025-03-07 13:48:30,492 - INFO - Episode 12600/25000 - Avg Reward: 1486.68 - Avg Max Tile: 121.60 - Epsilon: 0.050 - Beta: 0.476
+2025-03-07 13:52:23,910 - INFO - Episode 12700/25000 - Avg Reward: 1595.62 - Avg Max Tile: 137.92 - Epsilon: 0.050 - Beta: 0.476
+2025-03-07 13:56:26,742 - INFO - Episode 12800/25000 - Avg Reward: 1692.43 - Avg Max Tile: 141.76 - Epsilon: 0.050 - Beta: 0.477
+2025-03-07 13:59:59,804 - INFO - Episode 12900/25000 - Avg Reward: 1538.50 - Avg Max Tile: 128.00 - Epsilon: 0.050 - Beta: 0.477
+2025-03-07 14:04:00,337 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_13000.pt
+2025-03-07 14:04:00,337 - INFO - Episode 13000/25000 - Avg Reward: 1580.73 - Avg Max Tile: 134.40 - Epsilon: 0.050 - Beta: 0.478
+2025-03-07 14:07:32,265 - INFO - Episode 13100/25000 - Avg Reward: 1499.75 - Avg Max Tile: 125.12 - Epsilon: 0.050 - Beta: 0.479
+2025-03-07 14:11:22,470 - INFO - Episode 13200/25000 - Avg Reward: 1607.29 - Avg Max Tile: 137.12 - Epsilon: 0.050 - Beta: 0.479
+2025-03-07 14:14:55,664 - INFO - Episode 13300/25000 - Avg Reward: 1510.39 - Avg Max Tile: 125.60 - Epsilon: 0.050 - Beta: 0.480
+2025-03-07 14:18:35,922 - INFO - Episode 13400/25000 - Avg Reward: 1552.26 - Avg Max Tile: 136.64 - Epsilon: 0.050 - Beta: 0.480
+2025-03-07 14:22:32,241 - INFO - Episode 13500/25000 - Avg Reward: 1642.82 - Avg Max Tile: 140.16 - Epsilon: 0.050 - Beta: 0.481
+2025-03-07 14:26:06,237 - INFO - Episode 13600/25000 - Avg Reward: 1491.36 - Avg Max Tile: 125.92 - Epsilon: 0.050 - Beta: 0.482
+2025-03-07 14:30:18,413 - INFO - Episode 13700/25000 - Avg Reward: 1717.60 - Avg Max Tile: 150.72 - Epsilon: 0.050 - Beta: 0.482
+2025-03-07 14:34:17,662 - INFO - Episode 13800/25000 - Avg Reward: 1606.93 - Avg Max Tile: 133.76 - Epsilon: 0.050 - Beta: 0.483
+2025-03-07 14:38:17,217 - INFO - Episode 13900/25000 - Avg Reward: 1632.40 - Avg Max Tile: 143.04 - Epsilon: 0.050 - Beta: 0.483
+2025-03-07 14:42:26,897 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_14000.pt
+2025-03-07 14:42:26,897 - INFO - Episode 14000/25000 - Avg Reward: 1661.69 - Avg Max Tile: 135.68 - Epsilon: 0.050 - Beta: 0.484
+2025-03-07 14:42:26,898 - INFO - Episode 14000: Reset epsilon to 0.5, learning rate to 2.5e-05, and batch size to 512
+2025-03-07 14:45:17,490 - INFO - Episode 14100/25000 - Avg Reward: 1298.54 - Avg Max Tile: 111.04 - Epsilon: 0.113 - Beta: 0.485
+2025-03-07 14:48:58,879 - INFO - Episode 14199: Returning to normal epsilon decay rate with learning rate 5e-05 and batch size 1024
+2025-03-07 14:49:00,172 - INFO - Episode 14200/25000 - Avg Reward: 1496.97 - Avg Max Tile: 126.40 - Epsilon: 0.050 - Beta: 0.485
+2025-03-07 14:52:38,075 - INFO - Episode 14300/25000 - Avg Reward: 1472.85 - Avg Max Tile: 123.84 - Epsilon: 0.050 - Beta: 0.486
+2025-03-07 14:56:31,773 - INFO - Episode 14400/25000 - Avg Reward: 1563.07 - Avg Max Tile: 135.68 - Epsilon: 0.050 - Beta: 0.486
+2025-03-07 15:00:24,594 - INFO - Episode 14500/25000 - Avg Reward: 1620.97 - Avg Max Tile: 136.48 - Epsilon: 0.050 - Beta: 0.487
+2025-03-07 15:04:18,440 - INFO - Episode 14600/25000 - Avg Reward: 1627.00 - Avg Max Tile: 135.36 - Epsilon: 0.050 - Beta: 0.488
+2025-03-07 15:08:22,723 - INFO - Episode 14700/25000 - Avg Reward: 1624.92 - Avg Max Tile: 138.72 - Epsilon: 0.050 - Beta: 0.488
+2025-03-07 15:12:32,773 - INFO - Episode 14800/25000 - Avg Reward: 1683.97 - Avg Max Tile: 143.36 - Epsilon: 0.050 - Beta: 0.489
+2025-03-07 15:16:16,472 - INFO - Episode 14900/25000 - Avg Reward: 1467.71 - Avg Max Tile: 119.36 - Epsilon: 0.050 - Beta: 0.489
+2025-03-07 15:20:18,489 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_15000.pt
+2025-03-07 15:20:18,489 - INFO - Episode 15000/25000 - Avg Reward: 1604.75 - Avg Max Tile: 137.28 - Epsilon: 0.050 - Beta: 0.490
+2025-03-07 15:24:04,381 - INFO - Episode 15100/25000 - Avg Reward: 1574.23 - Avg Max Tile: 133.44 - Epsilon: 0.050 - Beta: 0.491
+2025-03-07 15:27:58,270 - INFO - Episode 15200/25000 - Avg Reward: 1594.25 - Avg Max Tile: 133.44 - Epsilon: 0.050 - Beta: 0.491
+2025-03-07 15:31:26,462 - INFO - Episode 15300/25000 - Avg Reward: 1434.01 - Avg Max Tile: 117.12 - Epsilon: 0.050 - Beta: 0.492
+2025-03-07 15:35:11,270 - INFO - Episode 15400/25000 - Avg Reward: 1559.84 - Avg Max Tile: 131.68 - Epsilon: 0.050 - Beta: 0.492
+2025-03-07 15:39:11,000 - INFO - Episode 15500/25000 - Avg Reward: 1575.20 - Avg Max Tile: 133.44 - Epsilon: 0.050 - Beta: 0.493
+2025-03-07 15:42:58,670 - INFO - Episode 15600/25000 - Avg Reward: 1529.22 - Avg Max Tile: 130.56 - Epsilon: 0.050 - Beta: 0.494
+2025-03-07 15:46:57,420 - INFO - Episode 15700/25000 - Avg Reward: 1632.25 - Avg Max Tile: 143.04 - Epsilon: 0.050 - Beta: 0.494
+2025-03-07 15:50:51,153 - INFO - Episode 15800/25000 - Avg Reward: 1567.82 - Avg Max Tile: 134.40 - Epsilon: 0.050 - Beta: 0.495
+2025-03-07 15:55:04,303 - INFO - Episode 15900/25000 - Avg Reward: 1653.14 - Avg Max Tile: 142.08 - Epsilon: 0.050 - Beta: 0.495
+2025-03-07 15:58:51,451 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_16000.pt
+2025-03-07 15:58:51,452 - INFO - Episode 16000/25000 - Avg Reward: 1516.40 - Avg Max Tile: 125.76 - Epsilon: 0.050 - Beta: 0.496
+2025-03-07 15:58:51,452 - INFO - Episode 16000: Reset epsilon to 0.5, learning rate to 2.5e-05, and batch size to 512
+2025-03-07 16:01:48,366 - INFO - Episode 16100/25000 - Avg Reward: 1333.17 - Avg Max Tile: 115.36 - Epsilon: 0.107 - Beta: 0.497
+2025-03-07 16:05:42,290 - INFO - Episode 16199: Returning to normal epsilon decay rate with learning rate 5e-05 and batch size 1024
+2025-03-07 16:05:43,783 - INFO - Episode 16200/25000 - Avg Reward: 1630.95 - Avg Max Tile: 144.96 - Epsilon: 0.050 - Beta: 0.497
+2025-03-07 16:09:38,855 - INFO - Episode 16300/25000 - Avg Reward: 1639.83 - Avg Max Tile: 140.48 - Epsilon: 0.050 - Beta: 0.498
+2025-03-07 16:13:26,548 - INFO - Episode 16400/25000 - Avg Reward: 1639.13 - Avg Max Tile: 139.52 - Epsilon: 0.050 - Beta: 0.498
+2025-03-07 16:17:16,863 - INFO - Episode 16500/25000 - Avg Reward: 1581.18 - Avg Max Tile: 131.20 - Epsilon: 0.050 - Beta: 0.499
+2025-03-07 16:20:58,955 - INFO - Episode 16600/25000 - Avg Reward: 1517.42 - Avg Max Tile: 128.80 - Epsilon: 0.050 - Beta: 0.500
+2025-03-07 16:25:04,975 - INFO - Episode 16700/25000 - Avg Reward: 1691.68 - Avg Max Tile: 150.40 - Epsilon: 0.050 - Beta: 0.500
+2025-03-07 16:28:55,167 - INFO - Episode 16800/25000 - Avg Reward: 1529.64 - Avg Max Tile: 127.36 - Epsilon: 0.050 - Beta: 0.501
+2025-03-07 16:32:53,734 - INFO - Episode 16900/25000 - Avg Reward: 1660.25 - Avg Max Tile: 142.56 - Epsilon: 0.050 - Beta: 0.501
+2025-03-07 16:36:40,632 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_17000.pt
+2025-03-07 16:36:40,632 - INFO - Episode 17000/25000 - Avg Reward: 1520.98 - Avg Max Tile: 125.76 - Epsilon: 0.050 - Beta: 0.502
+2025-03-07 16:40:27,556 - INFO - Episode 17100/25000 - Avg Reward: 1588.21 - Avg Max Tile: 133.44 - Epsilon: 0.050 - Beta: 0.503
+2025-03-07 16:44:13,846 - INFO - Episode 17200/25000 - Avg Reward: 1522.57 - Avg Max Tile: 129.28 - Epsilon: 0.050 - Beta: 0.503
+2025-03-07 16:48:08,944 - INFO - Episode 17300/25000 - Avg Reward: 1619.86 - Avg Max Tile: 137.92 - Epsilon: 0.050 - Beta: 0.504
+2025-03-07 16:52:06,186 - INFO - Episode 17400/25000 - Avg Reward: 1633.65 - Avg Max Tile: 136.64 - Epsilon: 0.050 - Beta: 0.504
+2025-03-07 16:55:59,280 - INFO - Episode 17500/25000 - Avg Reward: 1590.05 - Avg Max Tile: 137.44 - Epsilon: 0.050 - Beta: 0.505
+2025-03-07 16:59:47,873 - INFO - Episode 17600/25000 - Avg Reward: 1523.20 - Avg Max Tile: 128.00 - Epsilon: 0.050 - Beta: 0.506
+2025-03-07 17:03:40,947 - INFO - Episode 17700/25000 - Avg Reward: 1564.62 - Avg Max Tile: 130.56 - Epsilon: 0.050 - Beta: 0.506
+2025-03-07 17:07:48,511 - INFO - Episode 17800/25000 - Avg Reward: 1662.62 - Avg Max Tile: 144.00 - Epsilon: 0.050 - Beta: 0.507
+2025-03-07 17:11:19,962 - INFO - Episode 17900/25000 - Avg Reward: 1409.79 - Avg Max Tile: 113.60 - Epsilon: 0.050 - Beta: 0.507
+2025-03-07 17:15:36,897 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_18000.pt
+2025-03-07 17:15:36,897 - INFO - Episode 18000/25000 - Avg Reward: 1709.41 - Avg Max Tile: 147.84 - Epsilon: 0.050 - Beta: 0.508
+2025-03-07 17:15:36,898 - INFO - Episode 18000: Reset epsilon to 0.5, learning rate to 2.5e-05, and batch size to 512
+2025-03-07 17:18:29,822 - INFO - Episode 18100/25000 - Avg Reward: 1288.74 - Avg Max Tile: 112.32 - Epsilon: 0.112 - Beta: 0.509
+2025-03-07 17:22:18,883 - INFO - Episode 18199: Returning to normal epsilon decay rate with learning rate 5e-05 and batch size 1024
+2025-03-07 17:22:21,589 - INFO - Episode 18200/25000 - Avg Reward: 1563.17 - Avg Max Tile: 134.72 - Epsilon: 0.050 - Beta: 0.509
+2025-03-07 17:26:14,558 - INFO - Episode 18300/25000 - Avg Reward: 1587.10 - Avg Max Tile: 136.32 - Epsilon: 0.050 - Beta: 0.510
+2025-03-07 17:30:08,849 - INFO - Episode 18400/25000 - Avg Reward: 1580.22 - Avg Max Tile: 135.04 - Epsilon: 0.050 - Beta: 0.510
+2025-03-07 17:33:48,041 - INFO - Episode 18500/25000 - Avg Reward: 1472.86 - Avg Max Tile: 120.16 - Epsilon: 0.050 - Beta: 0.511
+2025-03-07 17:37:45,248 - INFO - Episode 18600/25000 - Avg Reward: 1571.56 - Avg Max Tile: 133.12 - Epsilon: 0.050 - Beta: 0.512
+2025-03-07 17:41:28,498 - INFO - Episode 18700/25000 - Avg Reward: 1508.19 - Avg Max Tile: 127.84 - Epsilon: 0.050 - Beta: 0.512
+2025-03-07 17:45:31,000 - INFO - Episode 18800/25000 - Avg Reward: 1586.34 - Avg Max Tile: 127.68 - Epsilon: 0.050 - Beta: 0.513
+2025-03-07 17:49:30,773 - INFO - Episode 18900/25000 - Avg Reward: 1573.50 - Avg Max Tile: 136.32 - Epsilon: 0.050 - Beta: 0.513
+2025-03-07 17:53:30,290 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_19000.pt
+2025-03-07 17:53:30,290 - INFO - Episode 19000/25000 - Avg Reward: 1567.11 - Avg Max Tile: 132.80 - Epsilon: 0.050 - Beta: 0.514
+2025-03-07 17:57:26,251 - INFO - Episode 19100/25000 - Avg Reward: 1616.65 - Avg Max Tile: 137.76 - Epsilon: 0.050 - Beta: 0.515
+2025-03-07 18:01:18,306 - INFO - Episode 19200/25000 - Avg Reward: 1611.19 - Avg Max Tile: 142.40 - Epsilon: 0.050 - Beta: 0.515
+2025-03-07 18:05:05,296 - INFO - Episode 19300/25000 - Avg Reward: 1550.82 - Avg Max Tile: 135.68 - Epsilon: 0.050 - Beta: 0.516
+2025-03-07 18:08:55,748 - INFO - Episode 19400/25000 - Avg Reward: 1617.55 - Avg Max Tile: 140.32 - Epsilon: 0.050 - Beta: 0.516
+2025-03-07 18:12:47,970 - INFO - Episode 19500/25000 - Avg Reward: 1540.96 - Avg Max Tile: 128.00 - Epsilon: 0.050 - Beta: 0.517
+2025-03-07 18:16:40,960 - INFO - Episode 19600/25000 - Avg Reward: 1558.83 - Avg Max Tile: 131.68 - Epsilon: 0.050 - Beta: 0.518
+2025-03-07 18:20:43,900 - INFO - Episode 19700/25000 - Avg Reward: 1665.46 - Avg Max Tile: 137.60 - Epsilon: 0.050 - Beta: 0.518
+2025-03-07 18:24:29,242 - INFO - Episode 19800/25000 - Avg Reward: 1514.99 - Avg Max Tile: 121.60 - Epsilon: 0.050 - Beta: 0.519
+2025-03-07 18:28:30,645 - INFO - Episode 19900/25000 - Avg Reward: 1654.78 - Avg Max Tile: 146.24 - Epsilon: 0.050 - Beta: 0.519
+2025-03-07 18:32:28,558 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_20000.pt
+2025-03-07 18:32:28,559 - INFO - Episode 20000/25000 - Avg Reward: 1558.36 - Avg Max Tile: 127.68 - Epsilon: 0.050 - Beta: 0.520
+2025-03-07 18:32:28,559 - INFO - Episode 20000: Reset epsilon to 0.5, learning rate to 2.5e-05, and batch size to 512
+2025-03-07 18:35:13,880 - INFO - Episode 20100/25000 - Avg Reward: 1222.09 - Avg Max Tile: 103.04 - Epsilon: 0.122 - Beta: 0.521
+2025-03-07 18:38:59,112 - INFO - Episode 20199: Returning to normal epsilon decay rate with learning rate 5e-05 and batch size 1024
+2025-03-07 18:39:02,574 - INFO - Episode 20200/25000 - Avg Reward: 1507.83 - Avg Max Tile: 130.24 - Epsilon: 0.050 - Beta: 0.521
+2025-03-07 18:42:57,312 - INFO - Episode 20300/25000 - Avg Reward: 1587.45 - Avg Max Tile: 133.92 - Epsilon: 0.050 - Beta: 0.522
+2025-03-07 18:46:44,785 - INFO - Episode 20400/25000 - Avg Reward: 1556.72 - Avg Max Tile: 126.72 - Epsilon: 0.050 - Beta: 0.522
+2025-03-07 18:50:23,319 - INFO - Episode 20500/25000 - Avg Reward: 1485.32 - Avg Max Tile: 127.52 - Epsilon: 0.050 - Beta: 0.523
+2025-03-07 18:54:13,712 - INFO - Episode 20600/25000 - Avg Reward: 1536.41 - Avg Max Tile: 130.56 - Epsilon: 0.050 - Beta: 0.524
+2025-03-07 18:58:18,911 - INFO - Episode 20700/25000 - Avg Reward: 1699.29 - Avg Max Tile: 148.48 - Epsilon: 0.050 - Beta: 0.524
+2025-03-07 19:02:34,872 - INFO - Episode 20800/25000 - Avg Reward: 1747.52 - Avg Max Tile: 149.76 - Epsilon: 0.050 - Beta: 0.525
+2025-03-07 19:06:25,082 - INFO - Episode 20900/25000 - Avg Reward: 1527.68 - Avg Max Tile: 128.00 - Epsilon: 0.050 - Beta: 0.525
+2025-03-07 19:10:34,871 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_21000.pt
+2025-03-07 19:10:34,871 - INFO - Episode 21000/25000 - Avg Reward: 1590.82 - Avg Max Tile: 136.64 - Epsilon: 0.050 - Beta: 0.526
+2025-03-07 19:14:27,430 - INFO - Episode 21100/25000 - Avg Reward: 1615.30 - Avg Max Tile: 139.20 - Epsilon: 0.050 - Beta: 0.527
+2025-03-07 19:18:36,899 - INFO - Episode 21200/25000 - Avg Reward: 1682.85 - Avg Max Tile: 143.68 - Epsilon: 0.050 - Beta: 0.527
+2025-03-07 19:22:30,213 - INFO - Episode 21300/25000 - Avg Reward: 1547.68 - Avg Max Tile: 128.00 - Epsilon: 0.050 - Beta: 0.528
+2025-03-07 19:26:19,090 - INFO - Episode 21400/25000 - Avg Reward: 1497.01 - Avg Max Tile: 127.04 - Epsilon: 0.050 - Beta: 0.528
+2025-03-07 19:30:11,057 - INFO - Episode 21500/25000 - Avg Reward: 1531.28 - Avg Max Tile: 128.16 - Epsilon: 0.050 - Beta: 0.529
+2025-03-07 19:33:50,146 - INFO - Episode 21600/25000 - Avg Reward: 1545.92 - Avg Max Tile: 125.60 - Epsilon: 0.050 - Beta: 0.530
+2025-03-07 19:37:46,921 - INFO - Episode 21700/25000 - Avg Reward: 1536.76 - Avg Max Tile: 128.32 - Epsilon: 0.050 - Beta: 0.530
+2025-03-07 19:41:49,359 - INFO - Episode 21800/25000 - Avg Reward: 1657.26 - Avg Max Tile: 136.72 - Epsilon: 0.050 - Beta: 0.531
+2025-03-07 19:45:44,757 - INFO - Episode 21900/25000 - Avg Reward: 1603.90 - Avg Max Tile: 138.88 - Epsilon: 0.050 - Beta: 0.531
+2025-03-07 19:49:52,735 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_22000.pt
+2025-03-07 19:49:52,736 - INFO - Episode 22000/25000 - Avg Reward: 1686.73 - Avg Max Tile: 144.32 - Epsilon: 0.050 - Beta: 0.532
+2025-03-07 19:49:52,736 - INFO - Episode 22000: Reset epsilon to 0.5, learning rate to 2.5e-05, and batch size to 512
+2025-03-07 19:52:41,413 - INFO - Episode 22100/25000 - Avg Reward: 1260.84 - Avg Max Tile: 105.76 - Epsilon: 0.115 - Beta: 0.533
+2025-03-07 19:56:17,400 - INFO - Episode 22199: Returning to normal epsilon decay rate with learning rate 5e-05 and batch size 1024
+2025-03-07 19:56:19,121 - INFO - Episode 22200/25000 - Avg Reward: 1541.64 - Avg Max Tile: 125.44 - Epsilon: 0.050 - Beta: 0.533
+2025-03-07 19:59:53,537 - INFO - Episode 22300/25000 - Avg Reward: 1423.29 - Avg Max Tile: 115.36 - Epsilon: 0.050 - Beta: 0.534
+2025-03-07 20:03:38,254 - INFO - Episode 22400/25000 - Avg Reward: 1533.22 - Avg Max Tile: 130.24 - Epsilon: 0.050 - Beta: 0.534
+2025-03-07 20:07:48,178 - INFO - Episode 22500/25000 - Avg Reward: 1719.61 - Avg Max Tile: 149.44 - Epsilon: 0.050 - Beta: 0.535
+2025-03-07 20:11:51,540 - INFO - Episode 22600/25000 - Avg Reward: 1668.71 - Avg Max Tile: 144.64 - Epsilon: 0.050 - Beta: 0.536
+2025-03-07 20:15:32,218 - INFO - Episode 22700/25000 - Avg Reward: 1538.34 - Avg Max Tile: 129.44 - Epsilon: 0.050 - Beta: 0.536
+2025-03-07 20:19:29,400 - INFO - Episode 22800/25000 - Avg Reward: 1613.81 - Avg Max Tile: 132.48 - Epsilon: 0.050 - Beta: 0.537
+2025-03-07 20:23:05,733 - INFO - Episode 22900/25000 - Avg Reward: 1554.37 - Avg Max Tile: 128.16 - Epsilon: 0.050 - Beta: 0.537
+2025-03-07 20:27:09,203 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_23000.pt
+2025-03-07 20:27:09,203 - INFO - Episode 23000/25000 - Avg Reward: 1619.63 - Avg Max Tile: 137.44 - Epsilon: 0.050 - Beta: 0.538
+2025-03-07 20:30:47,696 - INFO - Episode 23100/25000 - Avg Reward: 1581.03 - Avg Max Tile: 141.28 - Epsilon: 0.050 - Beta: 0.539
+2025-03-07 20:34:40,007 - INFO - Episode 23200/25000 - Avg Reward: 1570.56 - Avg Max Tile: 133.76 - Epsilon: 0.050 - Beta: 0.539
+2025-03-07 20:38:24,663 - INFO - Episode 23300/25000 - Avg Reward: 1566.26 - Avg Max Tile: 134.24 - Epsilon: 0.050 - Beta: 0.540
+2025-03-07 20:42:05,418 - INFO - Episode 23400/25000 - Avg Reward: 1553.88 - Avg Max Tile: 131.36 - Epsilon: 0.050 - Beta: 0.540
+2025-03-07 20:46:01,405 - INFO - Episode 23500/25000 - Avg Reward: 1560.63 - Avg Max Tile: 134.08 - Epsilon: 0.050 - Beta: 0.541
+2025-03-07 20:49:48,436 - INFO - Episode 23600/25000 - Avg Reward: 1595.67 - Avg Max Tile: 134.72 - Epsilon: 0.050 - Beta: 0.542
+2025-03-07 20:53:20,833 - INFO - Episode 23700/25000 - Avg Reward: 1465.83 - Avg Max Tile: 122.24 - Epsilon: 0.050 - Beta: 0.542
+2025-03-07 20:56:59,518 - INFO - Episode 23800/25000 - Avg Reward: 1539.66 - Avg Max Tile: 129.60 - Epsilon: 0.050 - Beta: 0.543
+2025-03-07 21:00:30,327 - INFO - Episode 23900/25000 - Avg Reward: 1509.32 - Avg Max Tile: 121.60 - Epsilon: 0.050 - Beta: 0.543
+2025-03-07 21:04:32,215 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_24000.pt
+2025-03-07 21:04:32,216 - INFO - Episode 24000/25000 - Avg Reward: 1659.66 - Avg Max Tile: 141.76 - Epsilon: 0.050 - Beta: 0.544
+2025-03-07 21:04:32,216 - INFO - Episode 24000: Reset epsilon to 0.5, learning rate to 2.5e-05, and batch size to 512
+2025-03-07 21:07:16,627 - INFO - Episode 24100/25000 - Avg Reward: 1230.65 - Avg Max Tile: 103.84 - Epsilon: 0.119 - Beta: 0.545
+2025-03-07 21:10:46,096 - INFO - Episode 24199: Returning to normal epsilon decay rate with learning rate 5e-05 and batch size 1024
+2025-03-07 21:10:47,136 - INFO - Episode 24200/25000 - Avg Reward: 1501.32 - Avg Max Tile: 123.84 - Epsilon: 0.050 - Beta: 0.545
+2025-03-07 21:14:28,293 - INFO - Episode 24300/25000 - Avg Reward: 1561.44 - Avg Max Tile: 132.80 - Epsilon: 0.050 - Beta: 0.546
+2025-03-07 21:18:15,730 - INFO - Episode 24400/25000 - Avg Reward: 1623.55 - Avg Max Tile: 136.64 - Epsilon: 0.050 - Beta: 0.546
+2025-03-07 21:21:55,814 - INFO - Episode 24500/25000 - Avg Reward: 1579.06 - Avg Max Tile: 132.16 - Epsilon: 0.050 - Beta: 0.547
+2025-03-07 21:25:53,142 - INFO - Episode 24600/25000 - Avg Reward: 1680.78 - Avg Max Tile: 141.12 - Epsilon: 0.050 - Beta: 0.548
+2025-03-07 21:29:26,149 - INFO - Episode 24700/25000 - Avg Reward: 1518.04 - Avg Max Tile: 126.24 - Epsilon: 0.050 - Beta: 0.548
+2025-03-07 21:33:16,309 - INFO - Episode 24800/25000 - Avg Reward: 1596.30 - Avg Max Tile: 136.96 - Epsilon: 0.050 - Beta: 0.549
+2025-03-07 21:37:02,724 - INFO - Episode 24900/25000 - Avg Reward: 1551.93 - Avg Max Tile: 126.40 - Epsilon: 0.050 - Beta: 0.549
+2025-03-07 21:40:51,356 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_25000.pt
+2025-03-07 21:40:51,357 - INFO - Episode 25000/25000 - Avg Reward: 1559.42 - Avg Max Tile: 128.48 - Epsilon: 0.050 - Beta: 0.550
+2025-03-07 21:40:58,007 - INFO - Training completed - Final model saved to models\dueling_dqn\dueling_dqn_per_final.pt
+2025-03-07 21:40:58,008 - INFO - Highest tile achieved during training: 512
+2025-03-07 21:46:36,776 - INFO - Starting training with device: cuda
+2025-03-07 21:46:36,777 - INFO - Model parameters: 3394954
+2025-03-07 21:46:37,022 - INFO - New best score: 983.5999915599823 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-07 21:46:37,022 - INFO - Final board state for new best score 983.5999915599823:
+[[ 4, 32,  4,  2],
+ [ 8, 64,  8,  4],
+ [ 4, 32,  2,  8],
+ [ 2, 16,  8,  2]]
+2025-03-07 21:46:37,281 - INFO - New highest tile achieved: 128 (Episode 2)
+2025-03-07 21:46:37,282 - INFO - Final board state for new max tile 128:
+[[  2,   4,   2,   8],
+ [  8,   2,   8,  16],
+ [  2, 128,  64,   4],
+ [  8,   2,   8,   2]]
+2025-03-07 21:46:37,330 - INFO - New best score: 1206.3999811410904 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-07 21:46:37,330 - INFO - Final board state for new best score 1206.3999811410904:
+[[  2,   4,   2,   8],
+ [  8,   2,   8,  16],
+ [  2, 128,  64,   4],
+ [  8,   2,   8,   2]]
+2025-03-07 21:46:38,411 - INFO - New best score: 1638.9999731779099 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-07 21:46:38,412 - INFO - Final board state for new best score 1638.9999731779099:
+[[  2,  16, 128,   8],
+ [  4, 128,  64,   2],
+ [ 16,   2,   8,   4],
+ [  2,   8,   4,   2]]
+2025-03-07 21:46:39,073 - INFO - New highest tile achieved: 256 (Episode 7)
+2025-03-07 21:46:39,074 - INFO - Final board state for new max tile 256:
+[[  2,   8,  16,   4],
+ [  4, 256,  32,   2],
+ [  8, 128,   4,  16],
+ [  2,   4,  16,   4]]
+2025-03-07 21:46:39,137 - INFO - New best score: 2164.3999650478363 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-07 21:46:39,138 - INFO - Final board state for new best score 2164.3999650478363:
+[[  2,   8,  16,   4],
+ [  4, 256,  32,   2],
+ [  8, 128,   4,  16],
+ [  2,   4,  16,   4]]
+2025-03-07 21:46:40,355 - INFO - New best score: 2258.3999655246735 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-07 21:46:40,356 - INFO - Final board state for new best score 2258.3999655246735:
+[[  2,   4,  16,   4],
+ [  8, 128, 256,  16],
+ [  4,   8,  64,   8],
+ [  2,   4,   8,   4]]
+2025-03-07 21:48:19,309 - INFO - New best score: 2293.799989938736 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-07 21:48:19,310 - INFO - Final board state for new best score 2293.799989938736:
+[[ 32,   8,   4,   2],
+ [  2,  16,   2,   8],
+ [ 64, 256,  32,   4],
+ [  8,   2,   8,   2]]
+2025-03-07 21:48:30,618 - INFO - Episode 100/10000 - Avg Reward: 1243.44 - Avg Max Tile: 110.40 - Epsilon: 0.274 - Beta: 0.401
+2025-03-07 21:48:36,356 - INFO - New best score: 2533.1999727487564 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-07 21:48:36,357 - INFO - Final board state for new best score 2533.1999727487564:
+[[  2,  16,   4,   2],
+ [128,  64,   8,   4],
+ [ 32,   4, 256,   8],
+ [  8,   2,   8,   2]]
+2025-03-07 21:49:48,866 - INFO - New best score: 2780.7999683618546 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-07 21:49:48,867 - INFO - Final board state for new best score 2780.7999683618546:
+[[  2, 256,  32,  16],
+ [128,   8,   2,   8],
+ [  8,  64,  32,   4],
+ [  2,   8,   4,   2]]
+2025-03-07 21:50:18,675 - INFO - New best score: 3097.3999705314636 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-07 21:50:18,675 - INFO - Final board state for new best score 3097.3999705314636:
+[[256,  64,  32,   8],
+ [128,  32,  16,   4],
+ [ 64,   8,   4,   2],
+ [  8,   4,   2,   4]]
+2025-03-07 21:51:15,495 - INFO - Episode 200/10000 - Avg Reward: 1360.38 - Avg Max Tile: 112.96 - Epsilon: 0.053 - Beta: 0.401
+2025-03-07 21:53:13,890 - INFO - New highest tile achieved: 512 (Episode 262)
+2025-03-07 21:53:13,891 - INFO - Final board state for new max tile 512:
+[[  2, 128,   2,  16],
+ [512,  64,  32,   8],
+ [ 16,  32,  16,   4],
+ [  2,  16,   4,   2]]
+2025-03-07 21:53:14,913 - INFO - New best score: 4311.999950766563 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-07 21:53:14,914 - INFO - Final board state for new best score 4311.999950766563:
+[[  2, 128,   2,  16],
+ [512,  64,  32,   8],
+ [ 16,  32,  16,   4],
+ [  2,  16,   4,   2]]
+2025-03-07 21:54:31,129 - INFO - Episode 300/10000 - Avg Reward: 1635.23 - Avg Max Tile: 142.72 - Epsilon: 0.050 - Beta: 0.402
+2025-03-07 21:57:13,338 - INFO - New best score: 4848.199961185455 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-07 21:57:13,338 - INFO - Final board state for new best score 4848.199961185455:
+[[ 64,   2,  32,  16],
+ [512, 128,  16,   8],
+ [ 16,  64,   8,   4],
+ [  4,   2,  16,   2]]
+2025-03-07 21:57:58,390 - INFO - Episode 400/10000 - Avg Reward: 1691.74 - Avg Max Tile: 144.64 - Epsilon: 0.050 - Beta: 0.402
+2025-03-07 22:01:15,125 - INFO - Episode 500/10000 - Avg Reward: 1577.04 - Avg Max Tile: 132.00 - Epsilon: 0.050 - Beta: 0.403
+2025-03-07 22:04:26,024 - INFO - Episode 600/10000 - Avg Reward: 1514.90 - Avg Max Tile: 130.08 - Epsilon: 0.050 - Beta: 0.404
+2025-03-07 22:07:42,615 - INFO - Episode 700/10000 - Avg Reward: 1569.14 - Avg Max Tile: 133.44 - Epsilon: 0.050 - Beta: 0.404
+2025-03-07 22:11:08,409 - INFO - Episode 800/10000 - Avg Reward: 1649.69 - Avg Max Tile: 137.92 - Epsilon: 0.050 - Beta: 0.405
+2025-03-07 22:14:38,117 - INFO - Episode 900/10000 - Avg Reward: 1596.82 - Avg Max Tile: 136.08 - Epsilon: 0.050 - Beta: 0.405
+2025-03-07 22:18:00,668 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_1000.pt
+2025-03-07 22:18:00,668 - INFO - Episode 1000/10000 - Avg Reward: 1581.22 - Avg Max Tile: 138.56 - Epsilon: 0.050 - Beta: 0.406
+2025-03-07 22:21:21,910 - INFO - Episode 1100/10000 - Avg Reward: 1662.45 - Avg Max Tile: 144.64 - Epsilon: 0.050 - Beta: 0.407
+2025-03-07 22:25:00,028 - INFO - Episode 1200/10000 - Avg Reward: 1634.83 - Avg Max Tile: 144.96 - Epsilon: 0.050 - Beta: 0.407
+2025-03-07 22:28:30,905 - INFO - Episode 1300/10000 - Avg Reward: 1571.38 - Avg Max Tile: 133.76 - Epsilon: 0.050 - Beta: 0.408
+2025-03-07 22:32:25,053 - INFO - Episode 1400/10000 - Avg Reward: 1744.71 - Avg Max Tile: 157.44 - Epsilon: 0.050 - Beta: 0.408
+2025-03-07 22:35:50,997 - INFO - Episode 1500/10000 - Avg Reward: 1489.64 - Avg Max Tile: 121.44 - Epsilon: 0.050 - Beta: 0.409
+2025-03-07 22:39:20,971 - INFO - Episode 1600/10000 - Avg Reward: 1577.14 - Avg Max Tile: 136.96 - Epsilon: 0.050 - Beta: 0.410
+2025-03-07 22:42:38,219 - INFO - Episode 1700/10000 - Avg Reward: 1499.97 - Avg Max Tile: 124.80 - Epsilon: 0.050 - Beta: 0.410
+2025-03-07 22:46:05,170 - INFO - Episode 1800/10000 - Avg Reward: 1503.49 - Avg Max Tile: 126.24 - Epsilon: 0.050 - Beta: 0.411
+2025-03-07 22:49:30,386 - INFO - Episode 1900/10000 - Avg Reward: 1530.64 - Avg Max Tile: 124.16 - Epsilon: 0.050 - Beta: 0.411
+2025-03-07 22:53:02,842 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_2000.pt
+2025-03-07 22:53:02,843 - INFO - Episode 2000/10000 - Avg Reward: 1530.31 - Avg Max Tile: 127.04 - Epsilon: 0.050 - Beta: 0.412
+2025-03-07 22:53:02,843 - INFO - Episode 2000: Reset epsilon to 0.5, learning rate to 1e-05, and batch size to 1024
+2025-03-07 22:55:50,595 - INFO - Episode 2100/10000 - Avg Reward: 1345.94 - Avg Max Tile: 117.12 - Epsilon: 0.105 - Beta: 0.413
+2025-03-07 22:59:12,231 - INFO - Episode 2199: Returning to normal epsilon decay rate with learning rate 2e-05 and batch size 2048
+2025-03-07 22:59:14,153 - INFO - Episode 2200/10000 - Avg Reward: 1530.79 - Avg Max Tile: 130.56 - Epsilon: 0.050 - Beta: 0.413
+2025-03-07 23:03:09,048 - INFO - Episode 2300/10000 - Avg Reward: 1607.68 - Avg Max Tile: 144.96 - Epsilon: 0.050 - Beta: 0.414
+2025-03-07 23:06:49,095 - INFO - Episode 2400/10000 - Avg Reward: 1522.23 - Avg Max Tile: 132.16 - Epsilon: 0.050 - Beta: 0.414
+2025-03-07 23:10:38,788 - INFO - Episode 2500/10000 - Avg Reward: 1577.22 - Avg Max Tile: 133.60 - Epsilon: 0.050 - Beta: 0.415
+2025-03-07 23:14:34,642 - INFO - Episode 2600/10000 - Avg Reward: 1574.26 - Avg Max Tile: 135.36 - Epsilon: 0.050 - Beta: 0.416
+2025-03-07 23:18:29,061 - INFO - Episode 2700/10000 - Avg Reward: 1552.42 - Avg Max Tile: 130.56 - Epsilon: 0.050 - Beta: 0.416
+2025-03-07 23:22:19,310 - INFO - Episode 2800/10000 - Avg Reward: 1557.40 - Avg Max Tile: 130.88 - Epsilon: 0.050 - Beta: 0.417
+2025-03-07 23:26:25,472 - INFO - Episode 2900/10000 - Avg Reward: 1623.89 - Avg Max Tile: 143.04 - Epsilon: 0.050 - Beta: 0.417
+2025-03-07 23:30:32,350 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_3000.pt
+2025-03-07 23:30:32,350 - INFO - Episode 3000/10000 - Avg Reward: 1650.80 - Avg Max Tile: 137.76 - Epsilon: 0.050 - Beta: 0.418
+2025-03-07 23:34:36,181 - INFO - Episode 3100/10000 - Avg Reward: 1641.44 - Avg Max Tile: 141.76 - Epsilon: 0.050 - Beta: 0.419
+2025-03-07 23:38:40,238 - INFO - Episode 3200/10000 - Avg Reward: 1637.86 - Avg Max Tile: 139.52 - Epsilon: 0.050 - Beta: 0.419
+2025-03-07 23:42:27,091 - INFO - Episode 3300/10000 - Avg Reward: 1487.59 - Avg Max Tile: 125.28 - Epsilon: 0.050 - Beta: 0.420
+2025-03-07 23:46:18,842 - INFO - Episode 3400/10000 - Avg Reward: 1545.33 - Avg Max Tile: 134.08 - Epsilon: 0.050 - Beta: 0.420
+2025-03-07 23:50:10,394 - INFO - Episode 3500/10000 - Avg Reward: 1559.16 - Avg Max Tile: 131.52 - Epsilon: 0.050 - Beta: 0.421
+2025-03-07 23:54:01,093 - INFO - Episode 3600/10000 - Avg Reward: 1568.25 - Avg Max Tile: 127.68 - Epsilon: 0.050 - Beta: 0.422
+2025-03-07 23:58:03,121 - INFO - Episode 3700/10000 - Avg Reward: 1685.08 - Avg Max Tile: 143.04 - Epsilon: 0.050 - Beta: 0.422
+2025-03-08 00:01:59,082 - INFO - Episode 3800/10000 - Avg Reward: 1507.45 - Avg Max Tile: 125.92 - Epsilon: 0.050 - Beta: 0.423
+2025-03-08 00:02:18,095 - INFO - New best score: 4939.399951100349 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-08 00:02:18,096 - INFO - Final board state for new best score 4939.399951100349:
+[[512, 128,  32,   4],
+ [128,  32,  16,   2],
+ [ 32,  16,   2,   8],
+ [  4,   2,  16,   2]]
+2025-03-08 00:05:57,350 - INFO - Episode 3900/10000 - Avg Reward: 1504.53 - Avg Max Tile: 129.12 - Epsilon: 0.050 - Beta: 0.423
+2025-03-08 00:10:01,642 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_4000.pt
+2025-03-08 00:10:01,642 - INFO - Episode 4000/10000 - Avg Reward: 1544.65 - Avg Max Tile: 130.88 - Epsilon: 0.050 - Beta: 0.424
+2025-03-08 00:10:01,643 - INFO - Episode 4000: Reset epsilon to 0.5, learning rate to 1e-05, and batch size to 1024
+2025-03-08 00:12:40,919 - INFO - Episode 4100/10000 - Avg Reward: 1270.56 - Avg Max Tile: 106.56 - Epsilon: 0.113 - Beta: 0.425
+2025-03-08 00:15:57,367 - INFO - Episode 4199: Returning to normal epsilon decay rate with learning rate 2e-05 and batch size 2048
+2025-03-08 00:15:59,679 - INFO - Episode 4200/10000 - Avg Reward: 1464.42 - Avg Max Tile: 118.24 - Epsilon: 0.050 - Beta: 0.425
+2025-03-08 00:20:03,701 - INFO - Episode 4300/10000 - Avg Reward: 1646.71 - Avg Max Tile: 140.16 - Epsilon: 0.050 - Beta: 0.426
+2025-03-08 00:23:48,416 - INFO - Episode 4400/10000 - Avg Reward: 1537.91 - Avg Max Tile: 129.12 - Epsilon: 0.050 - Beta: 0.426
+2025-03-08 00:27:46,425 - INFO - Episode 4500/10000 - Avg Reward: 1595.71 - Avg Max Tile: 134.88 - Epsilon: 0.050 - Beta: 0.427
+2025-03-08 00:31:36,437 - INFO - Episode 4600/10000 - Avg Reward: 1530.36 - Avg Max Tile: 129.12 - Epsilon: 0.050 - Beta: 0.428
+2025-03-08 00:35:38,158 - INFO - New best score: 5150.599961280823 - Model saved to models\dueling_dqn\dueling_dqn_per_best.pt
+2025-03-08 00:35:38,159 - INFO - Final board state for new best score 5150.599961280823:
+[[512, 256,   4,   2],
+ [  2,  32,   2,   8],
+ [ 32,  16,   8,   4],
+ [  2,   8,   4,   2]]
+2025-03-08 00:35:46,015 - INFO - Episode 4700/10000 - Avg Reward: 1578.08 - Avg Max Tile: 133.44 - Epsilon: 0.050 - Beta: 0.428
+2025-03-08 00:39:29,851 - INFO - Episode 4800/10000 - Avg Reward: 1491.69 - Avg Max Tile: 123.52 - Epsilon: 0.050 - Beta: 0.429
+2025-03-08 00:43:08,219 - INFO - Episode 4900/10000 - Avg Reward: 1472.78 - Avg Max Tile: 118.88 - Epsilon: 0.050 - Beta: 0.429
+2025-03-08 00:47:16,307 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_5000.pt
+2025-03-08 00:47:16,308 - INFO - Episode 5000/10000 - Avg Reward: 1573.78 - Avg Max Tile: 135.04 - Epsilon: 0.050 - Beta: 0.430
+2025-03-08 00:51:19,686 - INFO - Episode 5100/10000 - Avg Reward: 1656.32 - Avg Max Tile: 139.04 - Epsilon: 0.050 - Beta: 0.431
+2025-03-08 16:01:52,667 - INFO - Episode 5200/10000 - Avg Reward: 1550.14 - Avg Max Tile: 128.00 - Epsilon: 0.050 - Beta: 0.431
+2025-03-08 16:05:46,995 - INFO - Episode 5300/10000 - Avg Reward: 1480.45 - Avg Max Tile: 122.88 - Epsilon: 0.050 - Beta: 0.432
+2025-03-08 16:10:03,057 - INFO - Episode 5400/10000 - Avg Reward: 1678.66 - Avg Max Tile: 151.04 - Epsilon: 0.050 - Beta: 0.432
+2025-03-08 16:13:40,710 - INFO - Episode 5500/10000 - Avg Reward: 1416.70 - Avg Max Tile: 114.56 - Epsilon: 0.050 - Beta: 0.433
+2025-03-08 16:17:33,532 - INFO - Episode 5600/10000 - Avg Reward: 1532.53 - Avg Max Tile: 129.76 - Epsilon: 0.050 - Beta: 0.434
+2025-03-08 16:21:33,891 - INFO - Episode 5700/10000 - Avg Reward: 1609.61 - Avg Max Tile: 132.96 - Epsilon: 0.050 - Beta: 0.434
+2025-03-08 16:25:36,276 - INFO - Episode 5800/10000 - Avg Reward: 1529.32 - Avg Max Tile: 127.04 - Epsilon: 0.050 - Beta: 0.435
+2025-03-08 16:29:53,897 - INFO - Episode 5900/10000 - Avg Reward: 1518.40 - Avg Max Tile: 125.28 - Epsilon: 0.050 - Beta: 0.435
+2025-03-08 16:34:20,894 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_6000.pt
+2025-03-08 16:34:20,895 - INFO - Episode 6000/10000 - Avg Reward: 1552.06 - Avg Max Tile: 129.44 - Epsilon: 0.050 - Beta: 0.436
+2025-03-08 16:34:20,895 - INFO - Episode 6000: Reset epsilon to 0.5, learning rate to 1e-05, and batch size to 1024
+2025-03-08 16:37:34,262 - INFO - Episode 6100/10000 - Avg Reward: 1318.13 - Avg Max Tile: 114.56 - Epsilon: 0.105 - Beta: 0.437
+2025-03-08 16:41:07,551 - INFO - Episode 6199: Returning to normal epsilon decay rate with learning rate 2e-05 and batch size 2048
+2025-03-08 16:41:10,393 - INFO - Episode 6200/10000 - Avg Reward: 1459.14 - Avg Max Tile: 119.36 - Epsilon: 0.050 - Beta: 0.437
+2025-03-08 16:45:48,618 - INFO - Episode 6300/10000 - Avg Reward: 1643.69 - Avg Max Tile: 139.84 - Epsilon: 0.050 - Beta: 0.438
+2025-03-08 16:50:10,207 - INFO - Episode 6400/10000 - Avg Reward: 1573.76 - Avg Max Tile: 132.48 - Epsilon: 0.050 - Beta: 0.438
+2025-03-08 16:54:24,108 - INFO - Episode 6500/10000 - Avg Reward: 1497.42 - Avg Max Tile: 119.04 - Epsilon: 0.050 - Beta: 0.439
+2025-03-08 16:58:25,422 - INFO - Episode 6600/10000 - Avg Reward: 1434.37 - Avg Max Tile: 116.48 - Epsilon: 0.050 - Beta: 0.440
+2025-03-08 17:02:52,694 - INFO - Episode 6700/10000 - Avg Reward: 1620.72 - Avg Max Tile: 138.88 - Epsilon: 0.050 - Beta: 0.440
+2025-03-08 17:07:09,635 - INFO - Episode 6800/10000 - Avg Reward: 1506.69 - Avg Max Tile: 124.16 - Epsilon: 0.050 - Beta: 0.441
+2025-03-08 17:11:29,487 - INFO - Episode 6900/10000 - Avg Reward: 1508.73 - Avg Max Tile: 125.76 - Epsilon: 0.050 - Beta: 0.441
+2025-03-08 17:15:55,664 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_7000.pt
+2025-03-08 17:15:55,665 - INFO - Episode 7000/10000 - Avg Reward: 1521.99 - Avg Max Tile: 126.08 - Epsilon: 0.050 - Beta: 0.442
+2025-03-08 17:20:13,338 - INFO - Episode 7100/10000 - Avg Reward: 1542.47 - Avg Max Tile: 127.36 - Epsilon: 0.050 - Beta: 0.443
+2025-03-08 17:24:42,531 - INFO - Episode 7200/10000 - Avg Reward: 1610.61 - Avg Max Tile: 140.32 - Epsilon: 0.050 - Beta: 0.443
+2025-03-08 17:29:30,585 - INFO - Episode 7300/10000 - Avg Reward: 1701.06 - Avg Max Tile: 148.80 - Epsilon: 0.050 - Beta: 0.444
+2025-03-08 17:34:01,323 - INFO - Episode 7400/10000 - Avg Reward: 1652.87 - Avg Max Tile: 141.76 - Epsilon: 0.050 - Beta: 0.444
+2025-03-08 17:38:34,863 - INFO - Episode 7500/10000 - Avg Reward: 1587.71 - Avg Max Tile: 132.48 - Epsilon: 0.050 - Beta: 0.445
+2025-03-08 17:43:07,727 - INFO - Episode 7600/10000 - Avg Reward: 1594.88 - Avg Max Tile: 132.16 - Epsilon: 0.050 - Beta: 0.446
+2025-03-08 17:47:53,692 - INFO - Episode 7700/10000 - Avg Reward: 1685.23 - Avg Max Tile: 147.52 - Epsilon: 0.050 - Beta: 0.446
+2025-03-08 17:52:21,685 - INFO - Episode 7800/10000 - Avg Reward: 1587.56 - Avg Max Tile: 132.64 - Epsilon: 0.050 - Beta: 0.447
+2025-03-08 17:56:33,190 - INFO - Episode 7900/10000 - Avg Reward: 1432.85 - Avg Max Tile: 121.12 - Epsilon: 0.050 - Beta: 0.447
+2025-03-08 18:01:11,295 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_8000.pt
+2025-03-08 18:01:11,296 - INFO - Episode 8000/10000 - Avg Reward: 1612.69 - Avg Max Tile: 137.92 - Epsilon: 0.050 - Beta: 0.448
+2025-03-08 18:01:11,296 - INFO - Episode 8000: Reset epsilon to 0.5, learning rate to 1e-05, and batch size to 1024
+2025-03-08 18:04:01,167 - INFO - Episode 8100/10000 - Avg Reward: 1185.87 - Avg Max Tile: 97.92 - Epsilon: 0.122 - Beta: 0.449
+2025-03-08 18:07:51,910 - INFO - Episode 8199: Returning to normal epsilon decay rate with learning rate 2e-05 and batch size 2048
+2025-03-08 18:07:53,607 - INFO - Episode 8200/10000 - Avg Reward: 1570.10 - Avg Max Tile: 134.40 - Epsilon: 0.050 - Beta: 0.449
+2025-03-08 18:12:23,786 - INFO - Episode 8300/10000 - Avg Reward: 1580.25 - Avg Max Tile: 134.40 - Epsilon: 0.050 - Beta: 0.450
+2025-03-08 18:16:58,410 - INFO - Episode 8400/10000 - Avg Reward: 1568.87 - Avg Max Tile: 131.84 - Epsilon: 0.050 - Beta: 0.450
+2025-03-08 18:21:20,937 - INFO - Episode 8500/10000 - Avg Reward: 1535.91 - Avg Max Tile: 128.96 - Epsilon: 0.050 - Beta: 0.451
+2025-03-08 18:25:58,531 - INFO - Episode 8600/10000 - Avg Reward: 1592.49 - Avg Max Tile: 133.76 - Epsilon: 0.050 - Beta: 0.452
+2025-03-08 18:30:29,757 - INFO - Episode 8700/10000 - Avg Reward: 1636.22 - Avg Max Tile: 140.80 - Epsilon: 0.050 - Beta: 0.452
+2025-03-08 18:35:06,391 - INFO - Episode 8800/10000 - Avg Reward: 1630.39 - Avg Max Tile: 139.20 - Epsilon: 0.050 - Beta: 0.453
+2025-03-08 18:39:21,577 - INFO - Episode 8900/10000 - Avg Reward: 1620.01 - Avg Max Tile: 139.52 - Epsilon: 0.050 - Beta: 0.453
+2025-03-08 18:43:27,178 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_9000.pt
+2025-03-08 18:43:27,178 - INFO - Episode 9000/10000 - Avg Reward: 1540.79 - Avg Max Tile: 133.92 - Epsilon: 0.050 - Beta: 0.454
+2025-03-08 18:47:34,045 - INFO - Episode 9100/10000 - Avg Reward: 1591.07 - Avg Max Tile: 136.48 - Epsilon: 0.050 - Beta: 0.455
+2025-03-08 18:51:39,491 - INFO - Episode 9200/10000 - Avg Reward: 1572.31 - Avg Max Tile: 134.72 - Epsilon: 0.050 - Beta: 0.455
+2025-03-08 18:55:42,636 - INFO - Episode 9300/10000 - Avg Reward: 1555.99 - Avg Max Tile: 127.52 - Epsilon: 0.050 - Beta: 0.456
+2025-03-08 18:59:52,006 - INFO - Episode 9400/10000 - Avg Reward: 1593.80 - Avg Max Tile: 138.40 - Epsilon: 0.050 - Beta: 0.456
+2025-03-08 19:03:56,688 - INFO - Episode 9500/10000 - Avg Reward: 1514.90 - Avg Max Tile: 131.52 - Epsilon: 0.050 - Beta: 0.457
+2025-03-08 19:08:10,554 - INFO - Episode 9600/10000 - Avg Reward: 1602.67 - Avg Max Tile: 138.24 - Epsilon: 0.050 - Beta: 0.458
+2025-03-08 19:12:19,904 - INFO - Episode 9700/10000 - Avg Reward: 1584.29 - Avg Max Tile: 139.84 - Epsilon: 0.050 - Beta: 0.458
+2025-03-08 19:16:24,935 - INFO - Episode 9800/10000 - Avg Reward: 1596.01 - Avg Max Tile: 131.20 - Epsilon: 0.050 - Beta: 0.459
+2025-03-08 19:20:37,007 - INFO - Episode 9900/10000 - Avg Reward: 1640.46 - Avg Max Tile: 145.12 - Epsilon: 0.050 - Beta: 0.459
+2025-03-08 19:24:44,800 - INFO - Checkpoint saved to models\dueling_dqn\dueling_dqn_per_10000.pt
+2025-03-08 19:24:44,801 - INFO - Episode 10000/10000 - Avg Reward: 1522.90 - Avg Max Tile: 126.72 - Epsilon: 0.050 - Beta: 0.460
+2025-03-08 19:24:50,630 - INFO - Training completed - Final model saved to models\dueling_dqn\dueling_dqn_per_final.pt
+2025-03-08 19:24:50,630 - INFO - Highest tile achieved during training: 512
+2025-03-08 22:18:19,837 - INFO - Starting training with device: cuda
+2025-03-08 22:18:19,837 - INFO - Model parameters: 8914186
+2025-03-08 22:18:20,096 - INFO - New best score: 4938.200000000001 - Model saved to models\enhanced_dqn\enhanced_dqn_per_best.pt
+2025-03-08 22:18:20,096 - INFO - Final board state for new best score 4938.200000000001:
+[[ 4,  2, 16,  4],
+ [ 8,  4,  8,  2],
+ [16, 64, 32,  4],
+ [ 4,  2,  4, 16]]
+2025-03-08 22:18:20,370 - INFO - New best score: 5430.899999999999 - Model saved to models\enhanced_dqn\enhanced_dqn_per_best.pt
+2025-03-08 22:18:20,370 - INFO - Final board state for new best score 5430.899999999999:
+[[ 4, 16,  4,  2],
+ [ 8,  4,  8, 16],
+ [ 2, 64, 32,  8],
+ [ 4,  2, 16,  2]]
+2025-03-08 22:18:20,906 - INFO - New highest tile achieved: 128 (Episode 3)
+2025-03-08 22:18:20,906 - INFO - Final board state for new max tile 128:
+[[  2,   8,  32,   4],
+ [ 16,   4,  16,  32],
+ [  4, 128,  64,   8],
+ [  2,   4,   8,   4]]
+2025-03-08 22:18:20,990 - INFO - New best score: 6664.399999999994 - Model saved to models\enhanced_dqn\enhanced_dqn_per_best.pt
+2025-03-08 22:18:20,991 - INFO - Final board state for new best score 6664.399999999994:
+[[  2,   8,  32,   4],
+ [ 16,   4,  16,  32],
+ [  4, 128,  64,   8],
+ [  2,   4,   8,   4]]
+2025-03-08 22:18:21,551 - INFO - New best score: 7106.100000000002 - Model saved to models\enhanced_dqn\enhanced_dqn_per_best.pt
+2025-03-08 22:18:21,552 - INFO - Final board state for new best score 7106.100000000002:
+[[  8,   2,   8,   4],
+ [ 32, 128,   2,   8],
+ [  2,   4,  16,   4],
+ [  4,  16,   4,   2]]
+2025-03-08 22:18:22,336 - INFO - New best score: 7227.000000000002 - Model saved to models\enhanced_dqn\enhanced_dqn_per_best.pt
+2025-03-08 22:18:22,337 - INFO - Final board state for new best score 7227.000000000002:
+[[  2,   4,  16,   8],
+ [  4,  16,  32,  16],
+ [  8, 128,   2,   4],
+ [  4,  64,  32,   2]]
+2025-03-08 22:18:23,194 - INFO - New best score: 7409.399999999999 - Model saved to models\enhanced_dqn\enhanced_dqn_per_best.pt
+2025-03-08 22:18:23,195 - INFO - Final board state for new best score 7409.399999999999:
+[[  4,  64,   4,   2],
+ [128,   8,  16,   8],
+ [  2,   4,  64,   4],
+ [  4,   8,   4,   2]]
+2025-03-08 22:18:23,695 - INFO - New highest tile achieved: 256 (Episode 12)
+2025-03-08 22:18:23,696 - INFO - Final board state for new max tile 256:
+[[  4,   2,   4,  32],
+ [ 32,   8, 128,   4],
+ [  4, 256,   8,  16],
+ [  2,   8,  16,   8]]
+2025-03-08 22:18:23,799 - INFO - New best score: 9438.000000000004 - Model saved to models\enhanced_dqn\enhanced_dqn_per_best.pt
+2025-03-08 22:18:23,800 - INFO - Final board state for new best score 9438.000000000004:
+[[  4,   2,   4,  32],
+ [ 32,   8, 128,   4],
+ [  4, 256,   8,  16],
+ [  2,   8,  16,   8]]
+2025-03-08 22:18:44,337 - INFO - New best score: 9614.9 - Model saved to models\enhanced_dqn\enhanced_dqn_per_best.pt
+2025-03-08 22:18:44,338 - INFO - Final board state for new best score 9614.9:
+[[  4,   2,   4,   2],
+ [ 16,   8, 256,  16],
+ [  8,  32,  64,   4],
+ [  4,  16,   4,   2]]
+2025-03-08 22:19:31,935 - INFO - New best score: 10268.199999999999 - Model saved to models\enhanced_dqn\enhanced_dqn_per_best.pt
+2025-03-08 22:19:31,936 - INFO - Final board state for new best score 10268.199999999999:
+[[  2,   4,   2,  16],
+ [  8, 256,   8,   4],
+ [ 16,   8,   4,   2],
+ [  2,   4,   2,   8]]
+2025-03-08 22:21:10,788 - INFO - Episode 100/15000 - Avg Reward: 6224.01 - Avg Max Tile: 101.76 - Epsilon: 0.328 - Beta: 0.401
+2025-03-08 22:24:32,925 - INFO - New best score: 10952.199999999992 - Model saved to models\enhanced_dqn\enhanced_dqn_per_best.pt
+2025-03-08 22:24:32,925 - INFO - Final board state for new best score 10952.199999999992:
+[[256,   2,   8,   2],
+ [  2,   4,  16,   8],
+ [ 16,  64,   8,   4],
+ [  2,   8,   4,   2]]
+2025-03-08 22:25:24,685 - INFO - Episode 200/15000 - Avg Reward: 6379.74 - Avg Max Tile: 102.08 - Epsilon: 0.074 - Beta: 0.401
+2025-03-08 22:25:34,393 - INFO - New best score: 11156.60000000001 - Model saved to models\enhanced_dqn\enhanced_dqn_per_best.pt
+2025-03-08 22:25:34,394 - INFO - Final board state for new best score 11156.60000000001:
+[[256,  32,   8,   4],
+ [  2,  64,  16,   8],
+ [ 64,  16,   4,   2],
+ [  2,   8,   2,   4]]
+2025-03-08 22:29:05,798 - INFO - New highest tile achieved: 512 (Episode 263)
+2025-03-08 22:29:05,798 - INFO - Final board state for new max tile 512:
+[[512,   2,   4,   2],
+ [  2,  32,  64,   8],
+ [ 32,   4,  16,   2],
+ [  2,   8,   2,   4]]
+2025-03-08 22:29:06,968 - INFO - New best score: 14377.000000000002 - Model saved to models\enhanced_dqn\enhanced_dqn_per_best.pt
+2025-03-08 22:29:06,969 - INFO - Final board state for new best score 14377.000000000002:
+[[512,   2,   4,   2],
+ [  2,  32,  64,   8],
+ [ 32,   4,  16,   2],
+ [  2,   8,   2,   4]]
+2025-03-08 22:31:06,416 - INFO - New best score: 14511.600000000017 - Model saved to models\enhanced_dqn\enhanced_dqn_per_best.pt
+2025-03-08 22:31:06,416 - INFO - Final board state for new best score 14511.600000000017:
+[[  8, 256,  32,  16],
+ [512,  64,  16,   8],
+ [  8,   2,   8,   2],
+ [  2,  32,   2,   4]]
+2025-03-08 22:31:13,735 - INFO - Episode 300/15000 - Avg Reward: 7774.94 - Avg Max Tile: 151.68 - Epsilon: 0.050 - Beta: 0.402
+2025-03-08 22:36:12,572 - INFO - New best score: 15681.099999999991 - Model saved to models\enhanced_dqn\enhanced_dqn_per_best.pt
+2025-03-08 22:36:12,573 - INFO - Final board state for new best score 15681.099999999991:
+[[512,   2,  32,  16],
+ [  2, 128,  16,   8],
+ [128,  16,   8,   4],
+ [  2,   8,   4,   2]]
+2025-03-08 22:36:39,286 - INFO - Episode 400/15000 - Avg Reward: 7327.42 - Avg Max Tile: 135.68 - Epsilon: 0.050 - Beta: 0.402
+2025-03-08 22:42:26,445 - INFO - Episode 500/15000 - Avg Reward: 7626.35 - Avg Max Tile: 144.96 - Epsilon: 0.050 - Beta: 0.403
+2025-03-08 22:47:46,852 - INFO - Episode 600/15000 - Avg Reward: 7197.99 - Avg Max Tile: 130.40 - Epsilon: 0.050 - Beta: 0.404
+2025-03-08 22:53:05,488 - INFO - Episode 700/15000 - Avg Reward: 7115.73 - Avg Max Tile: 129.76 - Epsilon: 0.050 - Beta: 0.404
+2025-03-08 22:58:37,437 - INFO - Episode 800/15000 - Avg Reward: 7368.02 - Avg Max Tile: 134.40 - Epsilon: 0.050 - Beta: 0.405
+2025-03-08 23:03:54,266 - INFO - Episode 900/15000 - Avg Reward: 6939.36 - Avg Max Tile: 121.60 - Epsilon: 0.050 - Beta: 0.405
+2025-03-08 23:09:18,480 - INFO - Checkpoint saved to models\enhanced_dqn\enhanced_dqn_per_1000.pt
+2025-03-08 23:09:18,482 - INFO - Episode 1000/15000 - Avg Reward: 7268.39 - Avg Max Tile: 128.96 - Epsilon: 0.050 - Beta: 0.406
+2025-03-08 23:11:11,370 - INFO - New best score: 15796.200000000008 - Model saved to models\enhanced_dqn\enhanced_dqn_per_best.pt
+2025-03-08 23:11:11,370 - INFO - Final board state for new best score 15796.200000000008:
+[[512, 128,  64,  16],
+ [128,  64,   4,   2],
+ [  8,   4,   2,   4],
+ [  4,  16,   8,   2]]
+2025-03-08 23:14:52,769 - INFO - Episode 1100/15000 - Avg Reward: 7202.19 - Avg Max Tile: 129.92 - Epsilon: 0.050 - Beta: 0.407
+2025-03-08 23:20:20,081 - INFO - Episode 1200/15000 - Avg Reward: 7370.19 - Avg Max Tile: 132.16 - Epsilon: 0.050 - Beta: 0.407
+2025-03-09 10:37:44,914 - INFO - Episode 1300/15000 - Avg Reward: 7430.40 - Avg Max Tile: 132.80 - Epsilon: 0.050 - Beta: 0.408
+2025-03-09 10:43:15,706 - INFO - Episode 1400/15000 - Avg Reward: 7275.75 - Avg Max Tile: 132.16 - Epsilon: 0.050 - Beta: 0.408
+2025-03-09 10:48:53,903 - INFO - Episode 1500/15000 - Avg Reward: 7301.39 - Avg Max Tile: 137.76 - Epsilon: 0.050 - Beta: 0.409
+2025-03-09 10:54:45,932 - INFO - Episode 1600/15000 - Avg Reward: 7323.46 - Avg Max Tile: 135.84 - Epsilon: 0.050 - Beta: 0.410
+2025-03-09 11:00:11,274 - INFO - Episode 1700/15000 - Avg Reward: 7201.98 - Avg Max Tile: 125.92 - Epsilon: 0.050 - Beta: 0.410
+2025-03-09 11:05:49,224 - INFO - Episode 1800/15000 - Avg Reward: 7279.15 - Avg Max Tile: 131.20 - Epsilon: 0.050 - Beta: 0.411
+2025-03-09 11:11:47,222 - INFO - Episode 1900/15000 - Avg Reward: 7414.63 - Avg Max Tile: 136.80 - Epsilon: 0.050 - Beta: 0.411
+2025-03-09 11:18:31,323 - INFO - Checkpoint saved to models\enhanced_dqn\enhanced_dqn_per_2000.pt
+2025-03-09 11:18:31,324 - INFO - Episode 2000/15000 - Avg Reward: 7953.63 - Avg Max Tile: 155.52 - Epsilon: 0.050 - Beta: 0.412
+2025-03-09 11:18:31,324 - INFO - Episode 2000: Reset epsilon to 0.5, learning rate to 5e-06, and batch size to 2048
+2025-03-09 11:23:22,896 - INFO - Episode 2100/15000 - Avg Reward: 6625.45 - Avg Max Tile: 115.04 - Epsilon: 0.108 - Beta: 0.413
+2025-03-09 11:29:05,565 - INFO - Episode 2199: Returning to normal epsilon decay rate with learning rate 1e-05 and batch size 4096
+2025-03-09 11:29:10,962 - INFO - Episode 2200/15000 - Avg Reward: 7340.68 - Avg Max Tile: 134.72 - Epsilon: 0.050 - Beta: 0.413
+2025-03-09 11:39:25,728 - INFO - Episode 2300/15000 - Avg Reward: 7630.17 - Avg Max Tile: 141.44 - Epsilon: 0.050 - Beta: 0.414
+2025-03-09 11:48:59,269 - INFO - Episode 2400/15000 - Avg Reward: 7181.76 - Avg Max Tile: 127.68 - Epsilon: 0.050 - Beta: 0.414
+2025-03-09 11:58:11,875 - INFO - Episode 2500/15000 - Avg Reward: 7093.41 - Avg Max Tile: 128.64 - Epsilon: 0.050 - Beta: 0.415
+2025-03-09 12:07:40,984 - INFO - Episode 2600/15000 - Avg Reward: 7310.05 - Avg Max Tile: 132.80 - Epsilon: 0.050 - Beta: 0.416
+2025-03-09 12:16:55,258 - INFO - Episode 2700/15000 - Avg Reward: 6935.88 - Avg Max Tile: 123.20 - Epsilon: 0.050 - Beta: 0.416
+2025-03-09 12:26:20,879 - INFO - Episode 2800/15000 - Avg Reward: 7128.75 - Avg Max Tile: 127.04 - Epsilon: 0.050 - Beta: 0.417
+2025-03-09 12:35:47,141 - INFO - Episode 2900/15000 - Avg Reward: 7332.00 - Avg Max Tile: 131.36 - Epsilon: 0.050 - Beta: 0.417
+2025-03-09 12:45:45,920 - INFO - Checkpoint saved to models\enhanced_dqn\enhanced_dqn_per_3000.pt
+2025-03-09 12:45:45,921 - INFO - Episode 3000/15000 - Avg Reward: 7187.45 - Avg Max Tile: 137.76 - Epsilon: 0.050 - Beta: 0.418
+2025-03-09 12:51:28,474 - INFO - Loading checkpoint from models\enhanced_dqn\enhanced_dqn_per_3000.pt
+2025-03-09 12:51:32,668 - ERROR - Error loading checkpoint: Error(s) in loading state_dict for DQNAgent:
+	Missing key(s) in state_dict: "res_blocks.6.conv1.weight", "res_blocks.6.conv1.bias", "res_blocks.6.bn1.weight", "res_blocks.6.bn1.bias", "res_blocks.6.bn1.running_mean", "res_blocks.6.bn1.running_var", "res_blocks.6.conv2.weight", "res_blocks.6.conv2.bias", "res_blocks.6.bn2.weight", "res_blocks.6.bn2.bias", "res_blocks.6.bn2.running_mean", "res_blocks.6.bn2.running_var", "res_blocks.7.conv1.weight", "res_blocks.7.conv1.bias", "res_blocks.7.bn1.weight", "res_blocks.7.bn1.bias", "res_blocks.7.bn1.running_mean", "res_blocks.7.bn1.running_var", "res_blocks.7.conv2.weight", "res_blocks.7.conv2.bias", "res_blocks.7.bn2.weight", "res_blocks.7.bn2.bias", "res_blocks.7.bn2.running_mean", "res_blocks.7.bn2.running_var", "fc_adv.5.weight", "fc_adv.5.bias", "fc_adv.5.running_mean", "fc_adv.5.running_var", "fc_adv.8.weight", "fc_adv.8.bias", "fc_val.5.weight", "fc_val.5.bias", "fc_val.5.running_mean", "fc_val.5.running_var", "fc_val.8.weight", "fc_val.8.bias", "target_network.res_blocks.6.conv1.weight", "target_network.res_blocks.6.conv1.bias", "target_network.res_blocks.6.bn1.weight", "target_network.res_blocks.6.bn1.bias", "target_network.res_blocks.6.bn1.running_mean", "target_network.res_blocks.6.bn1.running_var", "target_network.res_blocks.6.conv2.weight", "target_network.res_blocks.6.conv2.bias", "target_network.res_blocks.6.bn2.weight", "target_network.res_blocks.6.bn2.bias", "target_network.res_blocks.6.bn2.running_mean", "target_network.res_blocks.6.bn2.running_var", "target_network.res_blocks.7.conv1.weight", "target_network.res_blocks.7.conv1.bias", "target_network.res_blocks.7.bn1.weight", "target_network.res_blocks.7.bn1.bias", "target_network.res_blocks.7.bn1.running_mean", "target_network.res_blocks.7.bn1.running_var", "target_network.res_blocks.7.conv2.weight", "target_network.res_blocks.7.conv2.bias", "target_network.res_blocks.7.bn2.weight", "target_network.res_blocks.7.bn2.bias", "target_network.res_blocks.7.bn2.running_mean", "target_network.res_blocks.7.bn2.running_var", "target_network.fc_adv.5.weight", "target_network.fc_adv.5.bias", "target_network.fc_adv.5.running_mean", "target_network.fc_adv.5.running_var", "target_network.fc_adv.8.weight", "target_network.fc_adv.8.bias", "target_network.fc_val.5.weight", "target_network.fc_val.5.bias", "target_network.fc_val.5.running_mean", "target_network.fc_val.5.running_var", "target_network.fc_val.8.weight", "target_network.fc_val.8.bias". 
+	size mismatch for conv1.weight: copying a param with shape torch.Size([128, 16, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 16, 3, 3]).
+	size mismatch for conv1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for bn1.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for bn1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for bn1.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for bn1.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.0.conv1.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for res_blocks.0.conv1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.0.bn1.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.0.bn1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.0.bn1.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.0.bn1.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.0.conv2.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for res_blocks.0.conv2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.0.bn2.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.0.bn2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.0.bn2.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.0.bn2.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.1.conv1.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for res_blocks.1.conv1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.1.bn1.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.1.bn1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.1.bn1.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.1.bn1.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.1.conv2.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for res_blocks.1.conv2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.1.bn2.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.1.bn2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.1.bn2.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.1.bn2.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.2.conv1.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for res_blocks.2.conv1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.2.bn1.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.2.bn1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.2.bn1.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.2.bn1.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.2.conv2.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for res_blocks.2.conv2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.2.bn2.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.2.bn2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.2.bn2.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.2.bn2.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.3.conv1.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for res_blocks.3.conv1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.3.bn1.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.3.bn1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.3.bn1.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.3.bn1.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.3.conv2.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for res_blocks.3.conv2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.3.bn2.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.3.bn2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.3.bn2.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.3.bn2.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.4.conv1.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for res_blocks.4.conv1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.4.bn1.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.4.bn1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.4.bn1.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.4.bn1.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.4.conv2.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for res_blocks.4.conv2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.4.bn2.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.4.bn2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.4.bn2.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.4.bn2.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.5.conv1.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for res_blocks.5.conv1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.5.bn1.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.5.bn1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.5.bn1.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.5.bn1.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.5.conv2.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for res_blocks.5.conv2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.5.bn2.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.5.bn2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.5.bn2.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for res_blocks.5.bn2.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for conv2.weight: copying a param with shape torch.Size([256, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([512, 256, 3, 3]).
+	size mismatch for conv2.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for bn2.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for bn2.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for bn2.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for bn2.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for skip_conv.weight: copying a param with shape torch.Size([256, 16, 1, 1]) from checkpoint, the shape in current model is torch.Size([512, 16, 1, 1]).
+	size mismatch for skip_conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for skip_bn.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for skip_bn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for skip_bn.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for skip_bn.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for fc1.weight: copying a param with shape torch.Size([512, 4096]) from checkpoint, the shape in current model is torch.Size([1024, 8192]).
+	size mismatch for fc1.bias: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_fc1.weight: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_fc1.bias: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_fc1.running_mean: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_fc1.running_var: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for fc_adv.0.weight: copying a param with shape torch.Size([256, 512]) from checkpoint, the shape in current model is torch.Size([512, 1024]).
+	size mismatch for fc_adv.0.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for fc_adv.1.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for fc_adv.1.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for fc_adv.1.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for fc_adv.1.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for fc_adv.4.weight: copying a param with shape torch.Size([4, 256]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for fc_adv.4.bias: copying a param with shape torch.Size([4]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for fc_val.0.weight: copying a param with shape torch.Size([256, 512]) from checkpoint, the shape in current model is torch.Size([512, 1024]).
+	size mismatch for fc_val.0.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for fc_val.1.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for fc_val.1.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for fc_val.1.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for fc_val.1.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for fc_val.4.weight: copying a param with shape torch.Size([1, 256]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for fc_val.4.bias: copying a param with shape torch.Size([1]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.conv1.weight: copying a param with shape torch.Size([128, 16, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 16, 3, 3]).
+	size mismatch for target_network.conv1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.bn1.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.bn1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.bn1.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.bn1.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.0.conv1.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for target_network.res_blocks.0.conv1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.0.bn1.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.0.bn1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.0.bn1.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.0.bn1.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.0.conv2.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for target_network.res_blocks.0.conv2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.0.bn2.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.0.bn2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.0.bn2.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.0.bn2.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.1.conv1.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for target_network.res_blocks.1.conv1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.1.bn1.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.1.bn1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.1.bn1.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.1.bn1.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.1.conv2.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for target_network.res_blocks.1.conv2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.1.bn2.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.1.bn2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.1.bn2.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.1.bn2.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.2.conv1.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for target_network.res_blocks.2.conv1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.2.bn1.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.2.bn1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.2.bn1.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.2.bn1.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.2.conv2.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for target_network.res_blocks.2.conv2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.2.bn2.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.2.bn2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.2.bn2.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.2.bn2.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.3.conv1.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for target_network.res_blocks.3.conv1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.3.bn1.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.3.bn1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.3.bn1.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.3.bn1.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.3.conv2.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for target_network.res_blocks.3.conv2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.3.bn2.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.3.bn2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.3.bn2.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.3.bn2.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.4.conv1.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for target_network.res_blocks.4.conv1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.4.bn1.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.4.bn1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.4.bn1.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.4.bn1.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.4.conv2.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for target_network.res_blocks.4.conv2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.4.bn2.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.4.bn2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.4.bn2.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.4.bn2.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.5.conv1.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for target_network.res_blocks.5.conv1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.5.bn1.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.5.bn1.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.5.bn1.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.5.bn1.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.5.conv2.weight: copying a param with shape torch.Size([128, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([256, 256, 3, 3]).
+	size mismatch for target_network.res_blocks.5.conv2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.5.bn2.weight: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.5.bn2.bias: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.5.bn2.running_mean: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.res_blocks.5.bn2.running_var: copying a param with shape torch.Size([128]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.conv2.weight: copying a param with shape torch.Size([256, 128, 3, 3]) from checkpoint, the shape in current model is torch.Size([512, 256, 3, 3]).
+	size mismatch for target_network.conv2.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.bn2.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.bn2.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.bn2.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.bn2.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.skip_conv.weight: copying a param with shape torch.Size([256, 16, 1, 1]) from checkpoint, the shape in current model is torch.Size([512, 16, 1, 1]).
+	size mismatch for target_network.skip_conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.skip_bn.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.skip_bn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.skip_bn.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.skip_bn.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.fc1.weight: copying a param with shape torch.Size([512, 4096]) from checkpoint, the shape in current model is torch.Size([1024, 8192]).
+	size mismatch for target_network.fc1.bias: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for target_network.bn_fc1.weight: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for target_network.bn_fc1.bias: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for target_network.bn_fc1.running_mean: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for target_network.bn_fc1.running_var: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for target_network.fc_adv.0.weight: copying a param with shape torch.Size([256, 512]) from checkpoint, the shape in current model is torch.Size([512, 1024]).
+	size mismatch for target_network.fc_adv.0.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.fc_adv.1.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.fc_adv.1.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.fc_adv.1.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.fc_adv.1.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.fc_adv.4.weight: copying a param with shape torch.Size([4, 256]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for target_network.fc_adv.4.bias: copying a param with shape torch.Size([4]) from checkpoint, the shape in current model is torch.Size([256]).
+	size mismatch for target_network.fc_val.0.weight: copying a param with shape torch.Size([256, 512]) from checkpoint, the shape in current model is torch.Size([512, 1024]).
+	size mismatch for target_network.fc_val.0.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.fc_val.1.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.fc_val.1.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.fc_val.1.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.fc_val.1.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for target_network.fc_val.4.weight: copying a param with shape torch.Size([1, 256]) from checkpoint, the shape in current model is torch.Size([256, 512]).
+	size mismatch for target_network.fc_val.4.bias: copying a param with shape torch.Size([1]) from checkpoint, the shape in current model is torch.Size([256]).
+2025-03-09 12:52:54,614 - INFO - Starting training with device: cuda
+2025-03-09 12:52:54,614 - INFO - Model parameters: 40772618
+2025-03-09 12:52:55,102 - INFO - New best score: 5422.700000000002 - Model saved to models\enhanced_dqn_v2\enhanced_dqn_per_best.pt
+2025-03-09 12:52:55,102 - INFO - Final board state for new best score 5422.700000000002:
+[[ 4,  8,  4,  2],
+ [ 2, 64, 16,  8],
+ [ 8,  2,  8,  2],
+ [ 2, 16,  2, 64]]
+2025-03-09 12:52:55,601 - INFO - New best score: 5497.7999999999965 - Model saved to models\enhanced_dqn_v2\enhanced_dqn_per_best.pt
+2025-03-09 12:52:55,601 - INFO - Final board state for new best score 5497.7999999999965:
+[[ 2, 32,  4,  2],
+ [ 4,  8,  2,  8],
+ [64, 16, 32,  4],
+ [ 4,  8,  4,  2]]
+2025-03-09 12:52:57,341 - INFO - New highest tile achieved: 128 (Episode 3)
+2025-03-09 12:52:57,341 - INFO - Final board state for new max tile 128:
+[[  2,   4,   2, 128],
+ [ 16,   8,   4,  32],
+ [  8,  64,  32,   2],
+ [  2,   4,   2,   4]]
+2025-03-09 12:52:57,647 - INFO - New best score: 7285.900000000001 - Model saved to models\enhanced_dqn_v2\enhanced_dqn_per_best.pt
+2025-03-09 12:52:57,648 - INFO - Final board state for new best score 7285.900000000001:
+[[  2,   4,   2, 128],
+ [ 16,   8,   4,  32],
+ [  8,  64,  32,   2],
+ [  2,   4,   2,   4]]
+2025-03-09 12:52:58,721 - INFO - New best score: 7635.999999999998 - Model saved to models\enhanced_dqn_v2\enhanced_dqn_per_best.pt
+2025-03-09 12:52:58,721 - INFO - Final board state for new best score 7635.999999999998:
+[[  2,   4,   2,   8],
+ [  4,   2,   8,   4],
+ [  8,  16, 128,  16],
+ [  2,   4,  64,   8]]
+2025-03-09 12:53:01,136 - INFO - New highest tile achieved: 256 (Episode 14)
+2025-03-09 12:53:01,136 - INFO - Final board state for new max tile 256:
+[[  2,  32,  16,   4],
+ [ 16,   4, 256,  16],
+ [  2,   8,   4,   2],
+ [  4,   2,  32,   4]]
+2025-03-09 12:53:01,523 - INFO - New best score: 10040.700000000008 - Model saved to models\enhanced_dqn_v2\enhanced_dqn_per_best.pt
+2025-03-09 12:53:01,523 - INFO - Final board state for new best score 10040.700000000008:
+[[  2,  32,  16,   4],
+ [ 16,   4, 256,  16],
+ [  2,   8,   4,   2],
+ [  4,   2,  32,   4]]
+2025-03-09 12:53:09,121 - INFO - New best score: 10044.900000000005 - Model saved to models\enhanced_dqn_v2\enhanced_dqn_per_best.pt
+2025-03-09 12:53:09,121 - INFO - Final board state for new best score 10044.900000000005:
+[[  4,   2,   8,   4],
+ [ 16,   8, 256,   2],
+ [  8,  64,   2,  16],
+ [  2,   8,  16,   2]]
+2025-03-09 12:59:09,081 - INFO - Episode 100/15000 - Avg Reward: 6194.27 - Avg Max Tile: 99.68 - Epsilon: 0.743 - Beta: 0.401
+2025-03-09 13:19:13,694 - INFO - New best score: 10242.599999999997 - Model saved to models\enhanced_dqn_v2\enhanced_dqn_per_best.pt
+2025-03-09 13:19:13,694 - INFO - Final board state for new best score 10242.599999999997:
+[[  4,   2,   4,   2],
+ [256,   8,   2,   8],
+ [  4,  32,  64,   2],
+ [  8,   4,   2,   4]]
+2025-03-09 13:31:10,230 - INFO - Episode 200/15000 - Avg Reward: 6290.71 - Avg Max Tile: 100.80 - Epsilon: 0.183 - Beta: 0.401
+2025-03-09 13:44:24,557 - INFO - New best score: 10390.900000000014 - Model saved to models\enhanced_dqn_v2\enhanced_dqn_per_best.pt
+2025-03-09 13:44:24,557 - INFO - Final board state for new best score 10390.900000000014:
+[[  4, 128,   2,   8],
+ [256,  64,   8,   4],
+ [  4,  32,  16,   2],
+ [  2,   8,   4,   8]]
+2025-03-09 13:45:20,250 - INFO - New best score: 10549.4 - Model saved to models\enhanced_dqn_v2\enhanced_dqn_per_best.pt
+2025-03-09 13:45:20,250 - INFO - Final board state for new best score 10549.4:
+[[256,  64,   8,   2],
+ [  4,   2,  32,  16],
+ [  2,  64,   8,   4],
+ [  4,  16,   4,   2]]
+2025-03-09 13:46:03,189 - INFO - New best score: 10737.399999999992 - Model saved to models\enhanced_dqn_v2\enhanced_dqn_per_best.pt
+2025-03-09 13:46:03,190 - INFO - Final board state for new best score 10737.399999999992:
+[[  4,   2,  32,   4],
+ [256,  16,   8,   2],
+ [ 16,   4,   2,   4],
+ [  4,   2,   8,   2]]
+2025-03-09 13:49:03,122 - INFO - New highest tile achieved: 512 (Episode 247)
+2025-03-09 13:49:03,122 - INFO - Final board state for new max tile 512:
+[[ 16,  64,   4,   2],
+ [512, 128,  16,   8],
+ [ 64,  32,   4,   2],
+ [  2,   4,  16,   4]]
+2025-03-09 13:49:04,555 - INFO - New best score: 13456.20000000001 - Model saved to models\enhanced_dqn_v2\enhanced_dqn_per_best.pt
+2025-03-09 13:49:04,555 - INFO - Final board state for new best score 13456.20000000001:
+[[ 16,  64,   4,   2],
+ [512, 128,  16,   8],
+ [ 64,  32,   4,   2],
+ [  2,   4,  16,   4]]
+2025-03-09 14:11:20,817 - INFO - Episode 300/15000 - Avg Reward: 7020.89 - Avg Max Tile: 125.60 - Epsilon: 0.050 - Beta: 0.402
+2025-03-09 14:53:11,475 - INFO - Episode 400/15000 - Avg Reward: 7285.31 - Avg Max Tile: 126.08 - Epsilon: 0.050 - Beta: 0.402
+2025-03-09 15:30:54,175 - INFO - Checkpoint saved to models\enhanced_dqn_v2\enhanced_dqn_per_500.pt
+2025-03-09 15:30:54,176 - INFO - Episode 500/15000 - Avg Reward: 6673.37 - Avg Max Tile: 108.16 - Epsilon: 0.050 - Beta: 0.403
+2025-03-09 15:49:36,321 - INFO - New best score: 15007.500000000013 - Model saved to models\enhanced_dqn_v2\enhanced_dqn_per_best.pt
+2025-03-09 15:49:36,321 - INFO - Final board state for new best score 15007.500000000013:
+[[512, 128,  64,  32],
+ [128,   8,   2,  16],
+ [  8,   2,  16,   4],
+ [  4,  16,   8,   2]]
+2025-03-09 16:03:13,354 - INFO - New best score: 15293.800000000005 - Model saved to models\enhanced_dqn_v2\enhanced_dqn_per_best.pt
+2025-03-09 16:03:13,354 - INFO - Final board state for new best score 15293.800000000005:
+[[  8,  32,   8,   2],
+ [512,  64,  16,   8],
+ [ 16,  32,   8,   4],
+ [  4,   8,   4,   2]]
+2025-03-09 16:12:17,368 - INFO - Episode 600/15000 - Avg Reward: 7207.24 - Avg Max Tile: 129.92 - Epsilon: 0.050 - Beta: 0.404
+2025-03-09 16:55:13,211 - INFO - Episode 700/15000 - Avg Reward: 7208.64 - Avg Max Tile: 131.52 - Epsilon: 0.050 - Beta: 0.404
+2025-03-09 17:38:20,124 - INFO - Episode 800/15000 - Avg Reward: 7383.70 - Avg Max Tile: 133.92 - Epsilon: 0.050 - Beta: 0.405
+2025-03-09 18:23:46,486 - INFO - Episode 900/15000 - Avg Reward: 7408.41 - Avg Max Tile: 140.16 - Epsilon: 0.050 - Beta: 0.405
+2025-03-09 19:05:18,086 - INFO - Checkpoint saved to models\enhanced_dqn_v2\enhanced_dqn_per_1000.pt
+2025-03-09 19:05:18,087 - INFO - Episode 1000/15000 - Avg Reward: 7341.27 - Avg Max Tile: 133.28 - Epsilon: 0.050 - Beta: 0.406

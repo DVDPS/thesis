@@ -52,6 +52,23 @@ def train_dqn(args):
     beta_start = 0.4
     beta_frames = 100000
     MIN_TILE_TO_LOG = 128  # Minimum tile value to log
+    
+    # Epsilon reset schedule parameters
+    RESET_INTERVAL = 2000  # Extended from 1000 to 2000 episodes
+    RESET_EPSILON_VALUE = 0.5
+    POST_RESET_DECAY = 0.9998
+    EXPLORATION_EPISODES = 200
+
+    # Dynamic learning rate and batch size parameters
+    BASE_LEARNING_RATE = args.learning_rate
+    EXPLORATION_LEARNING_RATE = BASE_LEARNING_RATE * 0.5  # Reduced learning rate during exploration
+    BASE_BATCH_SIZE = args.batch_size
+    EXPLOITATION_BATCH_SIZE = BASE_BATCH_SIZE * 2  # Doubled batch size during exploitation
+    
+    # Tracking for post-reset episodes
+    episodes_since_reset = 0
+    using_slow_decay = False
+    current_batch_size = BASE_BATCH_SIZE
 
     # Load checkpoint if specified
     if args.resume_from:
@@ -108,6 +125,28 @@ def train_dqn(args):
     logging.info(f"Model parameters: {sum(p.numel() for p in agent.parameters())}")
     
     for episode in range(start_episode, args.episodes):
+        # Apply epsilon reset schedule
+        if episode > 0 and episode % RESET_INTERVAL == 0:
+            agent.epsilon = RESET_EPSILON_VALUE
+            using_slow_decay = True
+            episodes_since_reset = 0
+            # Adjust learning rate for exploration phase
+            for param_group in agent.optimizer.param_groups:
+                param_group['lr'] = EXPLORATION_LEARNING_RATE
+            current_batch_size = BASE_BATCH_SIZE
+            logging.info(f"Episode {episode}: Reset epsilon to {RESET_EPSILON_VALUE}, learning rate to {EXPLORATION_LEARNING_RATE}, and batch size to {current_batch_size}")
+            
+        # Track episodes since last reset and manage decay rate
+        if using_slow_decay:
+            episodes_since_reset += 1
+            if episodes_since_reset >= EXPLORATION_EPISODES:
+                using_slow_decay = False
+                # Reset learning rate and increase batch size for exploitation
+                for param_group in agent.optimizer.param_groups:
+                    param_group['lr'] = BASE_LEARNING_RATE
+                current_batch_size = EXPLOITATION_BATCH_SIZE
+                logging.info(f"Episode {episode}: Returning to normal epsilon decay rate with learning rate {BASE_LEARNING_RATE} and batch size {current_batch_size}")
+            
         state = env.reset()
         state = preprocess_state_onehot(state)
         done = False
@@ -132,8 +171,8 @@ def train_dqn(args):
             # Store transition
             agent.store_transition(state, action, reward, next_state, done)
             
-            # Update network
-            loss = agent.update(beta=beta)
+            # Update network with current batch size
+            loss = agent.update(beta=beta, batch_size=current_batch_size)
             
             # Update statistics
             episode_reward += reward
@@ -213,6 +252,12 @@ def train_dqn(args):
                         f"Avg Max Tile: {avg_max_tile:.2f} - "
                         f"Epsilon: {agent.epsilon:.3f} - "
                         f"Beta: {beta:.3f}")
+        
+        # Apply appropriate epsilon decay rate based on exploration phase
+        if using_slow_decay:
+            agent.epsilon = max(agent.epsilon_end, agent.epsilon * POST_RESET_DECAY)
+        else:
+            agent.epsilon = max(agent.epsilon_end, agent.epsilon * agent.epsilon_decay)
     
     # Save final model with statistics
     final_path = os.path.join(args.checkpoint_dir, f"{args.model_name}_final.pt")

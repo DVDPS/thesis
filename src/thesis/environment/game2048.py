@@ -161,32 +161,56 @@ class Game2048:
         # Base reward: score from merging tiles
         reward = score_gain
         
-        # IMPROVED: Relative improvement reward for new max tiles
+        # IMPROVED: Stronger reward for new max tiles with exponential scaling
         if new_max_tile > old_max_tile:
-            # Reward is proportional to the level-up achieved
-            reward += 200 * (math.log2(new_max_tile) - math.log2(old_max_tile))
+            # Exponential reward based on the new max tile value
+            # This heavily rewards achieving higher tiles like 512, 1024, 2048
+            level_up = math.log2(new_max_tile) - math.log2(old_max_tile)
+            reward += 300 * level_up * math.log2(new_max_tile)
+            
+            # Extra bonus for reaching milestone tiles
+            if new_max_tile >= 512:
+                reward += 500
+            if new_max_tile >= 1024:
+                reward += 1000
+            if new_max_tile >= 2048:
+                reward += 2000
         
         # Penalty for invalid moves
         if not valid_move:
-            reward -= 10
+            reward -= 20  # Increased penalty
         
         # Game over penalty
         if self.is_game_over():
-            reward -= 100
+            reward -= 200  # Increased penalty
         
         # Reward for maintaining open spaces (critical for maneuverability)
-        # We compare to previous state to encourage moves that maintain or increase empty cells
         empty_cells_diff = new_empty_count - old_empty_count
         if empty_cells_diff >= 0:
-            reward += 2.0 * empty_cells_diff  # Bonus for maintaining or increasing empty cells
+            reward += 5.0 * empty_cells_diff  # Increased bonus for maintaining or increasing empty cells
+        else:
+            # Small penalty for losing empty cells, but not as severe as before
+            reward += 1.0 * empty_cells_diff
         
         # Strategic reward: potential high-value merges
         potential_merges_bonus = self.count_potential_high_value_merges()
-        reward += potential_merges_bonus
+        reward += 2.0 * potential_merges_bonus  # Doubled the weight
+        
+        # Special reward for adjacent high-value tiles
+        adjacent_512_bonus = self.check_adjacent_512_tiles()
+        reward += 2.0 * adjacent_512_bonus  # Doubled the weight
         
         # Strategic board organization: monotonicity
         mono_score = compute_monotonicity(self.board)
-        reward += 0.2 * mono_score
+        reward += 0.5 * mono_score  # Increased weight
+        
+        # NEW: Snake pattern reward - encourages organizing tiles in a snake pattern
+        snake_score = self.compute_snake_pattern()
+        reward += 0.3 * snake_score
+        
+        # NEW: Merge potential reward - encourages keeping mergeable tiles adjacent
+        merge_potential = self.compute_merge_potential()
+        reward += 0.3 * merge_potential
         
         info = {
             'score': self.score,
@@ -195,7 +219,10 @@ class Game2048:
             'empty_cells': new_empty_count,
             'merge_score': score_gain,
             'monotonicity': mono_score,
-            'potential_merges': potential_merges_bonus
+            'potential_merges': potential_merges_bonus,
+            'adjacent_512_bonus': adjacent_512_bonus,
+            'snake_score': snake_score,
+            'merge_potential': merge_potential
         }
         
         return self.board.copy(), reward, self.is_game_over(), info
@@ -303,6 +330,34 @@ class Game2048:
                     print(str(cell).center(5), end="|")
             print("\n" + "-" * 25)
         print("")
+
+    def check_adjacent_512_tiles(self):
+        """Check for adjacent 512 tiles and provide a substantial reward bonus"""
+        board = self.board
+        bonus = 0
+        
+        # Check for 512 tiles
+        tile_512_positions = np.where(board == 512)
+        tile_512_coords = list(zip(tile_512_positions[0], tile_512_positions[1]))
+        
+        # Count the number of 512 tiles
+        num_512_tiles = len(tile_512_coords)
+        
+        # If we have at least two 512 tiles
+        if num_512_tiles >= 2:
+            # Basic bonus just for having two or more 512 tiles
+            bonus += 400
+            
+            # Check if any 512 tiles are adjacent to each other (significantly higher reward)
+            for i, (r1, c1) in enumerate(tile_512_coords):
+                for j, (r2, c2) in enumerate(tile_512_coords[i+1:], i+1):
+                    # Check if tiles are adjacent (horizontally or vertically)
+                    if (abs(r1 - r2) == 1 and c1 == c2) or (abs(c1 - c2) == 1 and r1 == r2):
+                        # Substantial bonus for adjacent 512 tiles
+                        bonus += 1000
+                        return bonus  # Return immediately as we found what we want
+        
+        return bonus
 
 def preprocess_state(state):
     """Convert board state to log2 scale; zeros remain zeros."""

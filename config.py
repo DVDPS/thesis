@@ -42,3 +42,33 @@ HYPERPARAMS = {
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}") 
+
+# H100 optimization settings
+def setup_h100_optimizations():
+    """Configure optimizations for NVIDIA H100 GPUs."""
+    if torch.cuda.is_available():
+        # Check if the GPU is an H100
+        gpu_name = torch.cuda.get_device_name(0)
+        if 'H100' in gpu_name:
+            print(f"Detected NVIDIA H100 GPU: {gpu_name}")
+            
+            # Enable TF32 precision (specific to NVIDIA Ampere and later GPUs)
+            torch.backends.cuda.matmul.allow_tf32 = True
+            torch.backends.cudnn.allow_tf32 = True
+            print("Enabled TF32 precision for faster matrix multiplications")
+            
+            # Set optimal CUDA settings for H100
+            torch.backends.cudnn.benchmark = True
+            print("Enabled cuDNN benchmark mode for optimized convolutions")
+            
+            # Configure memory allocator
+            torch.cuda.empty_cache()
+            torch.cuda.memory.empty_cache()
+            print("Configured memory settings for H100")
+            
+            return True
+    
+    return False
+
+# Call this function to set up H100 optimizations
+h100_available = setup_h100_optimizations()

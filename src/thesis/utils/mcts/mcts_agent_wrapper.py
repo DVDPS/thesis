@@ -8,6 +8,7 @@ import numpy as np
 import logging
 import math
 import time
+from .parallel_mcts import ParallelMCTS
 from ...environment.game2048 import preprocess_state_onehot
 from ...config import device
 from .mcts import MCTS, mcts_action, analyze_position, TILE_BONUSES, MIN_EMPTY_CELLS
@@ -17,7 +18,7 @@ class MCTSAgentWrapper:
     Wrapper that adds MCTS capabilities to any existing agent.
     This allows using MCTS for inference without changing the agent training code.
     """
-    def __init__(self, agent, num_simulations=50, temperature=1.0, adaptive_simulations=True):
+    def __init__(self, agent, num_simulations=50, temperature=1.0, adaptive_simulations=True, use_parallel=True, num_workers=4, batch_size=16):
         """
         Initialize the MCTS wrapper.
         
@@ -26,13 +27,26 @@ class MCTSAgentWrapper:
             num_simulations: Number of MCTS simulations to run
             temperature: Temperature for action selection (higher = more exploration)
             adaptive_simulations: Whether to adaptively adjust simulation count based on game state
+            use_parallel: Whether to use parallel MCTS implementation
+            num_workers: Number of parallel worker threads (for parallel MCTS)
+            batch_size: Batch size for network inference (for parallel MCTS)
         """
         self.agent = agent
         self.num_simulations = num_simulations
         self.base_simulations = num_simulations  # Store the base simulation count
         self.temperature = temperature
         self.adaptive_simulations = adaptive_simulations
-        self.mcts = MCTS(agent, num_simulations=num_simulations, temperature=temperature)
+        self.use_parallel = use_parallel
+        self.num_workers = num_workers
+        self.batch_size = batch_size
+        
+        # Create appropriate MCTS implementation
+        if use_parallel:
+            self.mcts = ParallelMCTS(agent, num_simulations=num_simulations, temperature=temperature, 
+                                   num_workers=num_workers, batch_size=batch_size)
+        else:
+            self.mcts = MCTS(agent, num_simulations=num_simulations, temperature=temperature)
+            
         self.inference_count = 0
         self.average_time = 0
         
@@ -74,14 +88,26 @@ class MCTSAgentWrapper:
         """Change the number of MCTS simulations."""
         self.num_simulations = num_simulations
         self.base_simulations = num_simulations
-        self.mcts = MCTS(self.agent, num_simulations=num_simulations, temperature=self.temperature)
+        
+        if self.use_parallel:
+            self.mcts = ParallelMCTS(self.agent, num_simulations=num_simulations, temperature=self.temperature,
+                                   num_workers=self.num_workers, batch_size=self.batch_size)
+        else:
+            self.mcts = MCTS(self.agent, num_simulations=num_simulations, temperature=self.temperature)
+            
         # Share the transposition table
         self.mcts.transposition_table = self.shared_transposition_table
         
     def set_temperature(self, temperature):
         """Change the temperature for action selection."""
         self.temperature = temperature
-        self.mcts = MCTS(self.agent, num_simulations=self.num_simulations, temperature=temperature)
+        
+        if self.use_parallel:
+            self.mcts = ParallelMCTS(self.agent, num_simulations=self.num_simulations, temperature=temperature,
+                                   num_workers=self.num_workers, batch_size=self.batch_size)
+        else:
+            self.mcts = MCTS(self.agent, num_simulations=self.num_simulations, temperature=temperature)
+            
         # Share the transposition table
         self.mcts.transposition_table = self.shared_transposition_table
         
@@ -214,7 +240,12 @@ class MCTSAgentWrapper:
                 temp = self._get_adaptive_temperature(board)
                 
                 # Create MCTS with adaptive parameters
-                adaptive_mcts = MCTS(self.agent, num_simulations=sim_count, temperature=temp)
+                if self.use_parallel:
+                    adaptive_mcts = ParallelMCTS(self.agent, num_simulations=sim_count, temperature=temp,
+                                               num_workers=self.num_workers, batch_size=self.batch_size)
+                else:
+                    adaptive_mcts = MCTS(self.agent, num_simulations=sim_count, temperature=temp)
+                    
                 # Share the transposition table
                 adaptive_mcts.transposition_table = self.shared_transposition_table
                 
@@ -291,7 +322,12 @@ class MCTSAgentWrapper:
             temp = self._get_adaptive_temperature(board)
             
             # Create MCTS with adaptive parameters
-            adaptive_mcts = MCTS(self.agent, num_simulations=sim_count, temperature=temp)
+            if self.use_parallel:
+                adaptive_mcts = ParallelMCTS(self.agent, num_simulations=sim_count, temperature=temp,
+                                           num_workers=self.num_workers, batch_size=self.batch_size)
+            else:
+                adaptive_mcts = MCTS(self.agent, num_simulations=sim_count, temperature=temp)
+                
             # Share the transposition table
             adaptive_mcts.transposition_table = self.shared_transposition_table
             
@@ -427,7 +463,12 @@ class MCTSAgentWrapper:
             deterministic = True  # Force deterministic selection for critical states
             
         # Create MCTS with adaptive parameters
-        adaptive_mcts = MCTS(self.agent, num_simulations=sim_count, temperature=temp)
+        if self.use_parallel:
+            adaptive_mcts = ParallelMCTS(self.agent, num_simulations=sim_count, temperature=temp,
+                                       num_workers=self.num_workers, batch_size=self.batch_size)
+        else:
+            adaptive_mcts = MCTS(self.agent, num_simulations=sim_count, temperature=temp)
+            
         # Share the transposition table
         adaptive_mcts.transposition_table = self.shared_transposition_table
         
@@ -484,7 +525,12 @@ class MCTSAgentWrapper:
             sims = num_simulations
             
         # Create MCTS with shared transposition table
-        mcts = MCTS(self.agent, num_simulations=sims, temperature=self.temperature)
+        if self.use_parallel:
+            mcts = ParallelMCTS(self.agent, num_simulations=sims, temperature=self.temperature,
+                              num_workers=self.num_workers, batch_size=self.batch_size)
+        else:
+            mcts = MCTS(self.agent, num_simulations=sims, temperature=self.temperature)
+            
         mcts.transposition_table = self.shared_transposition_table
         
         # Analyze the position
@@ -498,7 +544,7 @@ class MCTSAgentWrapper:
         logging.info("Cleared action cache and transposition table")
 
 
-def wrap_agent_with_mcts(agent, num_simulations=50, temperature=1.0, adaptive_simulations=True):
+def wrap_agent_with_mcts(agent, num_simulations=50, temperature=1.0, adaptive_simulations=True, use_parallel=True, num_workers=4, batch_size=16):
     """
     Utility function to wrap an existing agent with MCTS capabilities.
     
@@ -507,8 +553,13 @@ def wrap_agent_with_mcts(agent, num_simulations=50, temperature=1.0, adaptive_si
         num_simulations: Number of MCTS simulations to run
         temperature: Temperature for action selection
         adaptive_simulations: Whether to use adaptive simulation counts
+        use_parallel: Whether to use parallel MCTS implementation
+        num_workers: Number of parallel worker threads (for parallel MCTS)
+        batch_size: Batch size for network inference (for parallel MCTS)
         
     Returns:
         Wrapped agent with MCTS capabilities
     """
-    return MCTSAgentWrapper(agent, num_simulations=num_simulations, temperature=temperature, adaptive_simulations=adaptive_simulations) 
+    return MCTSAgentWrapper(agent, num_simulations=num_simulations, temperature=temperature, 
+                           adaptive_simulations=adaptive_simulations, use_parallel=use_parallel,
+                           num_workers=num_workers, batch_size=batch_size) 
