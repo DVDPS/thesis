@@ -11,9 +11,9 @@ import time
 import argparse
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-from .environment.game2048 import Game2048, preprocess_state_onehot
-from .agents.custom_dqn_agent import CustomDQNAgent
-from .config import device, set_seeds
+from src.thesis.environment.game2048 import Game2048, preprocess_state_onehot
+from src.thesis.agents.custom_dqn_agent import CustomDQNAgent
+from src.thesis.config import device, set_seeds
 
 def train_custom_dqn(args):
     """
