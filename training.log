@@ -5432,3 +5432,8 @@ Evaluating enhanced MCTS agent...
 2025-03-09 18:23:46,486 - INFO - Episode 900/15000 - Avg Reward: 7408.41 - Avg Max Tile: 140.16 - Epsilon: 0.050 - Beta: 0.405
 2025-03-09 19:05:18,086 - INFO - Checkpoint saved to models\enhanced_dqn_v2\enhanced_dqn_per_1000.pt
 2025-03-09 19:05:18,087 - INFO - Episode 1000/15000 - Avg Reward: 7341.27 - Avg Max Tile: 133.28 - Epsilon: 0.050 - Beta: 0.406
+2025-03-17 13:40:01,570 - INFO - Using device: cuda
+2025-03-17 13:40:01,570 - INFO - Arguments: Namespace(total_timesteps=5000000, timesteps_per_update=4096, max_episode_length=2000, hidden_dim=512, learning_rate=0.0003, gamma=0.995, clip_ratio=0.2, vf_coef=0.5, ent_coef=0.01, max_grad_norm=0.5, gae_lambda=0.95, update_epochs=4, target_kl=0.01, batch_size=512, mixed_precision=True, use_data_parallel=True, eval_interval=25, eval_episodes=10, output_dir='ppo_results', checkpoint=None, seed=42)
+2025-03-17 13:40:01,596 - INFO - GPU: NVIDIA GeForce RTX 2080 SUPER
+2025-03-17 13:40:01,596 - INFO - CUDA Version: 11.8
+2025-03-17 13:42:04,464 - WARNING - Could not start GPU monitoring
