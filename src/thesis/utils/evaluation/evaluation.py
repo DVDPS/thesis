@@ -30,18 +30,24 @@ def evaluate_agent(agent, env=None, num_games=10, render=False, max_steps=1000, 
             state_proc = preprocess_state_onehot(state)
             state_tensor = torch.tensor(state_proc, dtype=torch.float, device=device).unsqueeze(0)
             
-            with torch.no_grad():
-                logits, _ = agent(state_tensor)
-                
+            # Get valid moves
             valid_moves = env.get_possible_moves()
             if not valid_moves:
                 break
                 
-            action_mask = torch.full((1, 4), float('-inf'), device=device)
-            action_mask[0, valid_moves] = 0
-            masked_logits = logits + action_mask
+            # Use get_action instead of calling the agent directly
+            with torch.no_grad():
+                if hasattr(agent, 'get_action'):
+                    # For PPOAgent which has get_action method
+                    action, _, _ = agent.get_action(state_proc, valid_moves, deterministic=True)
+                else:
+                    # For other agents that might be directly callable (like neural networks)
+                    logits, _ = agent(state_tensor)
+                    action_mask = torch.full((1, 4), float('-inf'), device=device)
+                    action_mask[0, valid_moves] = 0
+                    masked_logits = logits + action_mask
+                    action = torch.argmax(masked_logits, dim=1).item()
             
-            action = torch.argmax(masked_logits, dim=1).item()
             game_actions.append(action)
             
             next_state, reward, done, info = env.step(action)

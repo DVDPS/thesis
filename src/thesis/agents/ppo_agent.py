@@ -281,10 +281,14 @@ class PPOAgent:
         
         # Select action
         if deterministic:
+            # Deterministic action selection
             action = torch.argmax(policy, dim=1).item()
+            # Set a default log_prob value for deterministic actions
+            log_prob = 0.0  # This won't be used for updates, just for compatibility
         else:
-            # Sample from distribution
+            # Stochastic action selection
             try:
+                # Create a categorical distribution and sample from it
                 dist = torch.distributions.Categorical(policy)
                 action = dist.sample().item()
                 log_prob = dist.log_prob(torch.tensor([action], device=device)).item()
