@@ -5432,3 +5432,6 @@ Evaluating enhanced MCTS agent...
 2025-03-09 18:23:46,486 - INFO - Episode 900/15000 - Avg Reward: 7408.41 - Avg Max Tile: 140.16 - Epsilon: 0.050 - Beta: 0.405
 2025-03-09 19:05:18,086 - INFO - Checkpoint saved to models\enhanced_dqn_v2\enhanced_dqn_per_1000.pt
 2025-03-09 19:05:18,087 - INFO - Episode 1000/15000 - Avg Reward: 7341.27 - Avg Max Tile: 133.28 - Epsilon: 0.050 - Beta: 0.406
+2025-03-17 15:25:28,008 - INFO - Using device: cuda
+2025-03-17 15:25:28,009 - INFO - Arguments: Namespace(episodes=20000, max_steps=2000, buffer_size=50000, batch_size=64, gamma=0.99, epsilon_start=0.9, epsilon_end=0.01, epsilon_decay=0.9999, learning_rate=5e-05, log_interval=100, eval_interval=500, eval_episodes=5, output_dir='custom_dqn_results', checkpoint=None, seed=42)
+2025-03-17 15:25:30,992 - INFO - Starting training for 20000 episodes

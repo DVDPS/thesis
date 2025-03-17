@@ -13,7 +13,7 @@ from concurrent.futures import ThreadPoolExecutor
 from queue import Queue
 from ...environment.game2048 import preprocess_state_onehot, Game2048
 from ...config import device
-from .mcts import MCTSNode, MCTS, C_PUCT, DIRICHLET_ALPHA, MAX_DEPTH, TILE_BONUSES, MIN_EMPTY_CELLS
+from .mcts import MCTSNode, MCTS, BASE_C_PUCT, DIRICHLET_ALPHA, MAX_DEPTH, TILE_BONUSES, MIN_EMPTY_CELLS, C_PUCT_SCHEDULE
 
 class ParallelMCTS(MCTS):
     """
