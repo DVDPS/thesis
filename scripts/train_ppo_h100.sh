@@ -5,6 +5,9 @@
 # Change to the repository root (assuming 'scripts' is a subfolder of the repo)
 cd "$(dirname "$0")/.."
 
+# Add repository root to PYTHONPATH so that the src package is found
+export PYTHONPATH=$(pwd)
+
 # Set default output directory
 OUTPUT_DIR=${1:-"ppo_h100_results"}
 
