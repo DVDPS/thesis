@@ -34,25 +34,44 @@ export CUDA_VISIBLE_DEVICES=0  # Use only the first GPU
 export TF_FORCE_GPU_ALLOW_GROWTH=true
 export PYTORCH_CUDA_ALLOC_CONF="max_split_size_mb:512"
 
+# Set PyTorch optimizations for H100
+export TORCH_CUDNN_V8_API_ENABLED=1  # Enable cuDNN v8 API
+export TORCH_CUDNN_BENCHMARK=1      # Enable cuDNN benchmarking
+export CUDA_MODULE_LOADING=LAZY     # Lazy loading of CUDA modules
+
+# Add additional memory optimizations
+export PYTORCH_CUDA_ALLOC_CONF="max_split_size_mb:512,garbage_collection_threshold:0.6"
+
+# Set environment variable to use tensor cores (mixed precision)
+export NVIDIA_TF32_OVERRIDE=1
+
 echo "Running DQN training with optimized settings..."
 
 # Run the DQN training script with parameters that match the script's accepted arguments
-python -u src/thesis/train_custom_dqn.py \
+# Add nohup to prevent terminal close from stopping the training
+nohup python -u src/thesis/train_custom_dqn.py \
     --episodes 20000 \
     --max-steps 2000 \
-    --buffer-size 100000 \
-    --batch-size 4096 \
+    --buffer-size 200000 \
+    --batch-size 8192 \
     --gamma 0.99 \
     --epsilon-start 1.0 \
     --epsilon-end 0.01 \
-    --epsilon-decay 0.9999 \
-    --learning-rate 3e-4 \
-    --log-interval 10 \
-    --eval-interval 100 \
-    --eval-episodes 5 \
+    --epsilon-decay 0.9995 \
+    --learning-rate 1e-4 \
+    --log-interval 5 \
+    --eval-interval 50 \
+    --eval-episodes 10 \
     --output-dir "h100_dqn_results" \
-    --seed 42
-    
-# Final cleanup
-cleanup
-echo "DQN training script completed" 
+    --seed 42 > dqn_training.log 2>&1 &
+
+echo "Training started in background. You can monitor progress with:"
+echo "tail -f dqn_training.log"
+
+# Save the process ID for future reference
+DQN_PID=$!
+echo "Process ID: $DQN_PID"
+echo "To stop training: kill $DQN_PID"
+
+# Don't cleanup at the end since we're running in the background
+echo "DQN training script is running in the background" 
