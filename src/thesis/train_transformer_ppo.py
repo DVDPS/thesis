@@ -172,6 +172,20 @@ def train_transformer_ppo(args):
                     
                     # Log update stats
                     update_count += 1
+                    
+                    # Enhanced debugging for loss values
+                    if stats['policy_loss'] == 0.0 and stats['value_loss'] == 0.0 and stats['entropy'] == 0.0:
+                        logging.warning(f"Update {update_count} produced zero losses!")
+                        # Log the number of stored transitions for debugging
+                        logging.warning(f"Number of transitions: {len(agent.states) if hasattr(agent, 'states') else 'unknown'}")
+                        logging.warning(f"Approx KL value: {stats['approx_kl']}")
+                        # Try to check agent internals for debugging
+                        try:
+                            if hasattr(agent, 'training_stats') and len(agent.training_stats) > 0:
+                                logging.warning(f"Last training stats record: {agent.training_stats[-1]}")
+                        except Exception as e:
+                            logging.error(f"Error accessing agent internals: {e}")
+                    
                     logging.info(f"Update {update_count} | "
                                  f"Policy Loss: {stats['policy_loss']:.4f} | "
                                  f"Value Loss: {stats['value_loss']:.4f} | "

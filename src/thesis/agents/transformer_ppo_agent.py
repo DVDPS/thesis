@@ -605,14 +605,22 @@ class TransformerPPOAgent:
                     torch.nn.utils.clip_grad_norm_(self.network.parameters(), self.max_grad_norm)
                     self.optimizer.step()
                 
-                # Track metrics - only if no NaN detected
-                policy_losses.append(policy_loss.item())
-                value_losses.append(value_loss.item())
-                entropy_losses.append(entropy.item())
-                total_losses.append(loss.item())
+                # Store metrics as scalars - this is important to avoid memory leaks
+                policy_loss_val = policy_loss.item()
+                value_loss_val = value_loss.item()
+                entropy_val = entropy.item()
+                loss_val = loss.item()
+                
+                # Track metrics only if the values are not extreme
+                if (not np.isnan(policy_loss_val) and not np.isnan(value_loss_val) and
+                    not np.isnan(entropy_val) and not np.isnan(loss_val) and
+                    np.abs(policy_loss_val) < 1e6 and np.abs(value_loss_val) < 1e6):
+                    policy_losses.append(policy_loss_val)
+                    value_losses.append(value_loss_val)
+                    entropy_losses.append(entropy_val)
+                    total_losses.append(loss_val)
             
-        # First step the optimizer, then step the scheduler to fix warning
-        # (scheduler update moved here from inside the epoch loop)
+        # Step the scheduler after the optimizer to fix warning
         self.scheduler.step()
         
         # Increment update counter
@@ -621,13 +629,20 @@ class TransformerPPOAgent:
         # Clear buffers
         self.reset_buffers()
         
+        # Securely compute statistics with explicit NaN handling
+        def safe_mean(values):
+            if not values:
+                return 0.0
+            cleaned = [v for v in values if not np.isnan(v) and np.abs(v) < 1e6]
+            return np.mean(cleaned) if cleaned else 0.0
+        
         # Return stats
         stats = {
-            'policy_loss': np.nanmean(policy_losses) if policy_losses else 0.0,
-            'value_loss': np.nanmean(value_losses) if value_losses else 0.0,
-            'entropy': np.nanmean(entropy_losses) if entropy_losses else 0.0,
-            'total_loss': np.nanmean(total_losses) if total_losses else 0.0,
-            'approx_kl': np.nanmean(approx_kls) if approx_kls else 0.0,
+            'policy_loss': safe_mean(policy_losses),
+            'value_loss': safe_mean(value_losses),
+            'entropy': safe_mean(entropy_losses),
+            'total_loss': safe_mean(total_losses),
+            'approx_kl': safe_mean(approx_kls),
             'learning_rate': self.scheduler.get_last_lr()[0]
         }
         
