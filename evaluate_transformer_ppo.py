@@ -104,8 +104,8 @@ def evaluate_model(model_path, num_games=100, render=False, deterministic=True, 
                 if current_max_tile > best_max_tile:
                     best_max_tile = current_max_tile
                     logging.info(f"Game {game_idx+1}/{num_games}: New best max tile reached: {best_max_tile}!")
-                elif game_idx < 10 or (game_idx + 1) % 100 == 0:  # Log for early games or every 100 games
-                    logging.info(f"Game {game_idx+1}/{num_games}: Current game max tile: {current_max_tile}")
+                elif current_max_tile >= 512:  # Only log significant individual tiles (512 and above)
+                    logging.info(f"Game {game_idx+1}/{num_games}: Reached significant tile: {current_max_tile}")
             
             # Render if requested
             if render and game_idx == 0:  # Only render the first game
@@ -141,7 +141,7 @@ def evaluate_model(model_path, num_games=100, render=False, deterministic=True, 
                 
                 logging.info("Current Tile Distribution:")
                 for tile, count in sorted(current_distribution.items()):
-                    if tile >= 512:  # Only show high tiles
+                    if tile >= 256:  # Only show high tiles in distribution summaries
                         logging.info(f"  Tile {tile}: {count} games ({current_percentages[tile]:.2f}%)")
     
     # Calculate statistics
