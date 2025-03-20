@@ -84,6 +84,9 @@ def train_transformer_ppo(args):
         mixed_precision=args.mixed_precision
     )
     
+    # Print actual batch size for confirmation
+    logging.info(f"Using batch size: {args.batch_size} (agent internal batch size: {agent.batch_size})")
+    
     # Load checkpoint if provided
     if args.checkpoint:
         logging.info(f"Loading checkpoint from {args.checkpoint}")
@@ -164,6 +167,10 @@ def train_transformer_ppo(args):
                     else:
                         next_value = 0.0
                     
+                    # Log transition count before update
+                    transition_count = len(agent.states)
+                    logging.info(f"Updating with {transition_count} transitions")
+                    
                     # Update policy
                     update_start = time.time()
                     stats = agent.update(next_value)
@@ -177,7 +184,7 @@ def train_transformer_ppo(args):
                     if stats['policy_loss'] == 0.0 and stats['value_loss'] == 0.0 and stats['entropy'] == 0.0:
                         logging.warning(f"Update {update_count} produced zero losses!")
                         # Log the number of stored transitions for debugging
-                        logging.warning(f"Number of transitions: {len(agent.states) if hasattr(agent, 'states') else 'unknown'}")
+                        logging.warning(f"Number of transitions before update: {transition_count}")
                         logging.warning(f"Approx KL value: {stats['approx_kl']}")
                         # Try to check agent internals for debugging
                         try:
@@ -346,7 +353,7 @@ def main():
     
     # Training parameters
     parser.add_argument("--total-timesteps", type=int, default=1000000, help="Total timesteps to train")
-    parser.add_argument("--timesteps-per-update", type=int, default=2048, help="Timesteps per PPO update")
+    parser.add_argument("--timesteps-per-update", type=int, default=1024, help="Timesteps per PPO update")
     parser.add_argument("--max-episode-length", type=int, default=2000, help="Maximum steps per episode")
     
     # Transformer architecture parameters
@@ -364,7 +371,7 @@ def main():
     parser.add_argument("--gae-lambda", type=float, default=0.95, help="GAE lambda parameter")
     parser.add_argument("--update-epochs", type=int, default=4, help="Number of PPO update epochs")
     parser.add_argument("--target-kl", type=float, default=0.01, help="Target KL divergence")
-    parser.add_argument("--batch-size", type=int, default=256, help="Batch size for updates")
+    parser.add_argument("--batch-size", type=int, default=128, help="Batch size for updates")
     
     # H100 optimization parameters
     parser.add_argument("--mixed-precision", action="store_true", help="Use mixed precision training")

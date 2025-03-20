@@ -253,7 +253,7 @@ class TransformerPPONetwork(nn.Module):
                 context = context + noise
             
             # Policy and value heads
-            policy_logits = self.policy_head(context)
+            policy_logits, value = self.policy_head(context)
             value = self.value_head(context)
             
             # Clamp policy logits for numerical stability (with slightly wider bounds)
@@ -436,6 +436,10 @@ class TransformerPPOAgent:
             self.valid_masks.append(valid_mask)
         else:
             self.valid_masks.append(torch.ones(4, device=device))
+        
+        # Debug log for tracking buffer size
+        if len(self.states) % 100 == 0:
+            logging.info(f"Buffer size: {len(self.states)} transitions")
     
     def compute_advantages(self, next_value=0.0):
         """Compute advantage estimates using Generalized Advantage Estimation (GAE)"""
@@ -466,6 +470,9 @@ class TransformerPPOAgent:
         Returns:
             Dictionary with training statistics
         """
+        # Log the buffer size before processing
+        logging.info(f"Starting update with {len(self.states)} transitions in buffer")
+        
         # Check if we have enough samples
         if len(self.states) < 10:
             logging.warning("Not enough samples for update")
@@ -477,15 +484,42 @@ class TransformerPPOAgent:
                 'approx_kl': 0.0,
                 'learning_rate': self.scheduler.get_last_lr()[0]
             }
+        
+        # Save a copy of the data for processing
+        states_copy = self.states.copy()
+        actions_copy = self.actions.copy()
+        rewards_copy = self.rewards.copy()
+        log_probs_copy = self.log_probs.copy()
+        values_copy = self.values.copy() 
+        dones_copy = self.dones.copy()
+        valid_masks_copy = self.valid_masks.copy()
+        
+        # Clear buffers AFTER making copies - this allows new data collection while processing
+        self.reset_buffers()
             
-        # Calculate advantages and returns
-        advantages, returns = self.compute_advantages(next_value)
+        # Calculate advantages and returns using the copied data
+        rewards = torch.tensor(rewards_copy, dtype=torch.float, device=device)
+        values = torch.tensor(values_copy + [next_value], dtype=torch.float, device=device)
+        dones = torch.tensor(dones_copy, dtype=torch.float, device=device)
+
+        advantages = torch.zeros_like(rewards)
+        gae = 0.0
+        # Iterate backwards over the rewards to compute GAE
+        for t in reversed(range(len(rewards))):
+            delta = rewards[t] + self.gamma * values[t + 1] * (1 - dones[t]) - values[t]
+            gae = delta + self.gamma * self.gae_lambda * (1 - dones[t]) * gae
+            advantages[t] = gae
+
+        returns = advantages + values[:-1]
         
         # Convert all data to tensors
-        states = [torch.tensor(s, dtype=torch.float, device=device) for s in self.states]
-        actions = torch.tensor(self.actions, dtype=torch.long, device=device)
-        old_log_probs = torch.tensor(self.log_probs, dtype=torch.float, device=device)
-        valid_masks = torch.stack(self.valid_masks)
+        states = [torch.tensor(s, dtype=torch.float, device=device) for s in states_copy]
+        actions = torch.tensor(actions_copy, dtype=torch.long, device=device)
+        old_log_probs = torch.tensor(log_probs_copy, dtype=torch.float, device=device)
+        valid_masks = torch.stack(valid_masks_copy)
+        
+        # Log for debugging
+        logging.info(f"Processing {len(states)} states, {len(actions)} actions, {len(returns)} returns")
         
         # Check for NaN values but only log a warning instead of skipping the update
         has_nan = torch.isnan(returns).any() or torch.isnan(advantages).any() or torch.isnan(old_log_probs).any()
@@ -620,14 +654,11 @@ class TransformerPPOAgent:
                     entropy_losses.append(entropy_val)
                     total_losses.append(loss_val)
             
-        # Step the scheduler after the optimizer to fix warning
+        # Step the scheduler after all epochs are processed
         self.scheduler.step()
         
         # Increment update counter
         self.update_count += 1
-        
-        # Clear buffers
-        self.reset_buffers()
         
         # Securely compute statistics with explicit NaN handling
         def safe_mean(values):
