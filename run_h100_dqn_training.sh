@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run DQN training with basic settings for 2048 game
+# Run DQN training with CPU-only mode to avoid CUDA library issues
 
 set -e  # Exit on error
 trap 'echo "Script interrupted or error occurred. Cleaning up..."; cleanup' ERR INT TERM
@@ -7,10 +7,7 @@ trap 'echo "Script interrupted or error occurred. Cleaning up..."; cleanup' ERR 
 # Function to clean up processes
 cleanup() {
     echo "Performing cleanup..."
-    pkill -f train_custom_dqn || true
-    pkill -f "python3 -m src.thesis" || true
-    # Kill any python processes using GPUs
-    nvidia-smi | grep python | awk '{print $5}' | xargs -r kill -9 || true
+    pkill -f train_custom_dqn.py || true
     sleep 2
     echo "Cleanup completed"
 }
@@ -20,23 +17,26 @@ echo "Setting up environment for DQN training..."
 cleanup
 
 # Set PYTHONPATH correctly to include the root directory (one level above thesis folder)
-cd ~/
-export PYTHONPATH=$PYTHONPATH:$(pwd)
-cd thesis
+export PYTHONPATH=$PYTHONPATH:/home/ubuntu
 echo "PYTHONPATH set to: ${PYTHONPATH}"
 
+# Force CPU-only mode to avoid CUDA library issues
+export CUDA_VISIBLE_DEVICES=""
+# Ensure PyTorch uses CPU
+export TORCH_DEVICE="cpu"
+
 # Install required packages if not already installed
-python -m pip install matplotlib tqdm || true
+pip install matplotlib tqdm || true
 echo "Checked required packages"
 
-echo "Running DQN training..."
+echo "Running DQN training in CPU-only mode..."
 
-# Run the DQN training script with reduced batch size
+# Start DQN training with log redirection
 python -u src/thesis/train_custom_dqn.py \
     --episodes 20000 \
     --max-steps 2000 \
-    --buffer-size 100000 \
-    --batch-size 4096 \
+    --buffer-size 50000 \
+    --batch-size 64 \
     --gamma 0.99 \
     --epsilon-start 1.0 \
     --epsilon-end 0.01 \
@@ -45,7 +45,9 @@ python -u src/thesis/train_custom_dqn.py \
     --log-interval 10 \
     --eval-interval 100 \
     --eval-episodes 5 \
-    --output-dir "h100_dqn_results" \
-    --seed 42
+    --output-dir "dqn_cpu_results" \
+    --seed 42 > dqn_training.log 2>&1 &
 
-echo "DQN training completed" 
+PID=$!
+echo "DQN training started in background with PID: $PID"
+echo "Check training progress with: tail -f dqn_training.log" 

@@ -5441,3 +5441,8 @@ Evaluating enhanced MCTS agent...
 2025-03-17 18:36:23,962 - INFO - Using device: cuda
 2025-03-17 18:36:23,962 - INFO - Arguments: Namespace(episodes=20000, max_steps=2000, buffer_size=50000, batch_size=64, gamma=0.99, epsilon_start=0.9, epsilon_end=0.01, epsilon_decay=0.9999, learning_rate=5e-05, log_interval=100, eval_interval=500, eval_episodes=5, output_dir='custom_dqn_results', checkpoint=None, seed=42)
 2025-03-17 18:36:27,138 - INFO - Starting training for 20000 episodes
+2025-03-20 18:57:33,710 - INFO - Using device: cuda
+2025-03-20 18:57:33,710 - INFO - Arguments: Namespace(total_timesteps=1000000, timesteps_per_update=2048, max_episode_length=2000, embed_dim=256, num_heads=4, num_layers=4, learning_rate=0.0003, gamma=0.995, clip_ratio=0.2, vf_coef=0.5, ent_coef=0.01, max_grad_norm=0.5, gae_lambda=0.95, update_epochs=4, target_kl=0.01, batch_size=256, mixed_precision=True, use_data_parallel=False, eval_interval=50, eval_episodes=5, output_dir='transformer_ppo_results', checkpoint=None, seed=42)
+2025-03-20 18:57:33,717 - INFO - GPU: NVIDIA GeForce RTX 2080 SUPER
+2025-03-20 18:57:33,717 - INFO - CUDA Version: 11.8
+2025-03-20 18:59:29,618 - WARNING - Could not start GPU monitoring
