@@ -8,6 +8,9 @@ from ..config import device
 import math
 import time
 
+# Add numerical stability constant
+EPS = 1e-8
+
 class PositionalEncoding(nn.Module):
     """
     Positional encoding for the board positions to provide spatial context to the Transformer.
@@ -322,7 +325,8 @@ class TransformerPPOAgent:
         
         # Setup mixed precision training for H100
         if self.mixed_precision:
-            self.scaler = torch.cuda.amp.GradScaler()
+            # Use the updated API call for GradScaler
+            self.scaler = torch.amp.GradScaler('cuda')
         
         # Initialize buffers for trajectories
         self.reset_buffers()
@@ -451,7 +455,7 @@ class TransformerPPOAgent:
         valid_masks = torch.stack(self.valid_masks)
         
         # Normalize advantages
-        advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+        advantages = (advantages - advantages.mean()) / (advantages.std() + EPS)
         
         # Track metrics
         policy_losses = []
@@ -480,7 +484,8 @@ class TransformerPPOAgent:
                 
                 # Forward pass with mixed precision if enabled
                 if self.mixed_precision:
-                    with torch.cuda.amp.autocast():
+                    # Use the updated API call for autocast
+                    with torch.amp.autocast('cuda'):
                         policy_logits, values = self.network(mb_states, training=True)
                         
                         # Apply valid action mask
@@ -494,6 +499,7 @@ class TransformerPPOAgent:
                         
                         # Calculate ratio and clipped loss
                         ratio = torch.exp(new_log_probs - mb_old_log_probs)
+                        ratio = torch.clamp(ratio, 0.0, 10.0)  # Prevent extreme values
                         surr1 = ratio * mb_advantages
                         surr2 = torch.clamp(ratio, 1.0 - self.clip_ratio, 1.0 + self.clip_ratio) * mb_advantages
                         policy_loss = -torch.min(surr1, surr2).mean()
@@ -518,6 +524,7 @@ class TransformerPPOAgent:
                     
                     # Calculate ratio and clipped loss
                     ratio = torch.exp(new_log_probs - mb_old_log_probs)
+                    ratio = torch.clamp(ratio, 0.0, 10.0)  # Prevent extreme values
                     surr1 = ratio * mb_advantages
                     surr2 = torch.clamp(ratio, 1.0 - self.clip_ratio, 1.0 + self.clip_ratio) * mb_advantages
                     policy_loss = -torch.min(surr1, surr2).mean()
@@ -530,7 +537,7 @@ class TransformerPPOAgent:
                     loss = policy_loss + self.vf_coef * value_loss - self.ent_coef * entropy
                 
                 # Calculate approximate KL for early stopping
-                approx_kl = ((ratio - 1) - torch.log(ratio)).mean().item()
+                approx_kl = ((ratio - 1) - torch.log(ratio + EPS)).mean().item()
                 approx_kls.append(approx_kl)
                 
                 # Check if we should stop early due to KL divergence
@@ -557,8 +564,9 @@ class TransformerPPOAgent:
                 entropy_losses.append(entropy.item())
                 total_losses.append(loss.item())
             
-            # Step the learning rate scheduler
-            self.scheduler.step()
+        # First step the optimizer, then step the scheduler to fix warning
+        # (scheduler update moved here from inside the epoch loop)
+        self.scheduler.step()
         
         # Increment update counter
         self.update_count += 1
