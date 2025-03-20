@@ -65,6 +65,10 @@ def evaluate_model(model_path, num_games=100, render=False, deterministic=True, 
     max_tiles = []
     game_lengths = []
     
+    # Initialize tracking variables for best performance
+    best_score = 0
+    best_max_tile = 0
+    
     # Evaluate on multiple games
     logging.info(f"Evaluating on {num_games} games (deterministic={deterministic})")
     
@@ -74,6 +78,7 @@ def evaluate_model(model_path, num_games=100, render=False, deterministic=True, 
         done = False
         episode_reward = 0
         episode_length = 0
+        current_max_tile = 0
         
         while not done:
             # Process state
@@ -92,6 +97,16 @@ def evaluate_model(model_path, num_games=100, render=False, deterministic=True, 
             episode_reward += reward
             episode_length += 1
             
+            # Check for new max tile in this state
+            state_max_tile = np.max(next_state)
+            if state_max_tile > current_max_tile:
+                current_max_tile = state_max_tile
+                if current_max_tile > best_max_tile:
+                    best_max_tile = current_max_tile
+                    logging.info(f"Game {game_idx+1}/{num_games}: New best max tile reached: {best_max_tile}!")
+                elif game_idx < 10 or (game_idx + 1) % 100 == 0:  # Log for early games or every 100 games
+                    logging.info(f"Game {game_idx+1}/{num_games}: Current game max tile: {current_max_tile}")
+            
             # Render if requested
             if render and game_idx == 0:  # Only render the first game
                 print(f"Step {episode_length}, Action: {action}, Reward: {reward}")
@@ -103,12 +118,31 @@ def evaluate_model(model_path, num_games=100, render=False, deterministic=True, 
         
         # Record metrics
         scores.append(episode_reward)
-        max_tiles.append(np.max(state))
+        max_tiles.append(current_max_tile)
         game_lengths.append(episode_length)
         
+        # Check if this game has the best score
+        if episode_reward > best_score:
+            best_score = episode_reward
+            logging.info(f"Game {game_idx+1}/{num_games}: New best score: {best_score}!")
+        
         # Log progress
-        if (game_idx + 1) % 10 == 0:
-            logging.info(f"Completed {game_idx + 1}/{num_games} games")
+        if (game_idx + 1) % 100 == 0:  # Changed from 10 to 100 for larger evaluation runs
+            logging.info(f"Completed {game_idx + 1}/{num_games} games | " +
+                         f"Current Avg Score: {np.mean(scores):.2f} | " +
+                         f"Current Avg Max Tile: {np.mean(max_tiles):.2f} | " +
+                         f"Best Max Tile So Far: {best_max_tile}")
+            
+            # Create a quick summary of tile distribution so far
+            if (game_idx + 1) % 1000 == 0:  # Detailed stats every 1000 games
+                current_tiles, current_counts = np.unique(max_tiles, return_counts=True)
+                current_distribution = {int(tile): count for tile, count in zip(current_tiles, current_counts)}
+                current_percentages = {tile: count / len(max_tiles) * 100 for tile, count in current_distribution.items()}
+                
+                logging.info("Current Tile Distribution:")
+                for tile, count in sorted(current_distribution.items()):
+                    if tile >= 512:  # Only show high tiles
+                        logging.info(f"  Tile {tile}: {count} games ({current_percentages[tile]:.2f}%)")
     
     # Calculate statistics
     avg_score = np.mean(scores)
