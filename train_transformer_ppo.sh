@@ -111,8 +111,8 @@ if [ -n "$CHECKPOINT" ]; then
 fi
 echo "=========================================="
 
-# Build the command
-CMD="python -m src.thesis.train_transformer_ppo \
+# Build the command - use python3.10 explicitly
+CMD="python3.10 -m src.thesis.train_transformer_ppo --batch-size 4096 \
     --total-timesteps $TIMESTEPS \
     --embed-dim $EMBED_DIM \
     --num-heads $NUM_HEADS \
@@ -148,13 +148,13 @@ echo "To view training curves, run: tensorboard --logdir $OUTPUT_DIR/tensorboard
 # Recommend next steps
 echo "=== Recommended Next Steps ==="
 echo "1. Evaluate the model performance using the best model:"
-echo "   python -m src.thesis.evaluate \\"
+echo "   python3.10 -m src.thesis.evaluate \\"
 echo "       --model transformer_ppo \\"
 echo "       --model-path $OUTPUT_DIR/best_model.pt \\"
 echo "       --num-games 100"
 echo ""
 echo "2. Compare with other agents (if available):"
-echo "   python -m src.thesis.compare_agents \\"
+echo "   python3.10 -m src.thesis.compare_agents \\"
 echo "       --agents transformer_ppo standard_ppo dqn \\"
 echo "       --model-paths $OUTPUT_DIR/best_model.pt ppo_results/best_model.pt dqn_results/best_model.pt \\"
 echo "       --num-games 50" 
