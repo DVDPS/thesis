@@ -7,6 +7,7 @@ import numpy as np
 from ..config import device
 import math
 import time
+import logging
 
 # Add numerical stability constant
 EPS = 1e-8
@@ -151,7 +152,7 @@ class TransformerPPONetwork(nn.Module):
         )
         
         # Learnable query token for global attention pooling
-        self.query_token = nn.Parameter(torch.randn(1, 1, embed_dim))
+        self.query_token = nn.Parameter(torch.zeros(1, 1, embed_dim))
         self.layer_norm = nn.LayerNorm(embed_dim)
         
         # Policy head (actor)
@@ -175,14 +176,17 @@ class TransformerPPONetwork(nn.Module):
         # Initialize weights with Transformer-specific initialization
         self.apply(self._init_weights)
         
+        # Special initialization for query token - uniform in small range
+        nn.init.uniform_(self.query_token, -0.01, 0.01)
+        
         # Move to device
         self.to(device)
     
     def _init_weights(self, module):
         """Initialize weights with Transformer-appropriate method"""
         if isinstance(module, nn.Linear):
-            # Use standard Xavier initialization for linear layers
-            nn.init.xavier_uniform_(module.weight, gain=1.0)
+            # Transformer-appropriate initialization for better stability
+            nn.init.xavier_uniform_(module.weight, gain=0.02)
             if module.bias is not None:
                 nn.init.zeros_(module.bias)
         elif isinstance(module, nn.LayerNorm):
@@ -211,6 +215,12 @@ class TransformerPPONetwork(nn.Module):
             
             batch_size = x.shape[0]
             
+            # Check for invalid inputs
+            if torch.isnan(x).any() or torch.isinf(x).any():
+                # Handle invalid inputs
+                logging.warning("NaN or Inf detected in input!")
+                x = torch.nan_to_num(x, nan=0.0, posinf=1.0, neginf=-1.0)
+            
             # Embed the board state
             x = self.embedding(x)
             
@@ -220,6 +230,9 @@ class TransformerPPONetwork(nn.Module):
             # Apply transformer blocks
             for block in self.transformer_blocks:
                 x = block(x)
+                # Add safety check after each block
+                if torch.isnan(x).any() or torch.isinf(x).any():
+                    x = torch.nan_to_num(x, nan=0.0, posinf=1.0, neginf=-1.0)
             
             # Global attention pooling using a learnable query token
             query = self.query_token.repeat(batch_size, 1, 1)
@@ -236,24 +249,29 @@ class TransformerPPONetwork(nn.Module):
             
             # Add exploration noise during training if requested
             if training and self.training:
-                noise = 0.1 * torch.randn_like(context) * 0.1
+                noise = 0.05 * torch.randn_like(context)  # Reduce noise magnitude
                 context = context + noise
             
             # Policy and value heads
             policy_logits = self.policy_head(context)
             value = self.value_head(context)
             
+            # Clamp policy logits for numerical stability
+            policy_logits = torch.clamp(policy_logits, -10.0, 10.0)
+            value = torch.clamp(value, -100.0, 100.0)
+            
             # Safety checks to prevent NaN propagation
-            if torch.isnan(policy_logits).any():
+            if torch.isnan(policy_logits).any() or torch.isinf(policy_logits).any():
                 policy_logits = torch.zeros_like(policy_logits)
             
-            if torch.isnan(value).any():
+            if torch.isnan(value).any() or torch.isinf(value).any():
                 value = torch.zeros_like(value)
             
             return policy_logits, value
         
         except Exception as e:
             # Fallback to zeros if something goes wrong
+            logging.error(f"Error in forward pass: {e}")
             batch_size = x.shape[0] if isinstance(x, torch.Tensor) else 1
             return (torch.zeros((batch_size, 4), device=device), 
                     torch.zeros((batch_size, 1), device=device))
@@ -273,9 +291,9 @@ class TransformerPPOAgent:
                  num_heads=4,
                  num_layers=4,
                  input_channels=16,
-                 lr=0.0003,
+                 lr=0.0001,  # Lower learning rate for stability
                  gamma=0.99,
-                 clip_ratio=0.2,
+                 clip_ratio=0.1,  # Reduced clip ratio for more conservative updates
                  vf_coef=0.5,
                  ent_coef=0.01,
                  max_grad_norm=0.5,
@@ -312,8 +330,9 @@ class TransformerPPOAgent:
         self.optimizer = optim.AdamW(
             self.network.parameters(), 
             lr=lr,
-            weight_decay=0.01,  # L2 regularization to prevent overfitting
-            betas=(0.9, 0.999)  # Standard beta values for Adam
+            weight_decay=0.001,  # Reduced weight decay
+            betas=(0.9, 0.999),  # Standard beta values for Adam
+            eps=1e-5  # Slightly larger epsilon for numerical stability
         )
         
         # Learning rate scheduler for better convergence
@@ -445,6 +464,18 @@ class TransformerPPOAgent:
         Returns:
             Dictionary with training statistics
         """
+        # Check if we have enough samples
+        if len(self.states) < 10:
+            logging.warning("Not enough samples for update")
+            return {
+                'policy_loss': 0.0,
+                'value_loss': 0.0,
+                'entropy': 0.0,
+                'total_loss': 0.0,
+                'approx_kl': 0.0,
+                'learning_rate': self.scheduler.get_last_lr()[0]
+            }
+            
         # Calculate advantages and returns
         advantages, returns = self.compute_advantages(next_value)
         
@@ -453,6 +484,21 @@ class TransformerPPOAgent:
         actions = torch.tensor(self.actions, dtype=torch.long, device=device)
         old_log_probs = torch.tensor(self.log_probs, dtype=torch.float, device=device)
         valid_masks = torch.stack(self.valid_masks)
+        
+        # Check for NaN values
+        has_nan = torch.isnan(returns).any() or torch.isnan(advantages).any() or torch.isnan(old_log_probs).any()
+        if has_nan:
+            logging.warning("NaN detected in training data, skipping update")
+            # Clear buffers and return default stats
+            self.reset_buffers()
+            return {
+                'policy_loss': 0.0,
+                'value_loss': 0.0,
+                'entropy': 0.0,
+                'total_loss': 0.0,
+                'approx_kl': 0.0,
+                'learning_rate': self.scheduler.get_last_lr()[0]
+            }
         
         # Normalize advantages
         advantages = (advantages - advantages.mean()) / (advantages.std() + EPS)
@@ -499,14 +545,14 @@ class TransformerPPOAgent:
                         
                         # Calculate ratio and clipped loss
                         ratio = torch.exp(new_log_probs - mb_old_log_probs)
-                        ratio = torch.clamp(ratio, 0.0, 10.0)  # Prevent extreme values
+                        ratio = torch.clamp(ratio, 0.0, 5.0)  # More strict clamping for extreme values
                         surr1 = ratio * mb_advantages
                         surr2 = torch.clamp(ratio, 1.0 - self.clip_ratio, 1.0 + self.clip_ratio) * mb_advantages
                         policy_loss = -torch.min(surr1, surr2).mean()
                         
-                        # Value loss with clipping for stability
+                        # Value loss with huber loss for stability
                         value_pred = values.squeeze()
-                        value_loss = F.huber_loss(value_pred, mb_returns)  # Huber loss is more robust than MSE
+                        value_loss = F.huber_loss(value_pred, mb_returns, delta=1.0)  # Smaller delta for more robust loss
                         
                         # Total loss
                         loss = policy_loss + self.vf_coef * value_loss - self.ent_coef * entropy
@@ -524,20 +570,25 @@ class TransformerPPOAgent:
                     
                     # Calculate ratio and clipped loss
                     ratio = torch.exp(new_log_probs - mb_old_log_probs)
-                    ratio = torch.clamp(ratio, 0.0, 10.0)  # Prevent extreme values
+                    ratio = torch.clamp(ratio, 0.0, 5.0)  # More strict clamping for extreme values
                     surr1 = ratio * mb_advantages
                     surr2 = torch.clamp(ratio, 1.0 - self.clip_ratio, 1.0 + self.clip_ratio) * mb_advantages
                     policy_loss = -torch.min(surr1, surr2).mean()
                     
-                    # Value loss with clipping for stability
+                    # Value loss with huber loss for stability
                     value_pred = values.squeeze()
-                    value_loss = F.huber_loss(value_pred, mb_returns)
+                    value_loss = F.huber_loss(value_pred, mb_returns, delta=1.0)  # Smaller delta for more robust loss
                     
                     # Total loss
                     loss = policy_loss + self.vf_coef * value_loss - self.ent_coef * entropy
                 
+                # Skip update if NaN detected
+                if torch.isnan(loss).any() or torch.isinf(loss).any():
+                    logging.warning("NaN or Inf detected in loss, skipping update")
+                    continue
+                
                 # Calculate approximate KL for early stopping
-                approx_kl = ((ratio - 1) - torch.log(ratio + EPS)).mean().item()
+                approx_kl = ((ratio - 1) - torch.log(torch.clamp(ratio, min=EPS))).mean().item()
                 approx_kls.append(approx_kl)
                 
                 # Check if we should stop early due to KL divergence
@@ -576,11 +627,11 @@ class TransformerPPOAgent:
         
         # Return stats
         stats = {
-            'policy_loss': np.mean(policy_losses),
-            'value_loss': np.mean(value_losses),
-            'entropy': np.mean(entropy_losses),
-            'total_loss': np.mean(total_losses),
-            'approx_kl': np.mean(approx_kls),
+            'policy_loss': np.nanmean(policy_losses) if policy_losses else 0.0,
+            'value_loss': np.nanmean(value_losses) if value_losses else 0.0,
+            'entropy': np.nanmean(entropy_losses) if entropy_losses else 0.0,
+            'total_loss': np.nanmean(total_losses) if total_losses else 0.0,
+            'approx_kl': np.nanmean(approx_kls) if approx_kls else 0.0,
             'learning_rate': self.scheduler.get_last_lr()[0]
         }
         
