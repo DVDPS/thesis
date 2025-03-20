@@ -253,7 +253,7 @@ class TransformerPPONetwork(nn.Module):
                 context = context + noise
             
             # Policy and value heads
-            policy_logits, value = self.policy_head(context)
+            policy_logits = self.policy_head(context)
             value = self.value_head(context)
             
             # Clamp policy logits for numerical stability (with slightly wider bounds)
