@@ -13,6 +13,7 @@ from src.thesis.environment.game2048 import Game2048, preprocess_state_onehot
 from src.thesis.agents.transformer_ppo_agent import TransformerPPOAgent
 from src.thesis.config import device, set_seeds
 import matplotlib.pyplot as plt
+from custom_load import patch_agent_load_method
 
 def evaluate_model(model_path, num_games=100, render=False, deterministic=True, seed=42):
     """
@@ -49,7 +50,10 @@ def evaluate_model(model_path, num_games=100, render=False, deterministic=True, 
         input_channels=16
     )
     
-    # Load the saved weights
+    # Patch the agent's load method for PyTorch 2.6+ compatibility
+    agent = patch_agent_load_method(agent)
+    
+    # Load the saved weights with patched method
     agent.load(model_path)
     logging.info("Model loaded successfully")
     
