@@ -520,6 +520,7 @@ class TransformerPPOAgent:
         
         # Log for debugging
         logging.info(f"Processing {len(states)} states, {len(actions)} actions, {len(returns)} returns")
+        logging.info(f"Using batch size {self.batch_size} for {len(states)} samples")
         
         # Check for NaN values but only log a warning instead of skipping the update
         has_nan = torch.isnan(returns).any() or torch.isnan(advantages).any() or torch.isnan(old_log_probs).any()
@@ -540,15 +541,25 @@ class TransformerPPOAgent:
         total_losses = []
         approx_kls = []
         
+        # Set network to training mode
+        self.network.train()
+        logging.info(f"Network training mode: {self.network.training}")
+        
+        # Use smaller batch size if needed
+        effective_batch_size = min(self.batch_size, len(states))
+        
         # Perform multiple epochs of updates
-        for _ in range(self.update_epochs):
+        for epoch in range(self.update_epochs):
+            logging.info(f"Starting epoch {epoch+1}/{self.update_epochs}")
+            
             # Generate random indices for minibatches
             indices = torch.randperm(len(states))
             
             # Process in minibatches
-            for start_idx in range(0, len(states), self.batch_size):
-                end_idx = min(start_idx + self.batch_size, len(states))
+            for start_idx in range(0, len(states), effective_batch_size):
+                end_idx = min(start_idx + effective_batch_size, len(states))
                 mb_indices = indices[start_idx:end_idx]
+                logging.info(f"Processing minibatch {start_idx//effective_batch_size + 1} with indices {start_idx}:{end_idx}")
                 
                 # Extract minibatch data
                 mb_states = torch.stack([states[i] for i in mb_indices])
@@ -564,6 +575,10 @@ class TransformerPPOAgent:
                     with torch.amp.autocast('cuda'):
                         policy_logits, values = self.network(mb_states, training=True)
                         
+                        # Debug output for network outputs
+                        logging.info(f"Policy logits shape: {policy_logits.shape}, Values shape: {values.shape}")
+                        logging.info(f"Policy logits sample: {policy_logits[0]}, Values sample: {values[0]}")
+                        
                         # Apply valid action mask
                         policy_logits = policy_logits + (1.0 - mb_valid_masks) * -1e10
                         
@@ -572,6 +587,9 @@ class TransformerPPOAgent:
                         dist = torch.distributions.Categorical(policy)
                         new_log_probs = dist.log_prob(mb_actions)
                         entropy = dist.entropy().mean()
+                        
+                        # Debug the log probabilities
+                        logging.info(f"New log probs: {new_log_probs[:5]}, Old log probs: {mb_old_log_probs[:5]}")
                         
                         # Calculate ratio and clipped loss
                         ratio = torch.exp(new_log_probs - mb_old_log_probs)
@@ -584,10 +602,18 @@ class TransformerPPOAgent:
                         value_pred = values.squeeze()
                         value_loss = F.huber_loss(value_pred, mb_returns, delta=1.0)  # Smaller delta for more robust loss
                         
+                        # Debug loss components
+                        logging.info(f"Policy loss: {policy_loss.item()}, Value loss: {value_loss.item()}, Entropy: {entropy.item()}")
+                        
                         # Total loss
                         loss = policy_loss + self.vf_coef * value_loss - self.ent_coef * entropy
+                        logging.info(f"Total loss: {loss.item()}")
                 else:
                     policy_logits, values = self.network(mb_states, training=True)
+                    
+                    # Debug output for network outputs
+                    logging.info(f"Policy logits shape: {policy_logits.shape}, Values shape: {values.shape}")
+                    logging.info(f"Policy logits sample: {policy_logits[0]}, Values sample: {values[0]}")
                     
                     # Apply valid action mask
                     policy_logits = policy_logits + (1.0 - mb_valid_masks) * -1e10
@@ -597,6 +623,9 @@ class TransformerPPOAgent:
                     dist = torch.distributions.Categorical(policy)
                     new_log_probs = dist.log_prob(mb_actions)
                     entropy = dist.entropy().mean()
+                    
+                    # Debug the log probabilities
+                    logging.info(f"New log probs: {new_log_probs[:5]}, Old log probs: {mb_old_log_probs[:5]}")
                     
                     # Calculate ratio and clipped loss
                     ratio = torch.exp(new_log_probs - mb_old_log_probs)
@@ -609,8 +638,12 @@ class TransformerPPOAgent:
                     value_pred = values.squeeze()
                     value_loss = F.huber_loss(value_pred, mb_returns, delta=1.0)  # Smaller delta for more robust loss
                     
+                    # Debug loss components
+                    logging.info(f"Policy loss: {policy_loss.item()}, Value loss: {value_loss.item()}, Entropy: {entropy.item()}")
+                    
                     # Total loss
                     loss = policy_loss + self.vf_coef * value_loss - self.ent_coef * entropy
+                    logging.info(f"Total loss: {loss.item()}")
                 
                 # Skip update if NaN or Inf detected in loss
                 if torch.isnan(loss).any() or torch.isinf(loss).any():
@@ -654,8 +687,8 @@ class TransformerPPOAgent:
                     entropy_losses.append(entropy_val)
                     total_losses.append(loss_val)
             
-        # Step the scheduler after all epochs are processed
-        self.scheduler.step()
+            # Step the scheduler after all epochs are processed
+            self.scheduler.step()
         
         # Increment update counter
         self.update_count += 1
