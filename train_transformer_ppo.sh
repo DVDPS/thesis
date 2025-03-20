@@ -10,7 +10,8 @@ TIMESTEPS=1000000
 EMBED_DIM=256
 NUM_HEADS=4
 NUM_LAYERS=4
-LEARNING_RATE=0.0003
+LEARNING_RATE=0.0001
+CLIP_RATIO=0.1
 SEED=42
 MIXED_PRECISION=true
 DATA_PARALLEL=false
@@ -50,6 +51,11 @@ while [[ $# -gt 0 ]]; do
             shift
             shift
             ;;
+        --clip-ratio)
+            CLIP_RATIO="$2"
+            shift
+            shift
+            ;;
         --seed)
             SEED="$2"
             shift
@@ -76,7 +82,8 @@ while [[ $# -gt 0 ]]; do
             echo "  --embed-dim N          Embedding dimension (default: 256)"
             echo "  --num-heads N          Number of attention heads (default: 4)"
             echo "  --num-layers N         Number of transformer layers (default: 4)"
-            echo "  --lr, --learning-rate R  Learning rate (default: 0.0003)"
+            echo "  --lr, --learning-rate R  Learning rate (default: 0.0001)"
+            echo "  --clip-ratio R         PPO clip ratio (default: 0.1)"
             echo "  --seed N               Random seed (default: 42)"
             echo "  --no-mixed-precision   Disable mixed precision training"
             echo "  --use-data-parallel    Enable data parallelism for multi-GPU training"
@@ -103,6 +110,7 @@ echo "Embedding dimension: $EMBED_DIM"
 echo "Number of attention heads: $NUM_HEADS"
 echo "Number of transformer layers: $NUM_LAYERS"
 echo "Learning rate: $LEARNING_RATE"
+echo "Clip ratio: $CLIP_RATIO"
 echo "Random seed: $SEED"
 echo "Mixed precision: $MIXED_PRECISION"
 echo "Data parallel: $DATA_PARALLEL"
@@ -118,6 +126,7 @@ CMD="python3.10 -m src.thesis.train_transformer_ppo --batch-size 4096 \
     --num-heads $NUM_HEADS \
     --num-layers $NUM_LAYERS \
     --learning-rate $LEARNING_RATE \
+    --clip-ratio $CLIP_RATIO \
     --seed $SEED \
     --output-dir $OUTPUT_DIR"
 
