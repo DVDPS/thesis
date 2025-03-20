@@ -18,6 +18,56 @@ from .environment.game2048 import Game2048, preprocess_state_onehot
 from .agents.transformer_ppo_agent import TransformerPPOAgent
 from .config import device, set_seeds
 from .utils.evaluation.evaluation import evaluate_agent
+import torch.nn.functional as F
+
+def debug_policy_distribution(policy_logits, action_mask=None):
+    """
+    Debug the policy distribution to identify potential issues.
+    
+    Args:
+        policy_logits: Policy logits from the agent
+        action_mask: Optional mask of valid actions
+        
+    Returns:
+        Dict with debug info
+    """
+    with torch.no_grad():
+        # Convert to probabilities
+        policy = F.softmax(policy_logits, dim=-1)
+        
+        # If masked, apply the mask
+        if action_mask is not None:
+            # Create mask tensor (1 for valid actions, 0 for invalid)
+            mask_tensor = torch.zeros_like(policy)
+            mask_tensor[:, action_mask] = 1.0
+            
+            # Apply mask
+            masked_policy = policy * mask_tensor
+            # Renormalize
+            masked_policy = masked_policy / (masked_policy.sum(dim=-1, keepdim=True) + 1e-8)
+            
+            # Check if masked policy contains NaNs
+            if torch.isnan(masked_policy).any():
+                return {"error": "NaN in masked policy", "policy": policy.cpu().numpy()}
+            
+            policy = masked_policy
+        
+        # Compute entropy
+        log_policy = torch.log(policy + 1e-8)
+        entropy = -(policy * log_policy).sum(dim=-1).mean().item()
+        
+        # Get stats on the distribution
+        max_prob = policy.max(dim=-1)[0].mean().item()
+        min_prob = policy.min(dim=-1)[0].mean().item()
+        std_prob = policy.std(dim=-1).mean().item()
+        
+        return {
+            "entropy": entropy,
+            "max_prob": max_prob,
+            "min_prob": min_prob,
+            "std": std_prob,
+            "policy": policy.cpu().numpy()
+        }
 
 def curriculum_setup(episode_count, max_episodes=1000):
     """
@@ -165,6 +215,27 @@ def train_transformer_ppo(args):
                 valid_moves = env.get_possible_moves()
                 if not valid_moves:
                     break
+                
+                # Add debugging for policy distribution occasionally
+                if total_timesteps % 1000 == 0:
+                    with torch.no_grad():
+                        # Get policy logits directly
+                        state_tensor = torch.tensor(state_proc, dtype=torch.float, device=device).unsqueeze(0)
+                        policy_logits, _ = agent.network(state_tensor)
+                        
+                        # Debug the distribution
+                        debug_info = debug_policy_distribution(policy_logits, valid_moves)
+                        
+                        # Log the debug info
+                        logging.info(f"Policy debug at step {total_timesteps}: "
+                                    f"entropy={debug_info['entropy']:.4f}, "
+                                    f"max_prob={debug_info['max_prob']:.4f}, "
+                                    f"std={debug_info['std']:.4f}")
+                        
+                        # Log to tensorboard
+                        writer.add_scalar('debug/policy_entropy', debug_info['entropy'], total_timesteps)
+                        writer.add_scalar('debug/policy_max_prob', debug_info['max_prob'], total_timesteps)
+                        writer.add_scalar('debug/policy_std', debug_info['std'], total_timesteps)
                 
                 # Select action
                 action, log_prob, value = agent.get_action(state_proc, valid_moves)
