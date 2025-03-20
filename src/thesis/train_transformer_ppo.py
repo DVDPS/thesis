@@ -19,6 +19,41 @@ from .agents.transformer_ppo_agent import TransformerPPOAgent
 from .config import device, set_seeds
 from .utils.evaluation.evaluation import evaluate_agent
 
+def curriculum_setup(episode_count, max_episodes=1000):
+    """
+    Set up curriculum learning parameters based on training progress
+    
+    Args:
+        episode_count: Current episode count
+        max_episodes: Maximum number of episodes for scaling
+        
+    Returns:
+        Dictionary of curriculum parameters
+    """
+    progress = min(1.0, episode_count / max_episodes)
+    
+    # Early training: focus on exploration and simple patterns
+    if progress < 0.2:
+        return {
+            "entropy_coef": 0.02,
+            "learning_rate": 0.0001,
+            "target_kl": 0.03
+        }
+    # Mid training: balance exploration and exploitation
+    elif progress < 0.6:
+        return {
+            "entropy_coef": 0.01, 
+            "learning_rate": 0.00005,
+            "target_kl": 0.02
+        }
+    # Late training: focus on exploitation and fine-tuning
+    else:
+        return {
+            "entropy_coef": 0.005,
+            "learning_rate": 0.00002,
+            "target_kl": 0.01
+        }
+
 def train_transformer_ppo(args):
     """
     Train a Transformer-based PPO agent on the 2048 game.
@@ -217,6 +252,28 @@ def train_transformer_ppo(args):
             episode_rewards.append(episode_reward)
             episode_max_tiles.append(episode_max_tile)
             episode_lengths.append(episode_length)
+            
+            # Apply curriculum learning to adjust hyperparameters
+            if len(episode_rewards) % 10 == 0:  # Adjust parameters every 10 episodes
+                curriculum_params = curriculum_setup(len(episode_rewards), max_episodes=args.total_timesteps/100)
+                
+                # Update agent hyperparameters
+                agent.ent_coef = curriculum_params["entropy_coef"]
+                agent.target_kl = curriculum_params["target_kl"]
+                
+                # Update learning rate in optimizer
+                for param_group in agent.optimizer.param_groups:
+                    param_group['lr'] = curriculum_params["learning_rate"]
+                
+                # Log the curriculum update
+                logging.info(f"Curriculum update: entropy_coef={agent.ent_coef}, "
+                            f"target_kl={agent.target_kl}, "
+                            f"learning_rate={curriculum_params['learning_rate']}")
+                
+                # Record in tensorboard
+                writer.add_scalar('curriculum/entropy_coef', agent.ent_coef, len(episode_rewards))
+                writer.add_scalar('curriculum/target_kl', agent.target_kl, len(episode_rewards))
+                writer.add_scalar('curriculum/learning_rate', curriculum_params["learning_rate"], len(episode_rewards))
             
             # Log progress
             logging.info(f"Episode finished: Steps={episode_length}, "

@@ -120,13 +120,15 @@ fi
 echo "=========================================="
 
 # Build the command - use python3.10 explicitly
-CMD="python3.10 -m src.thesis.train_transformer_ppo --batch-size 128 \
+CMD="python3.10 -m src.thesis.train_transformer_ppo --batch-size 64 \
     --total-timesteps $TIMESTEPS \
-    --embed-dim $EMBED_DIM \
+    --embed-dim 128 \
     --num-heads $NUM_HEADS \
     --num-layers $NUM_LAYERS \
-    --learning-rate $LEARNING_RATE \
+    --learning-rate 0.00003 \
     --clip-ratio $CLIP_RATIO \
+    --ent-coef 0.005 \
+    --update-epochs 3 \
     --seed $SEED \
     --output-dir $OUTPUT_DIR"
 
