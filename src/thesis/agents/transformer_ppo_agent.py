@@ -247,24 +247,26 @@ class TransformerPPONetwork(nn.Module):
             # Extract the context vector (removing sequence dimension)
             context = context.squeeze(1)
             
-            # Add exploration noise during training if requested
+            # Add exploration noise during training if requested (with reduced magnitude)
             if training and self.training:
-                noise = 0.05 * torch.randn_like(context)  # Reduce noise magnitude
+                noise = 0.01 * torch.randn_like(context)  # Further reduce noise magnitude
                 context = context + noise
             
             # Policy and value heads
             policy_logits = self.policy_head(context)
             value = self.value_head(context)
             
-            # Clamp policy logits for numerical stability
-            policy_logits = torch.clamp(policy_logits, -10.0, 10.0)
-            value = torch.clamp(value, -100.0, 100.0)
+            # Clamp policy logits for numerical stability (with slightly wider bounds)
+            policy_logits = torch.clamp(policy_logits, -15.0, 15.0)
+            value = torch.clamp(value, -150.0, 150.0)
             
             # Safety checks to prevent NaN propagation
             if torch.isnan(policy_logits).any() or torch.isinf(policy_logits).any():
+                logging.warning("NaN or Inf detected in policy logits!")
                 policy_logits = torch.zeros_like(policy_logits)
             
             if torch.isnan(value).any() or torch.isinf(value).any():
+                logging.warning("NaN or Inf detected in value!")
                 value = torch.zeros_like(value)
             
             return policy_logits, value
@@ -485,20 +487,14 @@ class TransformerPPOAgent:
         old_log_probs = torch.tensor(self.log_probs, dtype=torch.float, device=device)
         valid_masks = torch.stack(self.valid_masks)
         
-        # Check for NaN values
+        # Check for NaN values but only log a warning instead of skipping the update
         has_nan = torch.isnan(returns).any() or torch.isnan(advantages).any() or torch.isnan(old_log_probs).any()
         if has_nan:
-            logging.warning("NaN detected in training data, skipping update")
-            # Clear buffers and return default stats
-            self.reset_buffers()
-            return {
-                'policy_loss': 0.0,
-                'value_loss': 0.0,
-                'entropy': 0.0,
-                'total_loss': 0.0,
-                'approx_kl': 0.0,
-                'learning_rate': self.scheduler.get_last_lr()[0]
-            }
+            logging.warning("NaN detected in training data, attempting to clean and continue")
+            # Replace NaNs with zeros instead of skipping the update completely
+            returns = torch.nan_to_num(returns, nan=0.0)
+            advantages = torch.nan_to_num(advantages, nan=0.0)
+            old_log_probs = torch.nan_to_num(old_log_probs, nan=0.0)
         
         # Normalize advantages
         advantages = (advantages - advantages.mean()) / (advantages.std() + EPS)
@@ -582,10 +578,10 @@ class TransformerPPOAgent:
                     # Total loss
                     loss = policy_loss + self.vf_coef * value_loss - self.ent_coef * entropy
                 
-                # Skip update if NaN detected
+                # Skip update if NaN or Inf detected in loss
                 if torch.isnan(loss).any() or torch.isinf(loss).any():
-                    logging.warning("NaN or Inf detected in loss, skipping update")
-                    continue
+                    logging.warning("NaN or Inf detected in loss, skipping this batch update")
+                    continue  # Skip this batch but continue with others
                 
                 # Calculate approximate KL for early stopping
                 approx_kl = ((ratio - 1) - torch.log(torch.clamp(ratio, min=EPS))).mean().item()
@@ -609,7 +605,7 @@ class TransformerPPOAgent:
                     torch.nn.utils.clip_grad_norm_(self.network.parameters(), self.max_grad_norm)
                     self.optimizer.step()
                 
-                # Track metrics
+                # Track metrics - only if no NaN detected
                 policy_losses.append(policy_loss.item())
                 value_losses.append(value_loss.item())
                 entropy_losses.append(entropy.item())
