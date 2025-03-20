@@ -120,7 +120,7 @@ fi
 echo "=========================================="
 
 # Build the command - use python3.10 explicitly
-CMD="python3.10 -m src.thesis.train_transformer_ppo --batch-size 4096 \
+CMD="python3.10 -m src.thesis.train_transformer_ppo --batch-size 128 \
     --total-timesteps $TIMESTEPS \
     --embed-dim $EMBED_DIM \
     --num-heads $NUM_HEADS \
