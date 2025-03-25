@@ -169,36 +169,23 @@ def train_transformer_ppo(
     # Create environment
     env = Game2048()
     
-    # Create network
-    network = TransformerPPONetwork(
+    # Create agent
+    agent = TransformerPPOAgent(
         board_size=4,
         embed_dim=embed_dim,
         num_heads=num_heads,
         num_layers=num_layers,
-        use_checkpoint=True  # Enable gradient checkpointing
+        learning_rate=learning_rate,
+        gamma=gamma,
+        gae_lambda=gae_lambda,
+        clip_ratio=clip_ratio,
+        vf_coef=vf_coef,
+        ent_coef=ent_coef,
+        max_grad_norm=max_grad_norm,
+        target_kl=target_kl,
+        mixed_precision=mixed_precision,
+        use_data_parallel=use_data_parallel
     )
-    
-    # Move network to GPU if available
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    network = network.to(device)
-    
-    # Use DataParallel if requested and multiple GPUs are available
-    if use_data_parallel and torch.cuda.device_count() > 1:
-        network = torch.nn.DataParallel(network)
-        logging.info(f"Using {torch.cuda.device_count()} GPUs with DataParallel")
-    
-    # Create optimizer and scheduler
-    optimizer = torch.optim.Adam(network.parameters(), lr=learning_rate)
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer,
-        mode='max',
-        factor=0.5,
-        patience=5,
-        verbose=True
-    )
-    
-    # Create scaler for mixed precision training
-    scaler = torch.cuda.amp.GradScaler() if mixed_precision else None
     
     # Initialize metrics
     episode_rewards = []
@@ -206,6 +193,9 @@ def train_transformer_ppo(
     episode_max_tiles = []
     total_steps = 0
     episode_count = 0
+    
+    # Create TensorBoard writer
+    writer = SummaryWriter(os.path.join(output_dir, 'tensorboard'))
     
     # Training loop
     while total_steps < total_timesteps:
@@ -222,11 +212,7 @@ def train_transformer_ppo(
         # Collect timesteps_per_update steps
         while len(states) < timesteps_per_update:
             # Get action from policy
-            with torch.no_grad():
-                state_tensor = torch.FloatTensor(state).unsqueeze(0).to(device)
-                policy_logits, value = network(state_tensor)
-                action_probs = F.softmax(policy_logits, dim=-1)
-                action = torch.multinomial(action_probs, 1).item()
+            action = agent.get_action(state)
             
             # Take action in environment
             next_state, reward, done, _ = env.step(action)
@@ -259,53 +245,8 @@ def train_transformer_ppo(
                 episode_max_tile = 0
                 state = env.reset()
         
-        # Convert lists to tensors
-        states = torch.FloatTensor(states).to(device)
-        actions = torch.LongTensor(actions).to(device)
-        rewards = torch.FloatTensor(rewards).to(device)
-        next_states = torch.FloatTensor(next_states).to(device)
-        dones = torch.FloatTensor(dones).to(device)
-        
-        # Compute advantages and returns
-        with torch.no_grad():
-            _, next_values = network(next_states)
-            advantages = compute_gae(rewards, next_values, dones, gamma, gae_lambda)
-            returns = advantages + next_values
-        
-        # Update policy and value function
-        for _ in range(update_epochs):
-            # Get policy and value predictions
-            policy_logits, values = network(states)
-            
-            # Compute PPO losses
-            policy_loss = compute_policy_loss(policy_logits, actions, advantages, clip_ratio)
-            value_loss = F.mse_loss(values, returns)
-            entropy = compute_entropy(policy_logits)
-            
-            # Total loss
-            total_loss = (
-                policy_loss +
-                vf_coef * value_loss -
-                ent_coef * entropy
-            )
-            
-            # Update network
-            optimizer.zero_grad()
-            
-            if mixed_precision:
-                scaler.scale(total_loss).backward()
-                scaler.unscale_(optimizer)
-                torch.nn.utils.clip_grad_norm_(network.parameters(), max_grad_norm)
-                scaler.step(optimizer)
-                scaler.update()
-            else:
-                total_loss.backward()
-                torch.nn.utils.clip_grad_norm_(network.parameters(), max_grad_norm)
-                optimizer.step()
-        
-        # Update learning rate based on average reward
-        avg_reward = np.mean(episode_rewards[-100:]) if episode_rewards else 0
-        scheduler.step(avg_reward)
+        # Update agent
+        agent.update(states, actions, rewards, next_states, dones, update_epochs)
         
         # Log metrics
         total_steps += len(states)
@@ -320,34 +261,25 @@ def train_transformer_ppo(
             logging.info(f"Average length: {avg_length:.2f}")
             logging.info(f"Average max tile: {avg_max_tile:.2f}")
             logging.info(f"Max tile reached: {max_tile_reached}")
-            logging.info(f"Learning rate: {optimizer.param_groups[0]['lr']:.6f}")
+            logging.info(f"Learning rate: {agent.optimizer.param_groups[0]['lr']:.6f}")
             
             # Save metrics to TensorBoard
             writer.add_scalar('train/reward', avg_reward, episode_count)
             writer.add_scalar('train/length', avg_length, episode_count)
             writer.add_scalar('train/max_tile', avg_max_tile, episode_count)
-            writer.add_scalar('train/learning_rate', optimizer.param_groups[0]['lr'], episode_count)
+            writer.add_scalar('train/learning_rate', agent.optimizer.param_groups[0]['lr'], episode_count)
             
             # Save model checkpoint
             if episode_count % 100 == 0:
                 checkpoint_path = os.path.join(output_dir, f'checkpoint_{episode_count}.pt')
-                torch.save({
-                    'episode': episode_count,
-                    'model_state_dict': network.state_dict(),
-                    'optimizer_state_dict': optimizer.state_dict(),
-                    'scheduler_state_dict': scheduler.state_dict(),
-                    'avg_reward': avg_reward,
-                    'avg_length': avg_length,
-                    'avg_max_tile': avg_max_tile,
-                    'max_tile_reached': max_tile_reached
-                }, checkpoint_path)
+                agent.save(checkpoint_path)
                 logging.info(f"Saved checkpoint to {checkpoint_path}")
     
     # Close environment and writer
     env.close()
     writer.close()
     
-    return network, episode_rewards, episode_lengths, episode_max_tiles
+    return agent, episode_rewards, episode_lengths, episode_max_tiles
 
 def plot_training_curves(rewards, max_tiles, eval_scores, eval_max_tiles, output_dir):
     """
