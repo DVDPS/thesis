@@ -1,6 +1,5 @@
 import numpy as np
 import random
-import torch
 from typing import List, Tuple, Dict
 import logging
 
@@ -14,13 +13,9 @@ class BeamSearchAgent:
         self.beam_width = beam_width
         self.search_depth = search_depth
         
-        # Set device
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        
         # Initialize logging
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
-        self.logger.info(f"Using device: {self.device}")
     
     def get_action(self, state: np.ndarray, valid_moves: List[int]) -> int:
         """
@@ -33,11 +28,8 @@ class BeamSearchAgent:
         Returns:
             Best action to take
         """
-        # Convert state to tensor and move to device
-        state_tensor = torch.tensor(state, dtype=torch.float32, device=self.device)
-        
         # Initialize beam with current state
-        beam = [(state_tensor, [], 0)]  # (state, action_history, score)
+        beam = [(state, [], 0)]  # (state, action_history, score)
         
         # Run beam search for specified depth
         for depth in range(self.search_depth):
@@ -72,7 +64,7 @@ class BeamSearchAgent:
         else:
             return random.choice(valid_moves)
     
-    def _simulate_action(self, state: torch.Tensor, action: int) -> torch.Tensor:
+    def _simulate_action(self, state: np.ndarray, action: int) -> np.ndarray:
         """
         Simulate an action on the state and return the resulting state.
         Randomly places a new tile (2 or 4) in an empty position.
@@ -85,21 +77,22 @@ class BeamSearchAgent:
             New state after action
         """
         # Create a copy of the state
-        new_state = state.clone()
+        new_state = state.copy()
         
         # Get empty positions
-        empty_positions = torch.where(new_state == 0)
-        if len(empty_positions[0]) == 0:
+        empty_positions = [(i, j) for i in range(self.board_size) 
+                          for j in range(self.board_size) if new_state[i, j] == 0]
+        
+        if not empty_positions:
             return None
         
         # Randomly place a new tile (2 or 4)
-        idx = random.randint(0, len(empty_positions[0]) - 1)
-        new_pos = (empty_positions[0][idx], empty_positions[1][idx])
+        new_pos = random.choice(empty_positions)
         new_state[new_pos] = 2 if random.random() < 0.9 else 4
         
         return new_state
     
-    def _evaluate_state(self, state: torch.Tensor) -> float:
+    def _evaluate_state(self, state: np.ndarray) -> float:
         """
         Evaluate state using the heuristic function that considers:
         1. Number of empty tiles
@@ -116,10 +109,10 @@ class BeamSearchAgent:
             Heuristic score
         """
         # Count empty tiles
-        empty_count = torch.sum(state == 0).item()
+        empty_count = np.sum(state == 0)
         
         # Get maximum tile value
-        max_tile = torch.max(state).item()
+        max_tile = np.max(state)
         
         # Calculate smoothness (penalize adjacent tiles with large differences)
         smoothness = 0
@@ -128,24 +121,24 @@ class BeamSearchAgent:
                 if state[i, j] != 0:
                     # Check right neighbor
                     if j < self.board_size - 1:
-                        smoothness -= abs(state[i, j].item() - state[i, j + 1].item())
+                        smoothness -= abs(state[i, j] - state[i, j + 1])
                     # Check bottom neighbor
                     if i < self.board_size - 1:
-                        smoothness -= abs(state[i, j].item() - state[i + 1, j].item())
+                        smoothness -= abs(state[i, j] - state[i + 1, j])
         
         # Calculate monotonicity (prefer states where tiles are arranged in decreasing order)
         monotonicity = 0
         # Check horizontal monotonicity
         for i in range(self.board_size):
             for j in range(self.board_size - 1):
-                if state[i, j].item() >= state[i, j + 1].item():
+                if state[i, j] >= state[i, j + 1]:
                     monotonicity += 1
                 else:
                     monotonicity -= 1
         # Check vertical monotonicity
         for j in range(self.board_size):
             for i in range(self.board_size - 1):
-                if state[i, j].item() >= state[i + 1, j].item():
+                if state[i, j] >= state[i + 1, j]:
                     monotonicity += 1
                 else:
                     monotonicity -= 1
@@ -154,9 +147,9 @@ class BeamSearchAgent:
         corner_score = 0
         corners = [(0, 0), (0, self.board_size-1), (self.board_size-1, 0), (self.board_size-1, self.board_size-1)]
         for corner in corners:
-            if state[corner].item() == max_tile:
+            if state[corner] == max_tile:
                 corner_score += 1
-            elif state[corner].item() >= max_tile / 2:
+            elif state[corner] >= max_tile / 2:
                 corner_score += 0.5
         
         # Calculate snake pattern score (prefer snake-like arrangement)
@@ -166,10 +159,10 @@ class BeamSearchAgent:
                 if state[i, j] != 0:
                     # Check if tile is part of a snake pattern
                     if i % 2 == 0:
-                        if j == 0 or state[i, j].item() >= state[i, j-1].item():
+                        if j == 0 or state[i, j] >= state[i, j-1]:
                             snake_score += 1
                     else:
-                        if j == self.board_size-1 or state[i, j].item() >= state[i, j+1].item():
+                        if j == self.board_size-1 or state[i, j] >= state[i, j+1]:
                             snake_score += 1
         
         # Combine all factors with adjusted weights

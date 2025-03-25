@@ -10,7 +10,6 @@ import os
 import time
 import argparse
 import matplotlib.pyplot as plt
-import torch
 from tqdm import tqdm
 from .environment.game2048 import Game2048
 from .agents.beam_search_agent import BeamSearchAgent
@@ -19,76 +18,54 @@ from .config import set_seeds
 def evaluate_beam_search(
     agent: BeamSearchAgent,
     num_games: int = 100,
-    max_steps: int = 1000,
-    batch_size: int = 32
+    max_steps: int = 1000
 ) -> dict:
     """
-    Evaluate the beam search agent over multiple games using batched processing.
+    Evaluate the beam search agent over multiple games.
     
     Args:
         agent: Beam search agent to evaluate
         num_games: Number of games to play
         max_steps: Maximum steps per game
-        batch_size: Number of games to process in parallel
         
     Returns:
         Dictionary with evaluation metrics
     """
+    env = Game2048()
     scores = []
     max_tiles = []
     game_lengths = []
     
-    # Process games in batches
-    for batch_start in tqdm(range(0, num_games, batch_size), desc="Processing batches"):
-        batch_end = min(batch_start + batch_size, num_games)
-        batch_size_actual = batch_end - batch_start
+    for game in tqdm(range(num_games), desc="Evaluating games"):
+        state = env.reset()
+        done = False
+        game_score = 0
+        game_length = 0
+        game_max_tile = 0
         
-        # Create environments for this batch
-        envs = [Game2048() for _ in range(batch_size_actual)]
-        
-        # Initialize batch of games
-        batch_states = [env.reset() for env in envs]
-        batch_dones = [False] * batch_size_actual
-        batch_scores = [0] * batch_size_actual
-        batch_lengths = [0] * batch_size_actual
-        batch_max_tiles = [0] * batch_size_actual
-        
-        # Run batch until all games are done
-        while not all(batch_dones):
-            # Get valid moves for each game
-            batch_valid_moves = [env.get_possible_moves() for env in envs]
+        while not done and game_length < max_steps:
+            # Get valid moves
+            valid_moves = env.get_possible_moves()
+            if not valid_moves:
+                break
+                
+            # Get action from beam search
+            action = agent.get_action(state, valid_moves)
             
-            # Get actions for all games in batch
-            batch_actions = []
-            for i in range(batch_size_actual):
-                if not batch_dones[i]:
-                    action = agent.get_action(batch_states[i], batch_valid_moves[i])
-                    batch_actions.append(action)
-                else:
-                    batch_actions.append(0)  # Dummy action for done games
+            # Execute action
+            next_state, reward, done, _ = env.step(action)
             
-            # Execute actions for all games
-            for i in range(batch_size_actual):
-                if not batch_dones[i]:
-                    next_state, reward, done, _ = envs[i].step(batch_actions[i])
-                    
-                    # Update metrics
-                    batch_scores[i] += reward
-                    batch_lengths[i] += 1
-                    batch_max_tiles[i] = max(batch_max_tiles[i], np.max(next_state))
-                    
-                    # Update state and done flag
-                    batch_states[i] = next_state
-                    batch_dones[i] = done or batch_lengths[i] >= max_steps
+            # Update metrics
+            game_score += reward
+            game_length += 1
+            game_max_tile = max(game_max_tile, np.max(next_state))
+            
+            # Update state
+            state = next_state
         
-        # Add batch results to overall metrics
-        scores.extend(batch_scores)
-        max_tiles.extend(batch_max_tiles)
-        game_lengths.extend(batch_lengths)
-        
-        # Clean up environments
-        for env in envs:
-            env.close()
+        scores.append(game_score)
+        max_tiles.append(game_max_tile)
+        game_lengths.append(game_length)
     
     return {
         'avg_score': np.mean(scores),
@@ -155,7 +132,6 @@ def main():
     parser.add_argument("--max-steps", type=int, default=1000, help="Maximum steps per game")
     parser.add_argument("--beam-width", type=int, default=10, help="Beam width for search")
     parser.add_argument("--search-depth", type=int, default=20, help="Search depth")
-    parser.add_argument("--batch-size", type=int, default=32, help="Batch size for parallel processing")
     
     # Output parameters
     parser.add_argument("--output-dir", type=str, default="beam_search_results", help="Output directory")
@@ -179,13 +155,6 @@ def main():
     # Set random seed
     set_seeds(args.seed)
     
-    # Log device information
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    logging.info(f"Using device: {device}")
-    if torch.cuda.is_available():
-        logging.info(f"GPU: {torch.cuda.get_device_name(0)}")
-        logging.info(f"CUDA Version: {torch.version.cuda}")
-    
     # Create and evaluate agent
     agent = BeamSearchAgent(
         board_size=4,
@@ -198,8 +167,7 @@ def main():
     results = evaluate_beam_search(
         agent,
         num_games=args.num_games,
-        max_steps=args.max_steps,
-        batch_size=args.batch_size
+        max_steps=args.max_steps
     )
     total_time = time.time() - start_time
     

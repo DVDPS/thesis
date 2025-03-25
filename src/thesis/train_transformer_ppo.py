@@ -108,31 +108,48 @@ def curriculum_setup(episode_count, max_episodes=1000):
 def train_transformer_ppo(
     output_dir: str,
     total_timesteps: int = 1_000_000,
-    batch_size: int = 128,
-    n_epochs: int = 10,
-    n_steps: int = 2048,
+    batch_size: int = 64,
+    update_epochs: int = 10,
+    timesteps_per_update: int = 2048,
     gamma: float = 0.99,
     gae_lambda: float = 0.95,
-    clip_range: float = 0.1,
-    clip_range_vf: float = 0.1,
-    ent_coef: float = 0.01,
+    clip_ratio: float = 0.2,
     vf_coef: float = 0.5,
+    ent_coef: float = 0.01,
     max_grad_norm: float = 0.5,
-    target_kl: float = 0.03,
-    learning_rate: float = 0.0001,
+    target_kl: float = 0.015,
+    learning_rate: float = 3e-4,
     embed_dim: int = 256,
-    num_heads: int = 4,
-    num_layers: int = 4,
-    mixed_precision: bool = True,
-    data_parallel: bool = False,
+    num_heads: int = 8,
+    num_layers: int = 6,
+    mixed_precision: bool = False,
+    use_data_parallel: bool = False,
     seed: int = 42
 ):
     """
-    Train a Transformer-based PPO agent on 2048 game with two-stage learning.
-    """
-    # Set random seed for reproducibility
-    set_seeds(seed)
+    Train a Transformer-based PPO agent on the 2048 game.
     
+    Args:
+        output_dir: Directory to save results
+        total_timesteps: Total number of timesteps to train for
+        batch_size: Batch size for updates
+        update_epochs: Number of epochs to update policy on each batch
+        timesteps_per_update: Number of timesteps to collect before updating
+        gamma: Discount factor
+        gae_lambda: Lambda parameter for GAE
+        clip_ratio: PPO clipping ratio
+        vf_coef: Value function coefficient
+        ent_coef: Entropy coefficient
+        max_grad_norm: Maximum gradient norm
+        target_kl: Target KL divergence
+        learning_rate: Learning rate
+        embed_dim: Embedding dimension for transformer
+        num_heads: Number of attention heads
+        num_layers: Number of transformer layers
+        mixed_precision: Whether to use mixed precision training
+        use_data_parallel: Whether to use DataParallel for multi-GPU training
+        seed: Random seed
+    """
     # Create output directory
     os.makedirs(output_dir, exist_ok=True)
     
@@ -146,125 +163,191 @@ def train_transformer_ppo(
         ]
     )
     
-    # Stage 1 parameters (early training)
-    stage1_params = {
-        'learning_rate': learning_rate * 2,  # Higher learning rate for exploration
-        'ent_coef': ent_coef * 2,  # Higher entropy for exploration
-        'target_kl': target_kl * 2,  # Larger policy updates
-        'clip_range': clip_range * 1.5,  # More aggressive clipping
-        'batch_size': batch_size // 2  # Smaller batches for faster updates
-    }
+    # Set random seed
+    set_seeds(seed)
     
-    # Stage 2 parameters (fine-tuning)
-    stage2_params = {
-        'learning_rate': learning_rate,
-        'ent_coef': ent_coef,
-        'target_kl': target_kl,
-        'clip_range': clip_range,
-        'batch_size': batch_size
-    }
-    
-    # Create environment and agent
+    # Create environment
     env = Game2048()
-    agent = TransformerPPOAgent(
+    
+    # Create network
+    network = TransformerPPONetwork(
         board_size=4,
         embed_dim=embed_dim,
         num_heads=num_heads,
         num_layers=num_layers,
-        input_channels=16
+        use_checkpoint=True  # Enable gradient checkpointing
     )
     
-    # Initialize optimizer and scheduler
-    optimizer = optim.Adam(agent.network.parameters(), lr=stage1_params['learning_rate'])
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max', factor=0.5, patience=5, verbose=True)
+    # Move network to GPU if available
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    network = network.to(device)
+    
+    # Use DataParallel if requested and multiple GPUs are available
+    if use_data_parallel and torch.cuda.device_count() > 1:
+        network = torch.nn.DataParallel(network)
+        logging.info(f"Using {torch.cuda.device_count()} GPUs with DataParallel")
+    
+    # Create optimizer and scheduler
+    optimizer = torch.optim.Adam(network.parameters(), lr=learning_rate)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer,
+        mode='max',
+        factor=0.5,
+        patience=5,
+        verbose=True
+    )
+    
+    # Create scaler for mixed precision training
+    scaler = torch.cuda.amp.GradScaler() if mixed_precision else None
+    
+    # Initialize metrics
+    episode_rewards = []
+    episode_lengths = []
+    episode_max_tiles = []
+    total_steps = 0
+    episode_count = 0
     
     # Training loop
-    episode_count = 0
-    total_steps = 0
-    best_score = float('-inf')
-    best_model_path = None
-    
     while total_steps < total_timesteps:
-        # Determine current stage based on total steps
-        is_stage1 = total_steps < total_timesteps * 0.5
-        current_params = stage1_params if is_stage1 else stage2_params
-        
-        # Update hyperparameters based on stage
-        agent.ent_coef = current_params['ent_coef']
-        agent.target_kl = current_params['target_kl']
-        agent.clip_range = current_params['clip_range']
-        
-        # Training episode
-        state = env.reset()
+        # Collect experience
+        states, actions, rewards, next_states, dones = [], [], [], [], []
         episode_reward = 0
         episode_length = 0
         episode_max_tile = 0
+        done = False  # Initialize done flag
         
-        while not done and episode_length < n_steps:
-            # Get action with tile-downgrading search
-            action, log_prob, value = agent.get_action(state, env.get_possible_moves())
+        # Reset environment
+        state = env.reset()
+        
+        # Collect timesteps_per_update steps
+        while len(states) < timesteps_per_update:
+            # Get action from policy
+            with torch.no_grad():
+                state_tensor = torch.FloatTensor(state).unsqueeze(0).to(device)
+                policy_logits, value = network(state_tensor)
+                action_probs = F.softmax(policy_logits, dim=-1)
+                action = torch.multinomial(action_probs, 1).item()
             
-            # Execute action
+            # Take action in environment
             next_state, reward, done, _ = env.step(action)
             
-            # Update episode metrics
+            # Store transition
+            states.append(state)
+            actions.append(action)
+            rewards.append(reward)
+            next_states.append(next_state)
+            dones.append(done)
+            
+            # Update metrics
             episode_reward += reward
             episode_length += 1
             episode_max_tile = max(episode_max_tile, np.max(next_state))
             
-            # Store transition
-            agent.store_transition(state, action, reward, next_state, done, log_prob, value)
-            
             # Update state
             state = next_state
+            
+            # If episode is done, reset environment
+            if done:
+                episode_rewards.append(episode_reward)
+                episode_lengths.append(episode_length)
+                episode_max_tiles.append(episode_max_tile)
+                episode_count += 1
+                
+                # Reset metrics for next episode
+                episode_reward = 0
+                episode_length = 0
+                episode_max_tile = 0
+                state = env.reset()
         
-        # Update agent with current stage parameters
-        update_info = agent.update(
-            batch_size=current_params['batch_size'],
-            n_epochs=n_epochs,
-            gamma=gamma,
-            gae_lambda=gae_lambda,
-            clip_range=current_params['clip_range'],
-            clip_range_vf=clip_range_vf,
-            ent_coef=current_params['ent_coef'],
-            vf_coef=vf_coef,
-            max_grad_norm=max_grad_norm,
-            target_kl=current_params['target_kl']
-        )
+        # Convert lists to tensors
+        states = torch.FloatTensor(states).to(device)
+        actions = torch.LongTensor(actions).to(device)
+        rewards = torch.FloatTensor(rewards).to(device)
+        next_states = torch.FloatTensor(next_states).to(device)
+        dones = torch.FloatTensor(dones).to(device)
         
-        # Update total steps and episode count
-        total_steps += episode_length
-        episode_count += 1
+        # Compute advantages and returns
+        with torch.no_grad():
+            _, next_values = network(next_states)
+            advantages = compute_gae(rewards, next_values, dones, gamma, gae_lambda)
+            returns = advantages + next_values
+        
+        # Update policy and value function
+        for _ in range(update_epochs):
+            # Get policy and value predictions
+            policy_logits, values = network(states)
+            
+            # Compute PPO losses
+            policy_loss = compute_policy_loss(policy_logits, actions, advantages, clip_ratio)
+            value_loss = F.mse_loss(values, returns)
+            entropy = compute_entropy(policy_logits)
+            
+            # Total loss
+            total_loss = (
+                policy_loss +
+                vf_coef * value_loss -
+                ent_coef * entropy
+            )
+            
+            # Update network
+            optimizer.zero_grad()
+            
+            if mixed_precision:
+                scaler.scale(total_loss).backward()
+                scaler.unscale_(optimizer)
+                torch.nn.utils.clip_grad_norm_(network.parameters(), max_grad_norm)
+                scaler.step(optimizer)
+                scaler.update()
+            else:
+                total_loss.backward()
+                torch.nn.utils.clip_grad_norm_(network.parameters(), max_grad_norm)
+                optimizer.step()
+        
+        # Update learning rate based on average reward
+        avg_reward = np.mean(episode_rewards[-100:]) if episode_rewards else 0
+        scheduler.step(avg_reward)
         
         # Log metrics
-        logging.info(f"Episode {episode_count} | "
-                    f"Score: {episode_reward:.2f} | "
-                    f"Max Tile: {episode_max_tile} | "
-                    f"Length: {episode_length} | "
-                    f"Stage: {'1' if is_stage1 else '2'}")
-        
-        # Save best model
-        if episode_reward > best_score:
-            best_score = episode_reward
-            best_model_path = os.path.join(output_dir, 'best_model.pt')
-            agent.save(best_model_path)
-            logging.info(f"New best model saved with score: {best_score:.2f}")
-        
-        # Save periodic checkpoints
+        total_steps += len(states)
         if episode_count % 10 == 0:
-            checkpoint_path = os.path.join(output_dir, f'checkpoint_eval_{episode_count}.pt')
-            agent.save(checkpoint_path)
-            logging.info(f"Saved checkpoint at episode {episode_count}")
-        
-        # Update learning rate based on performance
-        scheduler.step(episode_reward)
+            avg_reward = np.mean(episode_rewards[-100:]) if episode_rewards else 0
+            avg_length = np.mean(episode_lengths[-100:]) if episode_lengths else 0
+            avg_max_tile = np.mean(episode_max_tiles[-100:]) if episode_max_tiles else 0
+            max_tile_reached = max(episode_max_tiles) if episode_max_tiles else 0
+            
+            logging.info(f"Episode {episode_count}")
+            logging.info(f"Average reward: {avg_reward:.2f}")
+            logging.info(f"Average length: {avg_length:.2f}")
+            logging.info(f"Average max tile: {avg_max_tile:.2f}")
+            logging.info(f"Max tile reached: {max_tile_reached}")
+            logging.info(f"Learning rate: {optimizer.param_groups[0]['lr']:.6f}")
+            
+            # Save metrics to TensorBoard
+            writer.add_scalar('train/reward', avg_reward, episode_count)
+            writer.add_scalar('train/length', avg_length, episode_count)
+            writer.add_scalar('train/max_tile', avg_max_tile, episode_count)
+            writer.add_scalar('train/learning_rate', optimizer.param_groups[0]['lr'], episode_count)
+            
+            # Save model checkpoint
+            if episode_count % 100 == 0:
+                checkpoint_path = os.path.join(output_dir, f'checkpoint_{episode_count}.pt')
+                torch.save({
+                    'episode': episode_count,
+                    'model_state_dict': network.state_dict(),
+                    'optimizer_state_dict': optimizer.state_dict(),
+                    'scheduler_state_dict': scheduler.state_dict(),
+                    'avg_reward': avg_reward,
+                    'avg_length': avg_length,
+                    'avg_max_tile': avg_max_tile,
+                    'max_tile_reached': max_tile_reached
+                }, checkpoint_path)
+                logging.info(f"Saved checkpoint to {checkpoint_path}")
     
-    # Save final model
-    final_model_path = os.path.join(output_dir, 'final_model.pt')
-    agent.save(final_model_path)
-    logging.info("Training completed. Final model saved.")
+    # Close environment and writer
+    env.close()
+    writer.close()
     
-    return best_model_path
+    return network, episode_rewards, episode_lengths, episode_max_tiles
 
 def plot_training_curves(rewards, max_tiles, eval_scores, eval_max_tiles, output_dir):
     """
