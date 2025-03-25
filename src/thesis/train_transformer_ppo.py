@@ -175,7 +175,6 @@ def train_transformer_ppo(
         embed_dim=embed_dim,
         num_heads=num_heads,
         num_layers=num_layers,
-        learning_rate=learning_rate,
         gamma=gamma,
         gae_lambda=gae_lambda,
         clip_ratio=clip_ratio,
@@ -186,6 +185,10 @@ def train_transformer_ppo(
         mixed_precision=mixed_precision,
         use_data_parallel=use_data_parallel
     )
+    
+    # Set learning rate
+    for param_group in agent.optimizer.param_groups:
+        param_group['lr'] = learning_rate
     
     # Initialize metrics
     episode_rewards = []
