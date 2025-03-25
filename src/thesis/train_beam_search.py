@@ -34,7 +34,6 @@ def evaluate_beam_search(
     Returns:
         Dictionary with evaluation metrics
     """
-    env = Game2048()
     scores = []
     max_tiles = []
     game_lengths = []
@@ -44,8 +43,11 @@ def evaluate_beam_search(
         batch_end = min(batch_start + batch_size, num_games)
         batch_size_actual = batch_end - batch_start
         
+        # Create environments for this batch
+        envs = [Game2048() for _ in range(batch_size_actual)]
+        
         # Initialize batch of games
-        batch_states = [env.reset() for _ in range(batch_size_actual)]
+        batch_states = [env.reset() for env in envs]
         batch_dones = [False] * batch_size_actual
         batch_scores = [0] * batch_size_actual
         batch_lengths = [0] * batch_size_actual
@@ -54,7 +56,7 @@ def evaluate_beam_search(
         # Run batch until all games are done
         while not all(batch_dones):
             # Get valid moves for each game
-            batch_valid_moves = [env.get_possible_moves() for _ in range(batch_size_actual)]
+            batch_valid_moves = [env.get_possible_moves() for env in envs]
             
             # Get actions for all games in batch
             batch_actions = []
@@ -68,7 +70,7 @@ def evaluate_beam_search(
             # Execute actions for all games
             for i in range(batch_size_actual):
                 if not batch_dones[i]:
-                    next_state, reward, done, _ = env.step(batch_actions[i])
+                    next_state, reward, done, _ = envs[i].step(batch_actions[i])
                     
                     # Update metrics
                     batch_scores[i] += reward
@@ -83,6 +85,10 @@ def evaluate_beam_search(
         scores.extend(batch_scores)
         max_tiles.extend(batch_max_tiles)
         game_lengths.extend(batch_lengths)
+        
+        # Clean up environments
+        for env in envs:
+            env.close()
     
     return {
         'avg_score': np.mean(scores),
