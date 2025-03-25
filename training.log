@@ -5446,3 +5446,24 @@ Evaluating enhanced MCTS agent...
 2025-03-20 18:57:33,717 - INFO - GPU: NVIDIA GeForce RTX 2080 SUPER
 2025-03-20 18:57:33,717 - INFO - CUDA Version: 11.8
 2025-03-20 18:59:29,618 - WARNING - Could not start GPU monitoring
+2025-03-25 17:50:58,439 - INFO - Evaluation completed in 83.55 seconds
+2025-03-25 17:50:58,440 - INFO - Average score: 6258.23 ± 1562.68
+2025-03-25 17:50:58,440 - INFO - Average max tile: 100.48 ± 52.19
+2025-03-25 17:50:58,440 - INFO - Average game length: 102.16 ± 32.15
+2025-03-25 17:50:58,440 - INFO - Maximum tile reached: 256
+2025-03-25 17:50:59,279 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-25 17:50:59,280 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-25 17:58:37,302 - INFO - Evaluation completed in 419.70 seconds
+2025-03-25 17:58:37,303 - INFO - Average score: 6216.02 ± 1492.49
+2025-03-25 17:58:37,303 - INFO - Average max tile: 100.35 ± 49.46
+2025-03-25 17:58:37,304 - INFO - Average game length: 106.36 ± 32.20
+2025-03-25 17:58:37,304 - INFO - Maximum tile reached: 256
+2025-03-25 17:58:37,625 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-25 17:58:37,626 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-25 18:13:35,265 - INFO - Evaluation completed in 747.08 seconds
+2025-03-25 18:13:35,266 - INFO - Average score: 6298.31 ± 1613.73
+2025-03-25 18:13:35,266 - INFO - Average max tile: 104.80 ± 57.24
+2025-03-25 18:13:35,266 - INFO - Average game length: 108.01 ± 36.22
+2025-03-25 18:13:35,266 - INFO - Maximum tile reached: 256
+2025-03-25 18:13:35,569 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-03-25 18:13:35,570 - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.

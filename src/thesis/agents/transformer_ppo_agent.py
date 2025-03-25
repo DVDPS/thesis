@@ -240,13 +240,35 @@ class TransformerPPONetwork(nn.Module):
     board-wide patterns and relationships between tiles.
     """
     def __init__(self, board_size=4, embed_dim=256, num_heads=4, num_layers=4, 
-                 ff_dim=512, dropout=0.1, input_channels=16, n_actions=4):
+                 ff_dim=512, dropout=0.1, input_channels=16, n_actions=4, use_checkpoint=False):
         super(TransformerPPONetwork, self).__init__()
         self.board_size = board_size
         self.embed_dim = embed_dim
+        self.use_checkpoint = use_checkpoint
         
-        # Enable gradient checkpointing for memory efficiency and stability
-        self.use_checkpoint = True
+        # Optimistic initialization for value head
+        self.value_head = nn.Sequential(
+            nn.Linear(embed_dim, 256),
+            nn.ReLU(),
+            nn.Linear(256, 1)
+        )
+        # Initialize value head with optimistic values (320k as suggested in the paper)
+        for layer in self.value_head:
+            if isinstance(layer, nn.Linear):
+                nn.init.constant_(layer.weight, 0.1)  # Small positive weights
+                nn.init.constant_(layer.bias, 320000)  # Optimistic initial value
+        
+        # Policy head with optimistic initialization
+        self.policy_head = nn.Sequential(
+            nn.Linear(embed_dim, 256),
+            nn.ReLU(),
+            nn.Linear(256, 4)  # 4 possible moves
+        )
+        # Initialize policy head with optimistic values
+        for layer in self.policy_head:
+            if isinstance(layer, nn.Linear):
+                nn.init.constant_(layer.weight, 0.1)
+                nn.init.constant_(layer.bias, 0.5)  # Slightly positive bias for all actions
         
         # Board embedding
         self.embedding = BoardEmbedding(board_size, input_channels, embed_dim)
@@ -269,49 +291,8 @@ class TransformerPPONetwork(nn.Module):
         self.query_token = nn.Parameter(torch.zeros(1, 1, embed_dim))
         self.layer_norm = nn.LayerNorm(embed_dim)
         
-        # Policy head (actor)
-        self.policy_head = nn.Sequential(
-            nn.Linear(embed_dim, embed_dim // 2),
-            nn.LayerNorm(embed_dim // 2),
-            nn.GELU(),
-            nn.Dropout(dropout),
-            nn.Linear(embed_dim // 2, n_actions)
-        )
-        
-        # Value head (critic)
-        self.value_head = nn.Sequential(
-            nn.Linear(embed_dim, embed_dim // 2),
-            nn.LayerNorm(embed_dim // 2),
-            nn.GELU(),
-            nn.Dropout(dropout),
-            nn.Linear(embed_dim // 2, 1)
-        )
-        
-        # Initialize weights with Transformer-specific initialization
-        self.apply(self._init_weights)
-        
-        # Special initialization for query token - uniform in small range
-        nn.init.uniform_(self.query_token, -0.01, 0.01)
-        
         # Move to device
         self.to(device)
-    
-    def _init_weights(self, module):
-        """Initialize weights with Transformer-appropriate method"""
-        if isinstance(module, nn.Linear):
-            # Transformer-appropriate initialization for better stability
-            nn.init.xavier_uniform_(module.weight, gain=0.02)
-            if module.bias is not None:
-                nn.init.zeros_(module.bias)
-        elif isinstance(module, nn.LayerNorm):
-            # Layer norm weights should be 1, biases 0
-            nn.init.ones_(module.weight)
-            nn.init.zeros_(module.bias)
-        elif isinstance(module, nn.Conv2d):
-            # Conv layers use Kaiming initialization
-            nn.init.kaiming_normal_(module.weight, mode='fan_out', nonlinearity='relu')
-            if module.bias is not None:
-                nn.init.zeros_(module.bias)
     
     def forward(self, x, training=False):
         """Forward pass through the Transformer network"""
@@ -489,59 +470,66 @@ class TransformerPPOAgent:
         self.dones = []
         self.valid_masks = []
     
-    def get_action(self, state, valid_moves=None, deterministic=False):
+    def tile_downgrade_state(self, state, depth=0, max_depth=6):
         """
-        Select an action using the current policy.
+        Implements tile-downgrading search as described in the paper.
+        Translates complex states with large tiles into simpler states for evaluation.
         
         Args:
-            state: Current state
-            valid_moves: List of valid moves
-            deterministic: Whether to select deterministically
-            
+            state: Current game state
+            depth: Current search depth
+            max_depth: Maximum search depth (6-ply as suggested in paper)
+        
         Returns:
-            Selected action, log probability, and value
+            Simplified state for evaluation
+        """
+        if depth >= max_depth:
+            return state
+        
+        # Create a copy of the state
+        simplified_state = state.copy()
+        
+        # Downgrade tiles based on their value
+        for i in range(self.board_size):
+            for j in range(self.board_size):
+                if simplified_state[i, j] > 512:  # Only downgrade high-value tiles
+                    # Downgrade by one level (e.g., 1024 -> 512)
+                    simplified_state[i, j] = simplified_state[i, j] // 2
+        
+        return simplified_state
+
+    def get_action(self, state, valid_moves, deterministic=False):
+        """
+        Get action using tile-downgrading search for complex states
         """
         # Process state
-        if not isinstance(state, torch.Tensor):
-            state_tensor = torch.tensor(state, dtype=torch.float, device=device).unsqueeze(0)
-        else:
-            state_tensor = state.unsqueeze(0) if state.dim() == 3 else state
+        state_proc = preprocess_state_onehot(state)
         
-        # Forward pass through network
+        # Check if state needs tile-downgrading
+        max_tile = np.max(state)
+        if max_tile > 512:
+            # Use tile-downgrading search for complex states
+            simplified_state = self.tile_downgrade_state(state)
+            state_proc = preprocess_state_onehot(simplified_state)
+        
+        # Get policy logits and value
         with torch.no_grad():
-            policy_logits, value = self.network(state_tensor)
+            policy_logits, value = self.network(state_proc)
         
-        # Create valid action mask if provided
-        if valid_moves is not None:
-            action_mask = torch.full((1, 4), float('-inf'), device=device)
-            action_mask[0, valid_moves] = 0
-            policy_logits = policy_logits + action_mask
+        # Mask invalid moves
+        policy_logits = policy_logits.squeeze()
+        for move in range(4):
+            if move not in valid_moves:
+                policy_logits[move] = float('-inf')
         
-        # Convert logits to probabilities
-        policy = F.softmax(policy_logits, dim=1)
-        
-        # Always create the distribution object for consistency
-        dist = torch.distributions.Categorical(policy)
-        
-        # Select action
+        # Get action
         if deterministic:
-            # Deterministic action selection
-            action = torch.argmax(policy, dim=1).item()
-            # Get log_prob from the distribution, even though we chose deterministically
-            log_prob = dist.log_prob(torch.tensor([action], device=device)).item()
+            action = torch.argmax(policy_logits).item()
         else:
-            # Stochastic action selection
-            try:
-                # Sample from the already created distribution
-                action = dist.sample().item()
-                log_prob = dist.log_prob(torch.tensor([action], device=device)).item()
-            except Exception as e:
-                # Fallback if distribution has issues
-                print(f"Error sampling from distribution: {e}")
-                action = torch.argmax(policy, dim=1).item()
-                log_prob = torch.log(policy[0, action] + 1e-10).item()
+            probs = torch.softmax(policy_logits, dim=0)
+            action = torch.multinomial(probs, 1).item()
         
-        return action, log_prob, value.item()
+        return action, value.item(), policy_logits[action].item()
     
     def store_transition(self, state, action, reward, next_state, done, log_prob, value, valid_moves=None):
         """Store a transition in the trajectory buffer"""

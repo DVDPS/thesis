@@ -19,6 +19,7 @@ from .agents.transformer_ppo_agent import TransformerPPOAgent
 from .config import device, set_seeds
 from .utils.evaluation.evaluation import evaluate_agent
 import torch.nn.functional as F
+import torch.optim as optim
 
 def debug_policy_distribution(policy_logits, action_mask=None):
     """
@@ -104,318 +105,166 @@ def curriculum_setup(episode_count, max_episodes=1000):
             "target_kl": 0.01
         }
 
-def train_transformer_ppo(args):
+def train_transformer_ppo(
+    output_dir: str,
+    total_timesteps: int = 1_000_000,
+    batch_size: int = 128,
+    n_epochs: int = 10,
+    n_steps: int = 2048,
+    gamma: float = 0.99,
+    gae_lambda: float = 0.95,
+    clip_range: float = 0.1,
+    clip_range_vf: float = 0.1,
+    ent_coef: float = 0.01,
+    vf_coef: float = 0.5,
+    max_grad_norm: float = 0.5,
+    target_kl: float = 0.03,
+    learning_rate: float = 0.0001,
+    embed_dim: int = 256,
+    num_heads: int = 4,
+    num_layers: int = 4,
+    mixed_precision: bool = True,
+    data_parallel: bool = False,
+    seed: int = 42
+):
     """
-    Train a Transformer-based PPO agent on the 2048 game.
+    Train a Transformer-based PPO agent on 2048 game with two-stage learning.
+    """
+    # Set random seed for reproducibility
+    set_seeds(seed)
     
-    Args:
-        args: Command-line arguments
-    """
     # Create output directory
-    os.makedirs(args.output_dir, exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
     
     # Configure logging
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(levelname)s - %(message)s',
         handlers=[
-            logging.FileHandler(os.path.join(args.output_dir, 'training.log'), encoding='utf-8'),
+            logging.FileHandler(os.path.join(output_dir, 'training.log')),
             logging.StreamHandler()
         ]
     )
     
-    # Set random seeds for reproducibility
-    set_seeds(args.seed)
+    # Stage 1 parameters (early training)
+    stage1_params = {
+        'learning_rate': learning_rate * 2,  # Higher learning rate for exploration
+        'ent_coef': ent_coef * 2,  # Higher entropy for exploration
+        'target_kl': target_kl * 2,  # Larger policy updates
+        'clip_range': clip_range * 1.5,  # More aggressive clipping
+        'batch_size': batch_size // 2  # Smaller batches for faster updates
+    }
     
-    # Setup tensorboard
-    writer = SummaryWriter(log_dir=os.path.join(args.output_dir, 'tensorboard'))
+    # Stage 2 parameters (fine-tuning)
+    stage2_params = {
+        'learning_rate': learning_rate,
+        'ent_coef': ent_coef,
+        'target_kl': target_kl,
+        'clip_range': clip_range,
+        'batch_size': batch_size
+    }
     
-    # Log device and arguments
-    logging.info(f"Using device: {device}")
-    logging.info(f"Arguments: {args}")
-    
-    # Initialize performance monitoring
-    if torch.cuda.is_available():
-        logging.info(f"GPU: {torch.cuda.get_device_name(0)}")
-        logging.info(f"CUDA Version: {torch.version.cuda}")
-        # Start GPU monitoring if on Linux
-        try:
-            os.system('nvidia-smi -l 5 > ' + os.path.join(args.output_dir, 'gpu_usage.log') + ' &')
-            gpu_monitor_pid = int(os.popen('echo $!').read().strip())
-            logging.info(f"Started GPU monitoring with PID {gpu_monitor_pid}")
-        except:
-            logging.warning("Could not start GPU monitoring")
-    
-    # Create environment
+    # Create environment and agent
     env = Game2048()
-    
-    # Create Transformer-based PPO agent
     agent = TransformerPPOAgent(
         board_size=4,
-        embed_dim=args.embed_dim,
-        num_heads=args.num_heads,
-        num_layers=args.num_layers,
-        input_channels=16,  # This matches the onehot encoding size
-        lr=args.learning_rate,
-        gamma=args.gamma,
-        clip_ratio=args.clip_ratio,
-        vf_coef=args.vf_coef,
-        ent_coef=args.ent_coef,
-        max_grad_norm=args.max_grad_norm,
-        gae_lambda=args.gae_lambda,
-        update_epochs=args.update_epochs,
-        target_kl=args.target_kl,
-        batch_size=args.batch_size,
-        mixed_precision=args.mixed_precision
+        embed_dim=embed_dim,
+        num_heads=num_heads,
+        num_layers=num_layers,
+        input_channels=16
     )
     
-    # Print actual batch size for confirmation
-    logging.info(f"Using batch size: {args.batch_size} (agent internal batch size: {agent.batch_size})")
+    # Initialize optimizer and scheduler
+    optimizer = optim.Adam(agent.network.parameters(), lr=stage1_params['learning_rate'])
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max', factor=0.5, patience=5, verbose=True)
     
-    # Load checkpoint if provided
-    if args.checkpoint:
-        logging.info(f"Loading checkpoint from {args.checkpoint}")
-        agent.load(args.checkpoint)
+    # Training loop
+    episode_count = 0
+    total_steps = 0
+    best_score = float('-inf')
+    best_model_path = None
     
-    # Training metrics
-    episode_rewards = []
-    episode_max_tiles = []
-    episode_lengths = []
-    evaluation_scores = []
-    evaluation_max_tiles = []
-    training_times = []
-    
-    # Configure data parallel if multiple GPUs available
-    if torch.cuda.device_count() > 1 and args.use_data_parallel:
-        logging.info(f"Using {torch.cuda.device_count()} GPUs for data parallel")
-        agent.network = torch.nn.DataParallel(agent.network)
-    
-    # Main training loop
-    logging.info(f"Starting training for {args.total_timesteps} timesteps with Transformer-based PPO")
-    
-    timesteps_per_update = args.timesteps_per_update
-    total_timesteps = 0
-    update_count = 0
-    start_time = time.time()
-    
-    with tqdm(total=args.total_timesteps) as pbar:
-        while total_timesteps < args.total_timesteps:
-            # Collect trajectories
-            state = env.reset()
-            episode_reward = 0
-            episode_length = 0
-            episode_max_tile = 0
-            done = False
+    while total_steps < total_timesteps:
+        # Determine current stage based on total steps
+        is_stage1 = total_steps < total_timesteps * 0.5
+        current_params = stage1_params if is_stage1 else stage2_params
+        
+        # Update hyperparameters based on stage
+        agent.ent_coef = current_params['ent_coef']
+        agent.target_kl = current_params['target_kl']
+        agent.clip_range = current_params['clip_range']
+        
+        # Training episode
+        state = env.reset()
+        episode_reward = 0
+        episode_length = 0
+        episode_max_tile = 0
+        
+        while not done and episode_length < n_steps:
+            # Get action with tile-downgrading search
+            action, log_prob, value = agent.get_action(state, env.get_possible_moves())
             
-            while not done and episode_length < args.max_episode_length:
-                # Process state
-                state_proc = preprocess_state_onehot(state)
-                
-                # Get valid moves
-                valid_moves = env.get_possible_moves()
-                if not valid_moves:
-                    break
-                
-                # Add debugging for policy distribution occasionally
-                if total_timesteps % 1000 == 0:
-                    with torch.no_grad():
-                        # Get policy logits directly
-                        state_tensor = torch.tensor(state_proc, dtype=torch.float, device=device).unsqueeze(0)
-                        policy_logits, _ = agent.network(state_tensor)
-                        
-                        # Debug the distribution
-                        debug_info = debug_policy_distribution(policy_logits, valid_moves)
-                        
-                        # Log the debug info
-                        logging.info(f"Policy debug at step {total_timesteps}: "
-                                    f"entropy={debug_info['entropy']:.4f}, "
-                                    f"max_prob={debug_info['max_prob']:.4f}, "
-                                    f"std={debug_info['std']:.4f}")
-                        
-                        # Log to tensorboard
-                        writer.add_scalar('debug/policy_entropy', debug_info['entropy'], total_timesteps)
-                        writer.add_scalar('debug/policy_max_prob', debug_info['max_prob'], total_timesteps)
-                        writer.add_scalar('debug/policy_std', debug_info['std'], total_timesteps)
-                
-                # Select action
-                action, log_prob, value = agent.get_action(state_proc, valid_moves)
-                
-                # Execute action
-                next_state, reward, done, _ = env.step(action)
-                episode_reward += reward
-                episode_length += 1
-                episode_max_tile = max(episode_max_tile, np.max(next_state))
-                
-                # Process next state
-                next_state_proc = preprocess_state_onehot(next_state)
-                
-                # Get valid moves for next state
-                next_valid_moves = env.get_possible_moves() if not done else []
-                
-                # Store transition
-                agent.store_transition(
-                    state_proc, action, reward, next_state_proc, 
-                    done, log_prob, value, next_valid_moves
-                )
-                
-                # Update state
-                state = next_state
-                
-                # Update total timesteps
-                total_timesteps += 1
-                pbar.update(1)
-                
-                # Update agent if enough timesteps collected
-                if len(agent.states) >= timesteps_per_update or done:
-                    # Get value estimate for final state
-                    if not done:
-                        _, _, next_value = agent.get_action(next_state_proc, next_valid_moves)
-                    else:
-                        next_value = 0.0
-                    
-                    # Log transition count before update
-                    transition_count = len(agent.states)
-                    logging.info(f"Updating with {transition_count} transitions")
-                    
-                    # Update policy
-                    update_start = time.time()
-                    stats = agent.update(next_value)
-                    update_time = time.time() - update_start
-                    training_times.append(update_time)
-                    
-                    # Log update stats
-                    update_count += 1
-                    
-                    # Enhanced debugging for loss values
-                    if stats['policy_loss'] == 0.0 and stats['value_loss'] == 0.0 and stats['entropy'] == 0.0:
-                        logging.warning(f"Update {update_count} produced zero losses!")
-                        # Log the number of stored transitions for debugging
-                        logging.warning(f"Number of transitions before update: {transition_count}")
-                        logging.warning(f"Approx KL value: {stats['approx_kl']}")
-                        # Try to check agent internals for debugging
-                        try:
-                            if hasattr(agent, 'training_stats') and len(agent.training_stats) > 0:
-                                logging.warning(f"Last training stats record: {agent.training_stats[-1]}")
-                        except Exception as e:
-                            logging.error(f"Error accessing agent internals: {e}")
-                    
-                    logging.info(f"Update {update_count} | "
-                                 f"Policy Loss: {stats['policy_loss']:.4f} | "
-                                 f"Value Loss: {stats['value_loss']:.4f} | "
-                                 f"Entropy: {stats['entropy']:.4f} | "
-                                 f"Approx KL: {stats['approx_kl']:.4f} | "
-                                 f"LR: {stats['learning_rate']:.6f} | "
-                                 f"Time: {update_time:.2f}s")
-                    
-                    # Record stats in tensorboard
-                    writer.add_scalar('losses/policy_loss', stats['policy_loss'], update_count)
-                    writer.add_scalar('losses/value_loss', stats['value_loss'], update_count)
-                    writer.add_scalar('losses/entropy', stats['entropy'], update_count)
-                    writer.add_scalar('losses/approx_kl', stats['approx_kl'], update_count)
-                    writer.add_scalar('training/update_time', update_time, update_count)
-                    writer.add_scalar('training/learning_rate', stats['learning_rate'], update_count)
-                
-                # Break if reached total timesteps
-                if total_timesteps >= args.total_timesteps:
-                    break
+            # Execute action
+            next_state, reward, done, _ = env.step(action)
             
-            # Record episode metrics
-            episode_rewards.append(episode_reward)
-            episode_max_tiles.append(episode_max_tile)
-            episode_lengths.append(episode_length)
+            # Update episode metrics
+            episode_reward += reward
+            episode_length += 1
+            episode_max_tile = max(episode_max_tile, np.max(next_state))
             
-            # Apply curriculum learning to adjust hyperparameters
-            if len(episode_rewards) % 10 == 0:  # Adjust parameters every 10 episodes
-                curriculum_params = curriculum_setup(len(episode_rewards), max_episodes=args.total_timesteps/100)
-                
-                # Update agent hyperparameters
-                agent.ent_coef = curriculum_params["entropy_coef"]
-                agent.target_kl = curriculum_params["target_kl"]
-                
-                # Update learning rate in optimizer
-                for param_group in agent.optimizer.param_groups:
-                    param_group['lr'] = curriculum_params["learning_rate"]
-                
-                # Log the curriculum update
-                logging.info(f"Curriculum update: entropy_coef={agent.ent_coef}, "
-                            f"target_kl={agent.target_kl}, "
-                            f"learning_rate={curriculum_params['learning_rate']}")
-                
-                # Record in tensorboard
-                writer.add_scalar('curriculum/entropy_coef', agent.ent_coef, len(episode_rewards))
-                writer.add_scalar('curriculum/target_kl', agent.target_kl, len(episode_rewards))
-                writer.add_scalar('curriculum/learning_rate', curriculum_params["learning_rate"], len(episode_rewards))
+            # Store transition
+            agent.store_transition(state, action, reward, next_state, done, log_prob, value)
             
-            # Log progress
-            logging.info(f"Episode finished: Steps={episode_length}, "
-                         f"Reward={episode_reward:.1f}, Max Tile={episode_max_tile}")
-            
-            # Record in tensorboard
-            writer.add_scalar('episode/reward', episode_reward, len(episode_rewards))
-            writer.add_scalar('episode/max_tile', episode_max_tile, len(episode_rewards))
-            writer.add_scalar('episode/length', episode_length, len(episode_lengths))
-            
-            # Evaluate agent
-            if len(episode_rewards) % args.eval_interval == 0:
-                eval_results = evaluate_agent(agent, num_games=args.eval_episodes)
-                avg_eval_score = eval_results['avg_score']
-                avg_eval_max_tile = eval_results['avg_max_tile']
-                
-                evaluation_scores.append(avg_eval_score)
-                evaluation_max_tiles.append(avg_eval_max_tile)
-                
-                logging.info(f"Evaluation | "
-                             f"Avg Score: {avg_eval_score:.1f} | "
-                             f"Avg Max Tile: {avg_eval_max_tile:.1f} | "
-                             f"Best Max Tile: {eval_results['max_tile_reached']}")
-                
-                # Record in tensorboard
-                writer.add_scalar('evaluation/avg_score', avg_eval_score, len(evaluation_scores))
-                writer.add_scalar('evaluation/avg_max_tile', avg_eval_max_tile, len(evaluation_max_tiles))
-                writer.add_scalar('evaluation/max_tile_reached', eval_results['max_tile_reached'], len(evaluation_scores))
-                
-                # Save checkpoint
-                checkpoint_path = os.path.join(args.output_dir, f"checkpoint_eval_{len(evaluation_scores)}.pt")
-                agent.save(checkpoint_path)
-                logging.info(f"Saved checkpoint to {checkpoint_path}")
-                
-                # Save best model if this is the best performance
-                if len(evaluation_max_tiles) == 1 or avg_eval_max_tile > max(evaluation_max_tiles[:-1]):
-                    best_path = os.path.join(args.output_dir, "best_model.pt")
-                    agent.save(best_path)
-                    logging.info(f"Saved best model to {best_path}")
-    
-    # Calculate training statistics
-    total_time = time.time() - start_time
-    fps = total_timesteps / total_time
-    
-    logging.info(f"Training completed in {total_time:.2f} seconds")
-    logging.info(f"Average FPS: {fps:.1f}")
-    logging.info(f"Average update time: {np.mean(training_times):.4f}s")
+            # Update state
+            state = next_state
+        
+        # Update agent with current stage parameters
+        update_info = agent.update(
+            batch_size=current_params['batch_size'],
+            n_epochs=n_epochs,
+            gamma=gamma,
+            gae_lambda=gae_lambda,
+            clip_range=current_params['clip_range'],
+            clip_range_vf=clip_range_vf,
+            ent_coef=current_params['ent_coef'],
+            vf_coef=vf_coef,
+            max_grad_norm=max_grad_norm,
+            target_kl=current_params['target_kl']
+        )
+        
+        # Update total steps and episode count
+        total_steps += episode_length
+        episode_count += 1
+        
+        # Log metrics
+        logging.info(f"Episode {episode_count} | "
+                    f"Score: {episode_reward:.2f} | "
+                    f"Max Tile: {episode_max_tile} | "
+                    f"Length: {episode_length} | "
+                    f"Stage: {'1' if is_stage1 else '2'}")
+        
+        # Save best model
+        if episode_reward > best_score:
+            best_score = episode_reward
+            best_model_path = os.path.join(output_dir, 'best_model.pt')
+            agent.save(best_model_path)
+            logging.info(f"New best model saved with score: {best_score:.2f}")
+        
+        # Save periodic checkpoints
+        if episode_count % 10 == 0:
+            checkpoint_path = os.path.join(output_dir, f'checkpoint_eval_{episode_count}.pt')
+            agent.save(checkpoint_path)
+            logging.info(f"Saved checkpoint at episode {episode_count}")
+        
+        # Update learning rate based on performance
+        scheduler.step(episode_reward)
     
     # Save final model
-    final_path = os.path.join(args.output_dir, "final_model.pt")
-    agent.save(final_path)
-    logging.info(f"Saved final model to {final_path}")
+    final_model_path = os.path.join(output_dir, 'final_model.pt')
+    agent.save(final_model_path)
+    logging.info("Training completed. Final model saved.")
     
-    # Plot training curves
-    plot_training_curves(
-        episode_rewards, episode_max_tiles, 
-        evaluation_scores, evaluation_max_tiles,
-        args.output_dir
-    )
-    
-    # Clean up GPU monitoring
-    if torch.cuda.is_available() and 'gpu_monitor_pid' in locals():
-        try:
-            os.system(f'kill {gpu_monitor_pid}')
-            logging.info("Stopped GPU monitoring")
-        except:
-            pass
-    
-    writer.close()
-    
-    return agent
+    return best_model_path
 
 def plot_training_curves(rewards, max_tiles, eval_scores, eval_max_tiles, output_dir):
     """
@@ -513,7 +362,7 @@ def main():
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
     
     args = parser.parse_args()
-    train_transformer_ppo(args)
+    train_transformer_ppo(args.output_dir, args.total_timesteps, args.batch_size, args.update_epochs, args.timesteps_per_update, args.gamma, args.gae_lambda, args.clip_ratio, args.vf_coef, args.ent_coef, args.max_grad_norm, args.target_kl, args.learning_rate, args.embed_dim, args.num_heads, args.num_layers, args.mixed_precision, args.use_data_parallel, args.seed)
 
 if __name__ == "__main__":
     main() 
