@@ -26,6 +26,8 @@ def train_td_agent(num_episodes: int = 10000, epsilon: float = 0.1):
     
     best_score = 0
     best_board_score = 0
+    best_max_tile = 0
+    best_board_state = None
     best_weights = None
     td_errors = []
     
@@ -70,6 +72,11 @@ def train_td_agent(num_episodes: int = 10000, epsilon: float = 0.1):
         if info['score'] > best_board_score:
             best_board_score = info['score']
             best_weights = agent.network.weights.copy()
+            best_board_state = state.copy()
+        
+        # Update best max tile
+        if info['max_tile'] > best_max_tile:
+            best_max_tile = info['max_tile']
         
         # Log progress
         if (episode + 1) % 100 == 0:
@@ -77,17 +84,24 @@ def train_td_agent(num_episodes: int = 10000, epsilon: float = 0.1):
             print(f"Reward: {episode_reward:,.0f} | Board Score: {info['score']:,.0f}")
             print(f"Max Tile: {info['max_tile']}")
             print(f"Best Board Score: {best_board_score:,.0f}")
+            print(f"Best Max Tile: {best_max_tile}")
             print(f"Average TD Error: {avg_td_error:.4f}")
             print(f"Average TD Error (last 100): {np.mean(td_errors[-100:]):.4f}")
             print("-" * 50)
     
-    return agent, best_weights
+    return agent, best_weights, best_board_state, best_max_tile, best_board_score
 
 if __name__ == "__main__":
     print("Starting TD learning training...")
-    trained_agent, best_weights = train_td_agent(num_episodes=100000, epsilon=0.1)
+    trained_agent, best_weights, best_board_state, best_max_tile, best_board_score = train_td_agent(num_episodes=100000, epsilon=0.1)
     
     # Save the best model weights
     with open("trained_model.pkl", "wb") as f:
         pickle.dump(best_weights, f)
-    print("\nTraining complete and best model saved.") 
+    
+    print("\nTraining complete and best model saved.")
+    print("\nBest Performance Statistics:")
+    print(f"Best Max Tile: {best_max_tile}")
+    print(f"Best Board Score: {best_board_score:,.0f}")
+    print("\nBest Board State:")
+    print(best_board_state) 
