@@ -25,13 +25,14 @@ def train_td_agent(num_episodes: int = 10000, epsilon: float = 0.1):
     game = Game2048(seed=42)
     
     best_score = 0
+    best_board_score = 0
     best_weights = None
     td_errors = []
     
     for episode in range(num_episodes):
         state = game.reset()
         done = False
-        episode_score = 0
+        episode_reward = 0
         episode_td_errors = []
         
         while not done:
@@ -58,23 +59,24 @@ def train_td_agent(num_episodes: int = 10000, epsilon: float = 0.1):
             # Update the TD agent with discount factor
             td_error = agent.update(prev_state, reward, next_state, done)
             episode_td_errors.append(abs(td_error))  # Store absolute TD error
-            episode_score += reward
+            episode_reward += reward
             state = next_state
         
         # Calculate average TD error for this episode
         avg_td_error = np.mean(episode_td_errors) if episode_td_errors else 0
         td_errors.append(avg_td_error)
         
-        # Save best model
-        if episode_score > best_score:
-            best_score = episode_score
+        # Save best model based on board score
+        if info['score'] > best_board_score:
+            best_board_score = info['score']
             best_weights = agent.network.weights.copy()
         
         # Log progress
         if (episode + 1) % 100 == 0:
             print(f"Episode {episode+1}/{num_episodes}")
-            print(f"Score: {episode_score:,.0f} | Max Tile: {info['max_tile']}")
-            print(f"Best Score: {best_score:,.0f}")
+            print(f"Reward: {episode_reward:,.0f} | Board Score: {info['score']:,.0f}")
+            print(f"Max Tile: {info['max_tile']}")
+            print(f"Best Board Score: {best_board_score:,.0f}")
             print(f"Average TD Error: {avg_td_error:.4f}")
             print(f"Average TD Error (last 100): {np.mean(td_errors[-100:]):.4f}")
             print("-" * 50)
