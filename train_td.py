@@ -85,7 +85,7 @@ def train_td_agent(num_episodes: int = 10000, epsilon: float = 0.1):
 
 if __name__ == "__main__":
     print("Starting TD learning training...")
-    trained_agent, best_weights = train_td_agent(num_episodes=5000, epsilon=0.1)
+    trained_agent, best_weights = train_td_agent(num_episodes=100000, epsilon=0.1)
     
     # Save the best model weights
     with open("trained_model.pkl", "wb") as f:
