@@ -111,7 +111,7 @@ class TrainedExpectimaxAgent(ExpectimaxAgent):
         
         return next_bitboard, score
 
-def run_expectimax(num_episodes: int = 100, depth: int = 4):  # Increased default depth
+def run_expectimax(num_episodes: int = 100, depth: int = 15):  # Increased default depth
     # Load the trained model weights
     try:
         with open("trained_model.pkl", "rb") as f:
@@ -162,4 +162,4 @@ def run_expectimax(num_episodes: int = 100, depth: int = 4):  # Increased defaul
 
 if __name__ == "__main__":
     print("Starting Expectimax with trained model...")
-    run_expectimax(num_episodes=100, depth=4)  # Increased depth to 4 
+    run_expectimax(num_episodes=100, depth=15)  # Increased depth to 4 

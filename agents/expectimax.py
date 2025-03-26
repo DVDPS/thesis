@@ -25,7 +25,7 @@ def apply_tile_downgrading(state: np.ndarray) -> np.ndarray:
     return downgraded_state
 
 class ExpectimaxAgent:
-    def __init__(self, depth: int = 3, use_gpu: bool = True):
+    def __init__(self, depth: int = 15, use_gpu: bool = True):
         self.depth = depth
         self.device = torch.device("cuda" if torch.cuda.is_available() and use_gpu else "cpu")
         self.transposition_table = {}  # Cache for previously evaluated states
@@ -49,18 +49,16 @@ class ExpectimaxAgent:
         # Different stage models can be loaded here
         self.stage_thresholds = [0, 16384]  # Thresholds for different stages
         self.stage_models = {}  # Will store value networks for different stages
-        
+        # To use the TD model properly, you would also pass in your n-tuple configuration.
+        self.n_tuples = None  # Set this if you plan to load a TD model
+
     def get_move(self, game_state: np.ndarray) -> int:
         max_value = float("-inf")
         best_action = 0
         actions = [0, 1, 2, 3]  # [Up, Right, Down, Left]
-        game = Game2048()
         for action in actions:
-            next_state = game_state.copy()
-            state_before = next_state.copy()
-            next_state, reward, _, _ = game.step(action)
-            if not np.array_equal(next_state, state_before):
-                # Optionally apply tile downgrading before evaluation
+            next_state, reward, changed = Game2048.simulate_move(game_state, action)
+            if changed:
                 eval_state = apply_tile_downgrading(next_state)
                 value = reward + self._expectimax(eval_state, self.depth - 1, is_max=False)
                 if value > max_value:
@@ -91,11 +89,10 @@ class ExpectimaxAgent:
         
         if is_max:  # Player's move: maximize reward.
             value = float("-inf")
-            game = Game2048()
             for action in [0, 1, 2, 3]:
                 temp_state = state.copy()
-                next_state, reward, _, _ = game.step(action)
-                if not np.array_equal(next_state, temp_state):
+                next_state, reward, changed = Game2048.simulate_move(temp_state, action)
+                if changed:
                     value = max(value, reward + self._expectimax(next_state, depth - 1, is_max=False))
         else:  # Chance node: average over possible new tile placements.
             value = 0
@@ -105,10 +102,8 @@ class ExpectimaxAgent:
             p = 1.0 / len(empty_cells)
             for i, j in empty_cells:
                 original = state[i, j]
-                # Consider tile 2 with 90% probability.
                 state[i, j] = 2
                 value += 0.9 * p * self._expectimax(state, depth - 1, is_max=True)
-                # Consider tile 4 with 10% probability.
                 state[i, j] = 4
                 value += 0.1 * p * self._expectimax(state, depth - 1, is_max=True)
                 state[i, j] = original  # Restore cell.
@@ -116,11 +111,9 @@ class ExpectimaxAgent:
         return value
     
     def _is_terminal(self, state: np.ndarray) -> bool:
-        game = Game2048()
         for action in range(4):
-            temp_state = state.copy()
-            next_state, _, _, _ = game.step(action)
-            if not np.array_equal(temp_state, next_state):
+            next_state, _, changed = Game2048.simulate_move(state, action)
+            if changed:
                 return False
         return True
     
@@ -128,14 +121,10 @@ class ExpectimaxAgent:
         """
         Evaluate state using the loaded TD model if available, otherwise use heuristic.
         """
-        # Convert state to 1D array for n-tuple evaluation
         state_1d = state.flatten()
-        
-        # Try to use TD model if available
         stage = self._determine_stage(state)
-        if stage in self.stage_models:
+        if stage in self.stage_models and self.n_tuples is not None:
             weights = self.stage_models[stage]
-            # Evaluate using n-tuple network weights
             value = 0
             for n_tuple in self.n_tuples:
                 features = [state_1d[i] for i in n_tuple]
@@ -143,91 +132,57 @@ class ExpectimaxAgent:
                 if key in weights:
                     value += weights[key]
             return value
-        
-        # Fallback to heuristic evaluation if no model available
+        # Fallback to heuristic evaluation
         state_tensor = torch.tensor(state, dtype=torch.float32, device=self.device)
         corner_score = torch.sum(state_tensor * self.corner_weight_matrix)
         return corner_score.item()
     
     def _calculate_monotonicity(self, state: torch.Tensor) -> torch.Tensor:
-        """Calculate how monotonic the state is (decreasing from corner)"""
-        # Calculate monotonicity along rows and columns
         monotonicity_score = torch.tensor(0.0, device=self.device)
-        
-        # For rows (decreasing from right to left)
         for i in range(4):
             for j in range(3):
-                # If values are decreasing from right to left
                 if state[i, j+1] >= state[i, j] and state[i, j+1] > 0 and state[i, j] > 0:
                     monotonicity_score += torch.log2(state[i, j+1])
-                # Penalty for non-monotonic arrangement
                 elif state[i, j] > state[i, j+1] and state[i, j] > 0 and state[i, j+1] > 0:
                     monotonicity_score -= torch.log2(state[i, j])
-        
-        # For columns (decreasing from bottom to top)
         for j in range(4):
             for i in range(3):
-                # If values are decreasing from bottom to top
                 if state[i+1, j] >= state[i, j] and state[i+1, j] > 0 and state[i, j] > 0:
                     monotonicity_score += torch.log2(state[i+1, j])
-                # Penalty for non-monotonic arrangement
                 elif state[i, j] > state[i+1, j] and state[i, j] > 0 and state[i+1, j] > 0:
                     monotonicity_score -= torch.log2(state[i, j])
-        
         return monotonicity_score
     
     def _calculate_smoothness(self, state: torch.Tensor) -> torch.Tensor:
-        """Calculate smoothness of the state (adjacent tiles should be similar)"""
         smoothness_score = torch.tensor(0.0, device=self.device)
-        
-        # For rows
         for i in range(4):
             for j in range(3):
                 if state[i, j] > 0 and state[i, j+1] > 0:
-                    # Negative score for difference (we want to minimize difference)
                     smoothness_score -= torch.abs(torch.log2(state[i, j]) - torch.log2(state[i, j+1]))
-        
-        # For columns
         for j in range(4):
             for i in range(3):
                 if state[i, j] > 0 and state[i+1, j] > 0:
-                    # Negative score for difference (we want to minimize difference)
                     smoothness_score -= torch.abs(torch.log2(state[i, j]) - torch.log2(state[i+1, j]))
-        
         return smoothness_score
     
     def _calculate_snake_pattern(self, state: torch.Tensor) -> torch.Tensor:
-        """Calculate how well the state follows a snake pattern"""
-        # Snake pattern is rewarded by multiplying each cell by its position in the snake
         snake_score = torch.sum(state * self.snake_pattern_matrix)
         return snake_score
     
     def _apply_tile_downgrading(self, state: torch.Tensor) -> torch.Tensor:
-        """
-        Apply tile-downgrading technique to handle states with large tiles
-        by translating them into downgraded states
-        """
-        # Find the largest missing tile
         max_tile = torch.max(state)
         unique_tiles = torch.unique(state[state > 0])
-        
-        # Find the largest missing tile that's smaller than max_tile
         missing_tiles = []
         potential_tile = 2
         while potential_tile < max_tile:
             if potential_tile not in unique_tiles:
                 missing_tiles.append(potential_tile)
             potential_tile *= 2
-        
         if not missing_tiles:
-            return state  # No downgrading needed
-        
+            return state
         largest_missing = max(missing_tiles)
-        
-        # Create downgraded state by halving tiles larger than largest_missing
         downgraded_state = state.clone()
         downgraded_state[state > largest_missing] = state[state > largest_missing] / 2
-        
         return downgraded_state
     
     def load_model(self, stage: int, model_path: str):
@@ -235,12 +190,9 @@ class ExpectimaxAgent:
         try:
             with open(model_path, "rb") as f:
                 weights = pickle.load(f)
-            # Store the weights for this stage
             self.stage_models[stage] = weights
             print(f"Successfully loaded model weights for stage {stage}")
         except FileNotFoundError:
             print(f"Warning: Model file {model_path} not found")
         except Exception as e:
             print(f"Error loading model: {e}")
-
-
