@@ -8,6 +8,8 @@ from ..config import device
 import math
 import time
 import logging
+from typing import List, Tuple, Dict, Optional
+from ..environment.game2048 import Game2048, preprocess_state_onehot
 
 # Add numerical stability constant
 EPS = 1e-8

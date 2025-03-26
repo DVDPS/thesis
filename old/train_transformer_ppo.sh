@@ -7,11 +7,11 @@ set -e
 # Parse command line arguments
 OUTPUT_DIR="transformer_ppo_results"
 TIMESTEPS=1000000
-EMBED_DIM=256
-NUM_HEADS=4
-NUM_LAYERS=4
+EMBED_DIM=512
+NUM_HEADS=8
+NUM_LAYERS=6
 LEARNING_RATE=0.0001
-CLIP_RATIO=0.1
+CLIP_RATIO=0.2
 SEED=42
 MIXED_PRECISION=true
 DATA_PARALLEL=false
@@ -79,11 +79,11 @@ while [[ $# -gt 0 ]]; do
             echo "Options:"
             echo "  --output-dir DIR       Output directory for results (default: transformer_ppo_results)"
             echo "  --timesteps N          Total timesteps to train (default: 1000000)"
-            echo "  --embed-dim N          Embedding dimension (default: 256)"
-            echo "  --num-heads N          Number of attention heads (default: 4)"
-            echo "  --num-layers N         Number of transformer layers (default: 4)"
+            echo "  --embed-dim N          Embedding dimension (default: 512)"
+            echo "  --num-heads N          Number of attention heads (default: 8)"
+            echo "  --num-layers N         Number of transformer layers (default: 6)"
             echo "  --lr, --learning-rate R  Learning rate (default: 0.0001)"
-            echo "  --clip-ratio R         PPO clip ratio (default: 0.1)"
+            echo "  --clip-ratio R         PPO clip ratio (default: 0.2)"
             echo "  --seed N               Random seed (default: 42)"
             echo "  --no-mixed-precision   Disable mixed precision training"
             echo "  --use-data-parallel    Enable data parallelism for multi-GPU training"
@@ -122,13 +122,13 @@ echo "=========================================="
 # Build the command - use python3.10 explicitly
 CMD="python3.10 -m src.thesis.train_transformer_ppo --batch-size 64 \
     --total-timesteps $TIMESTEPS \
-    --embed-dim 128 \
+    --embed-dim $EMBED_DIM \
     --num-heads $NUM_HEADS \
     --num-layers $NUM_LAYERS \
-    --learning-rate 0.00003 \
+    --learning-rate $LEARNING_RATE \
     --clip-ratio $CLIP_RATIO \
-    --ent-coef 0.005 \
-    --update-epochs 3 \
+    --ent-coef 0.02 \
+    --update-epochs 10 \
     --seed $SEED \
     --output-dir $OUTPUT_DIR"
 
