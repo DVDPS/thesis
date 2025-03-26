@@ -40,7 +40,7 @@ class TrainedExpectimaxAgent(ExpectimaxAgent):
         print(f"Test evaluation: {test_value:.4f}")
 
     def _evaluate_state(self, state: np.ndarray) -> float:
-        """Evaluate state using the trained model"""
+        """Evaluate state using the trained model and enhanced heuristics"""
         # Apply tile downgrading if needed
         state = apply_tile_downgrading(state)
         
@@ -50,23 +50,50 @@ class TrainedExpectimaxAgent(ExpectimaxAgent):
         # Add heuristic bonuses for good board properties
         heuristic_value = 0
         
-        # Bonus for keeping high values in corners
+        # 1. Corner strategy (weighted more heavily)
         corners = [state[0,0], state[0,3], state[3,0], state[3,3]]
         max_corner = max(corners)
         if max_corner > 0:
-            heuristic_value += max_corner * 0.1
+            heuristic_value += max_corner * 0.2  # Increased weight
         
-        # Bonus for keeping the board organized (monotonic rows/columns)
+        # 2. Monotonic rows/columns (weighted more heavily)
         for i in range(4):
             row = state[i,:]
             col = state[:,i]
-            if all(row[j] >= row[j+1] for j in range(3)) or all(row[j] <= row[j+1] for j in range(3)):
-                heuristic_value += sum(row) * 0.05
-            if all(col[j] >= col[j+1] for j in range(3)) or all(col[j] <= col[j+1] for j in range(3)):
-                heuristic_value += sum(col) * 0.05
+            # Check for strictly decreasing (preferred for snake pattern)
+            if all(row[j] >= row[j+1] for j in range(3)):
+                heuristic_value += sum(row) * 0.15  # Increased weight
+            if all(col[j] >= col[j+1] for j in range(3)):
+                heuristic_value += sum(col) * 0.15  # Increased weight
+        
+        # 3. Smoothness (penalize large differences between adjacent tiles)
+        smoothness = 0
+        for i in range(4):
+            for j in range(4):
+                if i < 3:
+                    smoothness -= abs(state[i,j] - state[i+1,j])
+                if j < 3:
+                    smoothness -= abs(state[i,j] - state[i,j+1])
+        heuristic_value += smoothness * 0.1
+        
+        # 4. Empty cells bonus (encourage keeping space for merging)
+        empty_cells = np.sum(state == 0)
+        heuristic_value += empty_cells * 100
+        
+        # 5. Merge potential (bonus for adjacent equal tiles)
+        merge_potential = 0
+        for i in range(4):
+            for j in range(4):
+                if i < 3 and state[i,j] == state[i+1,j] and state[i,j] > 0:
+                    merge_potential += state[i,j] * 2
+                if j < 3 and state[i,j] == state[i,j+1] and state[i,j] > 0:
+                    merge_potential += state[i,j] * 2
+        heuristic_value += merge_potential * 0.1
         
         # Combine model value with heuristic bonuses
-        return model_value + heuristic_value
+        # Scale the model value to be more comparable with heuristics
+        scaled_model_value = model_value * 0.1
+        return scaled_model_value + heuristic_value
 
     def _apply_move(self, bitboard, move):
         """Apply a move to the bitboard and add a random tile"""
@@ -84,7 +111,7 @@ class TrainedExpectimaxAgent(ExpectimaxAgent):
         
         return next_bitboard, score
 
-def run_expectimax(num_episodes: int = 100, depth: int = 3):
+def run_expectimax(num_episodes: int = 100, depth: int = 4):  # Increased default depth
     # Load the trained model weights
     try:
         with open("trained_model.pkl", "rb") as f:
@@ -135,4 +162,4 @@ def run_expectimax(num_episodes: int = 100, depth: int = 3):
 
 if __name__ == "__main__":
     print("Starting Expectimax with trained model...")
-    run_expectimax(num_episodes=100, depth=3) 
+    run_expectimax(num_episodes=100, depth=4)  # Increased depth to 4 
