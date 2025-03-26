@@ -138,17 +138,24 @@ def run_expectimax(num_episodes: int = 100, depth: int = 15):  # Increased defau
         
         while not done:
             action = agent.get_move(state)
-            state, reward, done, info = game.step(action)
-            episode_score += reward
+            # Use _move instead of step
+            new_board, score, changed = game._move(game.board, action)
+            if changed:
+                game.board = new_board
+                game.score += score
+                game.add_random_tile()
+                episode_score += score
+                state = game.board.copy()
+            done = game.is_game_over()
         
         total_score += episode_score
         scores.append(episode_score)
-        max_tile_overall = max(max_tile_overall, info['max_tile'])
+        max_tile_overall = max(max_tile_overall, np.max(game.board))
         
         # Log progress
         if (episode + 1) % 10 == 0:
             print(f"Episode {episode+1}/{num_episodes}")
-            print(f"Score: {episode_score:,} | Max Tile: {info['max_tile']}")
+            print(f"Score: {episode_score:,} | Max Tile: {np.max(game.board)}")
             print(f"Average Score: {total_score/(episode+1):,.0f}")
             print("-" * 50)
     
@@ -158,7 +165,7 @@ def run_expectimax(num_episodes: int = 100, depth: int = 15):  # Increased defau
     print(f"Average Score: {total_score/num_episodes:,.0f}")
     print(f"Best Score: {max(scores):,}")
     print(f"Highest Max Tile: {max_tile_overall}")
-    print(f"Average Max Tile: {sum(info['max_tile'] for info in game.info_history)/num_episodes:.1f}")
+    print(f"Average Max Tile: {sum(np.max(game.board) for _ in range(num_episodes))/num_episodes:.1f}")
 
 if __name__ == "__main__":
     print("Starting Expectimax with trained model...")
