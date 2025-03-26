@@ -2,6 +2,7 @@ import numpy as np
 import torch
 from typing import Tuple, Dict, List, Optional
 from src.thesis.environment.game2048 import Game2048, preprocess_state
+import pickle
 
 def apply_tile_downgrading(state: np.ndarray) -> np.ndarray:
     """
@@ -125,9 +126,25 @@ class ExpectimaxAgent:
     
     def _evaluate_state(self, state: np.ndarray) -> float:
         """
-        A simple heuristic evaluation based on the corner strategy.
-        (In practice, the evaluation can combine multiple factors such as monotonicity, smoothness, free cells, etc.)
+        Evaluate state using the loaded TD model if available, otherwise use heuristic.
         """
+        # Convert state to 1D array for n-tuple evaluation
+        state_1d = state.flatten()
+        
+        # Try to use TD model if available
+        stage = self._determine_stage(state)
+        if stage in self.stage_models:
+            weights = self.stage_models[stage]
+            # Evaluate using n-tuple network weights
+            value = 0
+            for n_tuple in self.n_tuples:
+                features = [state_1d[i] for i in n_tuple]
+                key = tuple(features)
+                if key in weights:
+                    value += weights[key]
+            return value
+        
+        # Fallback to heuristic evaluation if no model available
         state_tensor = torch.tensor(state, dtype=torch.float32, device=self.device)
         corner_score = torch.sum(state_tensor * self.corner_weight_matrix)
         return corner_score.item()
@@ -215,7 +232,15 @@ class ExpectimaxAgent:
     
     def load_model(self, stage: int, model_path: str):
         """Load a trained model for a specific stage"""
-        # This method would load your trained TD learning model for evaluation
-        pass  # Implement based on your model format
+        try:
+            with open(model_path, "rb") as f:
+                weights = pickle.load(f)
+            # Store the weights for this stage
+            self.stage_models[stage] = weights
+            print(f"Successfully loaded model weights for stage {stage}")
+        except FileNotFoundError:
+            print(f"Warning: Model file {model_path} not found")
+        except Exception as e:
+            print(f"Error loading model: {e}")
 
 
