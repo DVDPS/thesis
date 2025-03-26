@@ -6,6 +6,7 @@ from src.thesis.environment.game2048 import Game2048
 
 class TrainedExpectimaxAgent(ExpectimaxAgent):
     def load_model(self, weights):
+        """Load the trained model weights"""
         # Create NTupleNetwork with the same configuration as training
         n_tuples = [
             [0, 1, 2, 3],  # First row
@@ -21,11 +22,27 @@ class TrainedExpectimaxAgent(ExpectimaxAgent):
             [8, 9, 12, 13],  # Bottom-left 2x2
             [10, 11, 14, 15]  # Bottom-right 2x2
         ]
+        
+        # Initialize the value model
         self.value_model = NTupleNetwork(n_tuples)
-        self.value_model.weights = weights
+        
+        # Load the weights
+        self.value_model.weights = weights.copy()  # Make sure to copy the weights
+        
+        # Print some statistics about the loaded model
+        print(f"Loaded model with {len(weights)} n-tuple weights")
+        print(f"Number of n-tuples: {len(n_tuples)}")
+        
+        # Test the model with a simple state
+        test_state = np.zeros((4, 4))
+        test_state[0, 0] = 2
+        test_value = self.value_model.evaluate(test_state)
+        print(f"Test evaluation: {test_value:.4f}")
 
     def _evaluate_state(self, state: np.ndarray) -> float:
         """Evaluate state using the trained model"""
+        # Apply tile downgrading if needed
+        state = apply_tile_downgrading(state)
         return self.value_model.evaluate(state)
 
     def _apply_move(self, bitboard, move):
