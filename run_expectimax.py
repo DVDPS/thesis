@@ -43,7 +43,30 @@ class TrainedExpectimaxAgent(ExpectimaxAgent):
         """Evaluate state using the trained model"""
         # Apply tile downgrading if needed
         state = apply_tile_downgrading(state)
-        return self.value_model.evaluate(state)
+        
+        # Get the model's evaluation
+        model_value = self.value_model.evaluate(state)
+        
+        # Add heuristic bonuses for good board properties
+        heuristic_value = 0
+        
+        # Bonus for keeping high values in corners
+        corners = [state[0,0], state[0,3], state[3,0], state[3,3]]
+        max_corner = max(corners)
+        if max_corner > 0:
+            heuristic_value += max_corner * 0.1
+        
+        # Bonus for keeping the board organized (monotonic rows/columns)
+        for i in range(4):
+            row = state[i,:]
+            col = state[:,i]
+            if all(row[j] >= row[j+1] for j in range(3)) or all(row[j] <= row[j+1] for j in range(3)):
+                heuristic_value += sum(row) * 0.05
+            if all(col[j] >= col[j+1] for j in range(3)) or all(col[j] <= col[j+1] for j in range(3)):
+                heuristic_value += sum(col) * 0.05
+        
+        # Combine model value with heuristic bonuses
+        return model_value + heuristic_value
 
     def _apply_move(self, bitboard, move):
         """Apply a move to the bitboard and add a random tile"""
