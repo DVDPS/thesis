@@ -15,7 +15,7 @@ sudo apt-get install -y git
 # Clone the repository if not already cloned
 if [ ! -d "thesis" ]; then
     echo "Cloning repository..."
-    git clone https://github.com/yourusername/thesis.git
+    git clone https://github.com/DVDPS/thesis.git
     cd thesis
 else
     echo "Repository already exists, skipping clone..."
