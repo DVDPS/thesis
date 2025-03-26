@@ -29,6 +29,22 @@ class TrainedExpectimaxAgent(BitboardExpectimaxAgent):
         state = bitboard.to_numpy()
         return self.value_model.evaluate(state)
 
+    def _apply_move(self, bitboard, move):
+        """Apply a move to the bitboard and add a random tile"""
+        # Get the result of the move
+        next_bitboard, score = super()._apply_move(bitboard, move)
+        
+        # Check if the move was valid (board changed)
+        if not np.array_equal(bitboard.to_numpy(), next_bitboard.to_numpy()):
+            # Add a random tile
+            empty_cells = np.transpose(np.where(next_bitboard.to_numpy() == 0))
+            if len(empty_cells) > 0:
+                i, j = empty_cells[np.random.randint(len(empty_cells))]
+                value = 2 if np.random.random() < 0.9 else 4
+                next_bitboard.set_tile(i, j, value)
+        
+        return next_bitboard, score
+
 def run_expectimax(num_episodes: int = 100, depth: int = 3):
     # Load the trained model weights
     try:
