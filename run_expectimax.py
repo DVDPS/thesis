@@ -1,6 +1,6 @@
 import pickle
 import numpy as np
-from agents.expectimax import ExpectimaxAgent
+from agents.expectimax import ExpectimaxAgent, apply_tile_downgrading
 from agents.ntuple_network import NTupleNetwork
 from src.thesis.environment.game2048 import Game2048
 
