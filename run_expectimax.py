@@ -1,10 +1,10 @@
 import pickle
 import numpy as np
-from agents.bitboard_expectimax import BitboardExpectimaxAgent
+from agents.expectimax import ExpectimaxAgent
 from agents.ntuple_network import NTupleNetwork
 from src.thesis.environment.game2048 import Game2048
 
-class TrainedExpectimaxAgent(BitboardExpectimaxAgent):
+class TrainedExpectimaxAgent(ExpectimaxAgent):
     def load_model(self, weights):
         # Create NTupleNetwork with the same configuration as training
         n_tuples = [
@@ -24,9 +24,8 @@ class TrainedExpectimaxAgent(BitboardExpectimaxAgent):
         self.value_model = NTupleNetwork(n_tuples)
         self.value_model.weights = weights
 
-    def _evaluate_state(self, bitboard) -> float:
-        # Convert bitboard to numpy array and evaluate using trained model
-        state = bitboard.to_numpy()
+    def _evaluate_state(self, state: np.ndarray) -> float:
+        """Evaluate state using the trained model"""
         return self.value_model.evaluate(state)
 
     def _apply_move(self, bitboard, move):
