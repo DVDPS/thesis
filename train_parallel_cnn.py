@@ -95,6 +95,7 @@ def train_parallel_cnn_agent(
             rewards_np = rewards.cpu().numpy() if isinstance(rewards, torch.Tensor) else rewards
             scores_np = infos['scores'].cpu().numpy() if isinstance(infos['scores'], torch.Tensor) else infos['scores']
             next_states_np = next_states.cpu().numpy() if isinstance(next_states, torch.Tensor) else next_states
+            dones_np = new_dones.cpu().numpy() if isinstance(new_dones, torch.Tensor) else new_dones
             
             # Update episode statistics
             episode_reward += np.mean(rewards_np)
@@ -109,7 +110,7 @@ def train_parallel_cnn_agent(
                         states[i].cpu().numpy() if isinstance(states[i], torch.Tensor) else states[i],
                         rewards_np[i],
                         next_states_np[i],
-                        new_dones[i].cpu().numpy() if isinstance(new_dones[i], torch.Tensor) else new_dones[i]
+                        dones_np[i]
                     )
             
             # Update network if enough experiences
@@ -118,7 +119,7 @@ def train_parallel_cnn_agent(
             
             # Update states and done flags
             states = next_states
-            dones = new_dones
+            dones = dones_np  # Use NumPy array for dones
             
             # Check if all environments are done
             if np.all(dones):

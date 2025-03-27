@@ -114,36 +114,38 @@ class ParallelGame2048:
         return new_boards, scores, changed
     
     def step(self, actions):
-        """Step all environments using the provided actions"""
-        # Convert numpy actions to tensor if needed
-        if isinstance(actions, np.ndarray):
-            actions = torch.tensor(actions, device=self.device)
-            
-        # Skip already done environments
+        """Execute actions for all environments"""
+        # Get active environments
         active_mask = ~self.done
         if not torch.any(active_mask):
-            return self.boards.clone().cpu().numpy(), torch.zeros(self.num_envs, device=self.device), self.done.clone(), {}
-            
-        # Execute moves for active environments
+            return self.boards, torch.zeros_like(self.scores), self.done, {'scores': self.scores}
+        
+        # Get active boards and actions
         active_boards = self.boards[active_mask]
         active_actions = actions[active_mask]
         
+        # Execute moves
         new_boards, rewards, changed = self._move_batch(active_boards, active_actions)
         
-        # Update active boards and add random tiles
+        # Update boards and scores for active environments
         self.boards[active_mask] = new_boards
         self.scores[active_mask] += rewards
         
-        # Add new random tiles to boards that changed
-        changed_mask = torch.zeros(self.num_envs, dtype=torch.bool, device=self.device)
-        changed_mask[active_mask.nonzero().flatten()[changed]] = True
-        self.add_random_tiles_mask(changed_mask)
+        # Add new tiles to changed boards
+        changed_mask = changed & active_mask
+        if torch.any(changed_mask):
+            self.add_random_tiles(changed_mask)
         
         # Check for game over
-        self.update_done()
+        self.check_game_over()
         
-        # Return observation, reward, done, info
-        return self.boards.clone().cpu().numpy(), rewards, self.done.clone(), {"scores": self.scores.clone()}
+        # Prepare info dictionary
+        info = {
+            'scores': self.scores.clone(),
+            'changed': changed
+        }
+        
+        return self.boards, self.scores, self.done, info
     
     def add_random_tiles_mask(self, mask):
         """Add random tiles only to specified environments"""
@@ -189,43 +191,36 @@ class ParallelGame2048:
                 if not can_merge:
                     self.done[env_idx] = True
     
-    def get_valid_moves(self, env_idx=0):
+    def get_valid_moves(self, env_idx):
         """Get valid moves for a specific environment"""
         valid_moves = []
-        board = self.boards[env_idx].clone()
+        board = self.boards[env_idx]
         
+        # Check each action
         for action in range(4):
-            temp_board = board.clone()
-            rotated = torch.rot90(temp_board, k=action)
-            changed = False
+            # Rotate board based on action
+            rotated = torch.rot90(board, k=action)
             
-            # Process each row
+            # Check if any row can be merged
             for i in range(4):
-                row = rotated[i].clone()
+                row = rotated[i]
                 non_zero = row[row > 0]
                 
-                if len(non_zero) <= 1:
-                    continue
+                # If we have at least 2 non-zero values, check for merges
+                if len(non_zero) >= 2:
+                    for j in range(len(non_zero) - 1):
+                        if non_zero[j] == non_zero[j + 1]:
+                            valid_moves.append(action)
+                            break
+                    if action in valid_moves:
+                        break
                 
-                merged_row = torch.zeros_like(row)
-                merge_idx = 0
-                j = 0
-                
-                while j < len(non_zero):
-                    if j + 1 < len(non_zero) and non_zero[j] == non_zero[j + 1]:
-                        merged_row[merge_idx] = non_zero[j] * 2
-                        j += 2
-                    else:
-                        merged_row[merge_idx] = non_zero[j]
-                        j += 1
-                    merge_idx += 1
-                
-                if not torch.equal(merged_row, row):
-                    changed = True
-                    break
-            
-            if changed:
-                valid_moves.append(action)
+                # If we have any non-zero values, check for movement
+                elif len(non_zero) > 0:
+                    # Check if values are not at the start of the row
+                    if not torch.all(non_zero == row[:len(non_zero)]):
+                        valid_moves.append(action)
+                        break
         
         return valid_moves
 

@@ -115,6 +115,31 @@ class ParallelCNNAgent:
         self.epsilon = max(self.min_epsilon, self.epsilon * self.epsilon_decay)
         self.episode_count += 1
     
+    def get_valid_moves(self, state, game):
+        """Get valid moves for a state"""
+        # Convert state to numpy if it's a tensor
+        if isinstance(state, torch.Tensor):
+            state = state.cpu().numpy()
+        
+        # Get valid moves from the game
+        return game.get_valid_moves(state)
+    
+    def preprocess_state(self, state):
+        """Convert a single board state to one-hot representation"""
+        if isinstance(state, torch.Tensor):
+            state = state.cpu().numpy()
+            
+        onehot = np.zeros((16, 4, 4), dtype=np.float32)
+        for i in range(4):
+            for j in range(4):
+                if state[i, j] > 0:
+                    power = int(np.log2(state[i, j]))
+                    if power < 16:
+                        onehot[power, i, j] = 1.0
+                else:
+                    onehot[0, i, j] = 1.0
+        return torch.tensor(onehot, dtype=torch.float32, device=self.device)
+    
     def preprocess_batch_states(self, states):
         """Process multiple states at once into one-hot encodings"""
         if isinstance(states, torch.Tensor):
@@ -133,22 +158,6 @@ class ParallelCNNAgent:
                     else:
                         onehot[b, 0, i, j] = 1.0
         
-        return torch.tensor(onehot, dtype=torch.float32, device=self.device)
-    
-    def preprocess_state(self, state):
-        """Convert a single board state to one-hot representation"""
-        if isinstance(state, torch.Tensor):
-            state = state.cpu().numpy()
-            
-        onehot = np.zeros((16, 4, 4), dtype=np.float32)
-        for i in range(4):
-            for j in range(4):
-                if state[i, j] > 0:
-                    power = int(np.log2(state[i, j]))
-                    if power < 16:
-                        onehot[power, i, j] = 1.0
-                else:
-                    onehot[0, i, j] = 1.0
         return torch.tensor(onehot, dtype=torch.float32, device=self.device)
     
     def batch_evaluate_actions(self, states, parallel_game):
