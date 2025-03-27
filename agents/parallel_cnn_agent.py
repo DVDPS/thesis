@@ -166,15 +166,21 @@ class ParallelCNNAgent:
         if states is None or states.size == 0:
             return None
             
+        # Convert states to numpy for cache key if it's a tensor
+        if isinstance(states, torch.Tensor):
+            states_np = states.cpu().numpy()
+        else:
+            states_np = states
+            
         # Try to get from cache first
-        state_key = states.tobytes()
+        state_key = states_np.tobytes()
         if state_key in self.eval_cache:
             return self.eval_cache[state_key]
         
         # Get valid moves for the correct environment
         if env_idx is None:
             # If no index provided, try to deduce it from the state shape
-            if isinstance(states, np.ndarray) and states.shape[0] == 1:
+            if isinstance(states_np, np.ndarray) and states_np.shape[0] == 1:
                 env_idx = 0
             else:
                 return None
@@ -189,7 +195,7 @@ class ParallelCNNAgent:
         
         # Generate all possible next states
         for i, action in enumerate(valid_actions):
-            temp_state = states[0].copy()  # Use first state from batch
+            temp_state = states_np[0].copy()  # Use first state from batch
             new_board, score, _ = parallel_game._move(temp_state, action)
             next_states[i] = self.preprocess_state(new_board)
             action_info.append((action, score, new_board))
