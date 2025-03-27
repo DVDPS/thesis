@@ -80,11 +80,21 @@ def train_parallel_cnn_agent(
                 else:
                     # Greedy action selection
                     action_values = agent.batch_evaluate_actions(states[np.newaxis, i], parallel_game)
-                    if action_values and action_values[0]:
-                        # Find best action based on value
-                        best_action, _, _, best_value = max(action_values[0], key=lambda x: x[3])
-                        actions[i] = best_action
+                    if action_values is not None and len(action_values) > 0 and len(action_values[0]) > 0:
+                        try:
+                            # Find best action based on value
+                            best_action, _, _, best_value = max(action_values[0], key=lambda x: x[3])
+                            actions[i] = best_action
+                        except (IndexError, TypeError):
+                            # If there's an error with the tuple format, choose random
+                            valid_moves = parallel_game.get_valid_moves(i)
+                            if valid_moves:
+                                actions[i] = np.random.choice(valid_moves)
+                            else:
+                                dones[i] = True
+                                continue
                     else:
+                        # No valid moves, mark as done
                         dones[i] = True
                         continue
             

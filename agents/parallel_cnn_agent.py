@@ -162,6 +162,10 @@ class ParallelCNNAgent:
     
     def batch_evaluate_actions(self, states, parallel_game):
         """Evaluate all possible actions in a single forward pass"""
+        # Handle empty states
+        if states is None or states.size == 0:
+            return None
+            
         # Try to get from cache first
         state_key = states.tobytes()
         if state_key in self.eval_cache:
