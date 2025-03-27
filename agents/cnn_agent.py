@@ -74,7 +74,7 @@ class Game2048CNN(nn.Module):
         return x
 
 class CNNAgent:
-    def __init__(self, device=None, buffer_size=2000000, batch_size=65536):
+    def __init__(self, device=None, buffer_size=4000000, batch_size=131072):
         self.device = device if device is not None else torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = Game2048CNN().to(self.device)
         self.target_model = Game2048CNN().to(self.device)
@@ -84,20 +84,20 @@ class CNNAgent:
         if torch.cuda.is_available():
             # These tensors will be kept as class members to prevent memory release
             self.retained_memory = {
-                'input_buffer': torch.zeros((400000, 16, 4, 4), device=self.device),
-                'conv1_buffer': torch.zeros((400000, 1024, 4, 4), device=self.device),
-                'conv2_buffer': torch.zeros((200000, 512, 2, 2), device=self.device),
-                'conv3_buffer': torch.zeros((200000, 256, 1, 1), device=self.device),
-                'large_batch_buffer': torch.zeros((batch_size * 16, 16, 4, 4), device=self.device),
-                'feature_buffer': torch.zeros((batch_size * 8, 1024, 4, 4), device=self.device)
+                'input_buffer': torch.zeros((800000, 16, 4, 4), device=self.device),
+                'conv1_buffer': torch.zeros((800000, 1024, 4, 4), device=self.device),
+                'conv2_buffer': torch.zeros((400000, 512, 2, 2), device=self.device),
+                'conv3_buffer': torch.zeros((400000, 256, 1, 1), device=self.device),
+                'large_batch_buffer': torch.zeros((batch_size * 32, 16, 4, 4), device=self.device),
+                'feature_buffer': torch.zeros((batch_size * 16, 1024, 4, 4), device=self.device)
             }
             
             # Additional retained buffers for parallel processing
             self.retained_parallel_buffers = {
-                'states': torch.zeros((32768, 16, 4, 4), device=self.device),
-                'features': torch.zeros((32768, 1024, 4, 4), device=self.device),
-                'intermediate': torch.zeros((32768, 512, 2, 2), device=self.device),
-                'output': torch.zeros((32768,), device=self.device)
+                'states': torch.zeros((65536, 16, 4, 4), device=self.device),
+                'features': torch.zeros((65536, 1024, 4, 4), device=self.device),
+                'intermediate': torch.zeros((65536, 512, 2, 2), device=self.device),
+                'output': torch.zeros((65536,), device=self.device)
             }
         
         print(f"Model device: {next(self.model.parameters()).device}")
@@ -119,43 +119,43 @@ class CNNAgent:
         self.priorities = np.ones(buffer_size)
         
         # Pre-allocate larger tensors for batch processing - keep references
-        self.state_tensors = torch.zeros((batch_size * 8, 16, 4, 4), dtype=torch.float32, device=self.device)
-        self.next_state_tensors = torch.zeros((batch_size * 8, 16, 4, 4), dtype=torch.float32, device=self.device)
-        self.reward_tensors = torch.zeros(batch_size * 8, dtype=torch.float32, device=self.device)
-        self.terminal_tensors = torch.zeros(batch_size * 8, dtype=torch.float32, device=self.device)
+        self.state_tensors = torch.zeros((batch_size * 16, 16, 4, 4), dtype=torch.float32, device=self.device)
+        self.next_state_tensors = torch.zeros((batch_size * 16, 16, 4, 4), dtype=torch.float32, device=self.device)
+        self.reward_tensors = torch.zeros(batch_size * 16, dtype=torch.float32, device=self.device)
+        self.terminal_tensors = torch.zeros(batch_size * 16, dtype=torch.float32, device=self.device)
         
         # Additional pre-allocated tensors for intermediate computations - keep references
         self.intermediate_tensors = {
-            'conv1': torch.zeros((batch_size, 1024, 4, 4), dtype=torch.float32, device=self.device),
-            'conv2': torch.zeros((batch_size, 1024, 4, 4), dtype=torch.float32, device=self.device),
-            'conv3': torch.zeros((batch_size, 512, 2, 2), dtype=torch.float32, device=self.device),
-            'conv4': torch.zeros((batch_size, 512, 2, 2), dtype=torch.float32, device=self.device),
-            'conv5': torch.zeros((batch_size, 256, 1, 1), dtype=torch.float32, device=self.device),
-            'conv6': torch.zeros((batch_size, 256, 1, 1), dtype=torch.float32, device=self.device),
-            'conv7': torch.zeros((batch_size, 128, 1, 1), dtype=torch.float32, device=self.device),
-            'conv8': torch.zeros((batch_size, 128, 1, 1), dtype=torch.float32, device=self.device)
+            'conv1': torch.zeros((batch_size * 2, 1024, 4, 4), dtype=torch.float32, device=self.device),
+            'conv2': torch.zeros((batch_size * 2, 1024, 4, 4), dtype=torch.float32, device=self.device),
+            'conv3': torch.zeros((batch_size * 2, 512, 2, 2), dtype=torch.float32, device=self.device),
+            'conv4': torch.zeros((batch_size * 2, 512, 2, 2), dtype=torch.float32, device=self.device),
+            'conv5': torch.zeros((batch_size * 2, 256, 1, 1), dtype=torch.float32, device=self.device),
+            'conv6': torch.zeros((batch_size * 2, 256, 1, 1), dtype=torch.float32, device=self.device),
+            'conv7': torch.zeros((batch_size * 2, 128, 1, 1), dtype=torch.float32, device=self.device),
+            'conv8': torch.zeros((batch_size * 2, 128, 1, 1), dtype=torch.float32, device=self.device)
         }
         
         # Increased cache sizes
         self.valid_moves_cache = {}
-        self.max_cache_size = 400000
+        self.max_cache_size = 800000
         
         self.eval_cache = {}
-        self.max_eval_cache_size = 400000
+        self.max_eval_cache_size = 800000
         
         self.update_counter = 0
         self.target_update_frequency = 500
         
         # Initialize larger parallel processing buffers - keep references
-        self.parallel_state_buffer = torch.zeros((16384, 16, 4, 4), dtype=torch.float32, device=self.device)
-        self.parallel_next_state_buffer = torch.zeros((16384, 16, 4, 4), dtype=torch.float32, device=self.device)
+        self.parallel_state_buffer = torch.zeros((32768, 16, 4, 4), dtype=torch.float32, device=self.device)
+        self.parallel_next_state_buffer = torch.zeros((32768, 16, 4, 4), dtype=torch.float32, device=self.device)
         
         # Additional buffers for parallel processing - keep references
         self.parallel_processing_buffers = {
-            'states': torch.zeros((32768, 16, 4, 4), dtype=torch.float32, device=self.device),
-            'next_states': torch.zeros((32768, 16, 4, 4), dtype=torch.float32, device=self.device),
-            'values': torch.zeros((32768,), dtype=torch.float32, device=self.device),
-            'targets': torch.zeros((32768,), dtype=torch.float32, device=self.device)
+            'states': torch.zeros((65536, 16, 4, 4), dtype=torch.float32, device=self.device),
+            'next_states': torch.zeros((65536, 16, 4, 4), dtype=torch.float32, device=self.device),
+            'values': torch.zeros((65536,), dtype=torch.float32, device=self.device),
+            'targets': torch.zeros((65536,), dtype=torch.float32, device=self.device)
         }
     
     def cleanup_memory(self):
@@ -358,7 +358,7 @@ class CNNAgent:
             import gc
             gc.collect()
     
-    def update_batch(self, num_batches=8):  # Doubled number of batches
+    def update_batch(self, num_batches=16):  # Doubled number of batches
         """Update the network using multiple batches"""
         if len(self.replay_buffer) < self.batch_size:
             return 0.0
