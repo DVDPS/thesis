@@ -5,8 +5,8 @@ from tqdm import tqdm
 import time
 import os
 
-from parallel_game2048 import ParallelGame2048
-from parallel_cnn_agent import ParallelCNNAgent
+from src.thesis.environment.parallel_game2048 import ParallelGame2048
+from agents.parallel_cnn_agent import ParallelCNNAgent
 
 def get_gpu_memory_usage():
     """Get current GPU memory usage"""
