@@ -70,19 +70,25 @@ class ParallelGame2048:
             # Rotate boards based on action
             rotated = torch.rot90(action_boards, k=action)
             
-            # Process each environment's board separately
-            for env_idx in range(action_boards.size(0)):
-                # Process each row in this environment's board
-                for i in range(4):
-                    row = rotated[env_idx, i].clone()
-                    
-                    # Skip empty rows
-                    if not torch.any(row > 0):
+            # Process each row in the rotated boards
+            for i in range(4):
+                # Get all rows for this position across all boards
+                rows = rotated[:, i].clone()
+                
+                # Skip empty rows
+                empty_rows = ~torch.any(rows > 0, dim=1)
+                if torch.all(empty_rows):
+                    continue
+                
+                # Process each board's row
+                for env_idx in range(rows.size(0)):
+                    if empty_rows[env_idx]:
                         continue
-                    
-                    # Extract non-zero elements
+                        
+                    row = rows[env_idx]
                     non_zero = row[row > 0]
-                    if len(non_zero) == 0:
+                    
+                    if len(non_zero) <= 1:
                         continue
                         
                     # Create a merged row
