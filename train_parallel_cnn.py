@@ -91,16 +91,26 @@ def train_parallel_cnn_agent(
             # Step environments
             next_states, rewards, new_dones, infos = parallel_game.step(actions)
             
+            # Convert PyTorch tensors to NumPy arrays for statistics
+            rewards_np = rewards.cpu().numpy() if isinstance(rewards, torch.Tensor) else rewards
+            scores_np = infos['scores'].cpu().numpy() if isinstance(infos['scores'], torch.Tensor) else infos['scores']
+            next_states_np = next_states.cpu().numpy() if isinstance(next_states, torch.Tensor) else next_states
+            
             # Update episode statistics
-            episode_reward += np.mean(rewards)
-            episode_score += np.mean(infos['scores'])
+            episode_reward += np.mean(rewards_np)
+            episode_score += np.mean(scores_np)
             episode_step += 1
-            episode_max_tile = max(episode_max_tile, np.max(next_states))
+            episode_max_tile = max(episode_max_tile, np.max(next_states_np))
             
             # Store experiences
             for i in range(num_envs):
                 if not dones[i]:
-                    agent.store_experience(states[i], rewards[i], next_states[i], new_dones[i])
+                    agent.store_experience(
+                        states[i].cpu().numpy() if isinstance(states[i], torch.Tensor) else states[i],
+                        rewards_np[i],
+                        next_states_np[i],
+                        new_dones[i].cpu().numpy() if isinstance(new_dones[i], torch.Tensor) else new_dones[i]
+                    )
             
             # Update network if enough experiences
             if len(agent.replay_buffer) >= batch_size:
