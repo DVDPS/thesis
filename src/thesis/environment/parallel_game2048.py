@@ -65,12 +65,13 @@ class ParallelGame2048:
                 
             # Get the boards for these environments
             action_boards = boards[action_mask]
+            action_indices = action_mask.nonzero().flatten()
             
             # Rotate boards based on action
             rotated = torch.rot90(action_boards, k=action)
             
             # Process each environment's board separately
-            for env_idx in range(len(action_boards)):
+            for env_idx in range(action_boards.size(0)):
                 # Process each row in this environment's board
                 for i in range(4):
                     row = rotated[env_idx, i].clone()
@@ -93,7 +94,7 @@ class ParallelGame2048:
                         if j + 1 < len(non_zero) and non_zero[j] == non_zero[j + 1]:
                             # Merge tiles
                             merged_row[merge_idx] = non_zero[j] * 2
-                            scores[action_mask.nonzero().flatten()[env_idx]] += merged_row[merge_idx].item()
+                            scores[action_indices[env_idx]] += merged_row[merge_idx].item()
                             j += 2
                         else:
                             # Just move the tile
@@ -103,7 +104,7 @@ class ParallelGame2048:
                     
                     # Check if row changed
                     if not torch.equal(merged_row, row):
-                        changed[action_mask.nonzero().flatten()[env_idx]] = True
+                        changed[action_indices[env_idx]] = True
                     
                     # Update the rotated board
                     rotated[env_idx, i] = merged_row
