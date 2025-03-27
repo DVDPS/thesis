@@ -53,6 +53,7 @@ def train_parallel_cnn_agent(
     for episode in pbar:
         # Reset environments
         states = parallel_game.reset_all()
+        dones = np.zeros(num_envs, dtype=bool)
         
         # Initialize episode variables
         episode_reward = 0
@@ -62,11 +63,33 @@ def train_parallel_cnn_agent(
         
         # Run episode
         while True:
-            # Get actions from agent
-            actions = agent.select_actions(states)
+            # Select actions for active environments
+            actions = np.zeros(num_envs, dtype=np.int32)
+            for i in range(num_envs):
+                if dones[i]:
+                    continue
+                    
+                if np.random.rand() < agent.epsilon:
+                    # Random action
+                    valid_moves = parallel_game.get_valid_moves(i)
+                    if valid_moves:
+                        actions[i] = np.random.choice(valid_moves)
+                    else:
+                        dones[i] = True
+                        continue
+                else:
+                    # Greedy action selection
+                    action_values = agent.batch_evaluate_actions(states[np.newaxis, i], parallel_game)
+                    if action_values and action_values[0]:
+                        # Find best action based on value
+                        best_action, _, _, best_value = max(action_values[0], key=lambda x: x[3])
+                        actions[i] = best_action
+                    else:
+                        dones[i] = True
+                        continue
             
             # Step environments
-            next_states, rewards, dones, infos = parallel_game.step(actions)
+            next_states, rewards, new_dones, infos = parallel_game.step(actions)
             
             # Update episode statistics
             episode_reward += np.mean(rewards)
@@ -76,14 +99,16 @@ def train_parallel_cnn_agent(
             
             # Store experiences
             for i in range(num_envs):
-                agent.store_experience(states[i], rewards[i], next_states[i], dones[i])
+                if not dones[i]:
+                    agent.store_experience(states[i], rewards[i], next_states[i], new_dones[i])
             
             # Update network if enough experiences
             if len(agent.replay_buffer) >= batch_size:
                 loss = agent.update_batch(num_batches=1)
             
-            # Update states
+            # Update states and done flags
             states = next_states
+            dones = new_dones
             
             # Check if all environments are done
             if np.all(dones):
