@@ -2,7 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-from torch.cuda.amp import GradScaler, autocast
+from torch.cuda.amp import GradScaler
+from torch.amp import autocast
 
 class LargeGame2048CNN(nn.Module):
     def __init__(self):
@@ -115,82 +116,48 @@ class ParallelCNNAgent:
         return torch.tensor(onehot, dtype=torch.float32, device=self.device)
     
     def batch_evaluate_actions(self, states, parallel_game):
-        """Evaluate all actions for multiple states in parallel"""
-        batch_size = states.shape[0]
+        """Evaluate all possible actions in a single forward pass"""
+        # Try to get from cache first
+        state_key = states.tobytes()
+        if state_key in self.eval_cache:
+            return self.eval_cache[state_key]
         
-        # Get valid moves for each state
-        all_valid_moves = []
-        for i in range(batch_size):
-            valid_moves = parallel_game.get_valid_moves(i)
-            all_valid_moves.append(valid_moves)
+        # Get valid moves
+        valid_actions = parallel_game.get_valid_moves(0)  # Get moves for first environment
+        if not valid_actions:
+            return None
         
-        # For states with no valid moves, return None
-        results = [None] * batch_size
+        # Prepare tensor for all possible next states
+        next_states = torch.zeros((len(valid_actions), 16, 4, 4), dtype=torch.float32, device=self.device)
+        action_info = []
         
-        # Group states by their valid moves for batch processing
-        action_map = {0: [], 1: [], 2: [], 3: []}
-        state_indices = {0: [], 1: [], 2: [], 3: []}
+        # Generate all possible next states
+        for i, action in enumerate(valid_actions):
+            temp_state = states[0].copy()  # Use first state from batch
+            new_board, score, _ = parallel_game._move(temp_state, action)
+            next_states[i] = self.preprocess_state(new_board)
+            action_info.append((action, score, new_board))
         
-        for i in range(batch_size):
-            if not all_valid_moves[i]:
-                continue
+        # Evaluate all states in a single forward pass
+        with torch.no_grad():
+            with autocast('cuda', dtype=torch.float16):
+                values = self.model(next_states)
                 
-            for action in all_valid_moves[i]:
-                # Simulate the action
-                board = torch.tensor(states[i], device=self.device)
-                new_board = board.clone()
-                rotated = torch.rot90(new_board, k=action)
-                
-                # Process the move (simplified version)
-                for row_idx in range(4):
-                    row = rotated[row_idx].clone()
-                    non_zero = row[row > 0]
-                    
-                    # Skip empty rows
-                    if len(non_zero) == 0:
-                        continue
-                        
-                    # Create merged row
-                    merged_row = torch.zeros_like(row)
-                    merge_idx = 0
-                    j = 0
-                    while j < len(non_zero):
-                        if j + 1 < len(non_zero) and non_zero[j] == non_zero[j + 1]:
-                            merged_row[merge_idx] = non_zero[j] * 2
-                            j += 2
-                        else:
-                            merged_row[merge_idx] = non_zero[j]
-                            j += 1
-                        merge_idx += 1
-                    
-                    rotated[row_idx] = merged_row
-                
-                # Rotate back
-                new_board = torch.rot90(rotated, k=-action)
-                
-                # Store the result
-                action_map[action].append(new_board.cpu().numpy())
-                state_indices[action].append(i)
+                # Handle the case when there's only one action (becomes 0-d tensor after squeeze)
+                if len(valid_actions) == 1:
+                    # If there's only one action, handle as scalar
+                    result = [(action_info[0][0], action_info[0][1], action_info[0][2], values.item())]
+                else:
+                    # Multiple actions - squeeze safely and convert to float
+                    values = values.squeeze().float()
+                    result = [(action, score, board, val.item()) for (action, score, board), val in zip(action_info, values)]
         
-        # Evaluate all moves in parallel by action
-        for action in range(4):
-            if not action_map[action]:
-                continue
-                
-            # Convert to tensors and evaluate
-            next_states = self.preprocess_batch_states(np.array(action_map[action]))
-            
-            with torch.no_grad():
-                with autocast(device_type='cuda', dtype=torch.float16):
-                    values = self.model(next_states).squeeze().float().cpu().numpy()
-            
-            # Assign results
-            for i, state_idx in enumerate(state_indices[action]):
-                if results[state_idx] is None:
-                    results[state_idx] = []
-                results[state_idx].append((action, 0, values[i]))  # We don't calculate score here
+        # Cache result
+        if len(self.eval_cache) >= self.max_eval_cache_size:
+            self.eval_cache.pop(next(iter(self.eval_cache)))
+        self.eval_cache[state_key] = result
         
-        return results
+        return result
     
     def store_experience(self, state, reward, next_state, terminal):
         """Store experience with priority"""
@@ -256,7 +223,7 @@ class ParallelCNNAgent:
             
             # Use mixed precision training for better performance
             self.model.train()
-            with autocast(device_type='cuda', dtype=torch.float16):
+            with autocast('cuda', dtype=torch.float16):
                 current_values = self.model(state_tensors).squeeze()
                 
                 # Get next values using target network

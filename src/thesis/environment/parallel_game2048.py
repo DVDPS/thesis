@@ -230,3 +230,46 @@ class ParallelGame2048:
                 valid_moves.append(action)
         
         return valid_moves
+
+    def _move(self, state, action):
+        """Execute a single move on a state"""
+        # Convert state to tensor if needed
+        if isinstance(state, np.ndarray):
+            state = torch.tensor(state, device=self.device)
+        
+        # Rotate board based on action
+        rotated = torch.rot90(state, k=action)
+        score = 0
+        changed = False
+        
+        # Process each row
+        for i in range(4):
+            row = rotated[i].clone()
+            non_zero = row[row > 0]
+            
+            if len(non_zero) <= 1:
+                continue
+            
+            merged_row = torch.zeros_like(row)
+            merge_idx = 0
+            j = 0
+            
+            while j < len(non_zero):
+                if j + 1 < len(non_zero) and non_zero[j] == non_zero[j + 1]:
+                    merged_row[merge_idx] = non_zero[j] * 2
+                    score += merged_row[merge_idx].item()
+                    j += 2
+                else:
+                    merged_row[merge_idx] = non_zero[j]
+                    j += 1
+                merge_idx += 1
+            
+            if not torch.equal(merged_row, row):
+                changed = True
+            
+            rotated[i] = merged_row
+        
+        # Rotate back
+        new_board = torch.rot90(rotated, k=-action)
+        
+        return new_board.cpu().numpy(), score, changed

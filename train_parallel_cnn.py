@@ -108,9 +108,9 @@ def train_parallel_cnn_agent(num_episodes=100000, num_envs=64, epsilon_start=0.5
                 else:
                     # Greedy action selection
                     action_values = agent.batch_evaluate_actions(states[np.newaxis, i], parallel_game)
-                    if action_values[0]:
-                        # Find best action
-                        best_action, _, best_value = max(action_values[0], key=lambda x: x[2])
+                    if action_values:
+                        # Find best action based on value
+                        best_action, _, _, best_value = max(action_values, key=lambda x: x[3])
                         actions[i] = best_action
                     else:
                         dones[i] = True
