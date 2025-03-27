@@ -49,6 +49,7 @@ class ParallelGame2048:
             # Place a 2 (90%) or 4 (10%)
             self.boards[env_idx, row, col] = 2.0 if torch.rand(1, device=self.device) < 0.9 else 4.0
     
+    @torch.no_grad()  # Eliminate gradient tracking for better performance
     def _move_batch(self, boards, actions):
         """Execute moves for all environments based on action vectors"""
         batch_size = boards.shape[0]
@@ -70,10 +71,8 @@ class ParallelGame2048:
             # Rotate boards based on action
             rotated = torch.rot90(action_boards, k=action)
             
-            # Process each board separately
-            for env_idx in range(action_boards.size(0)):
-                board = rotated[env_idx]
-                
+            # FIXED: Use enumerate to safely iterate through the boards
+            for env_idx, board in enumerate(rotated):
                 # Process each row
                 for i in range(4):
                     row = board[i].clone()
@@ -106,8 +105,7 @@ class ParallelGame2048:
                     # Update the board
                     board[i] = merged_row
                 
-                # Update the rotated board
-                rotated[env_idx] = board
+                # No need to update rotated[env_idx] = board as we're using direct reference
             
             # Rotate back to original orientation and update boards
             rotated_back = torch.rot90(rotated, k=-action)
