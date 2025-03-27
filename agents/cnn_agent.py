@@ -80,6 +80,13 @@ class CNNAgent:
         self.target_model = Game2048CNN().to(self.device)
         self.target_model.load_state_dict(self.model.state_dict())
         
+        # Epsilon decay parameters
+        self.epsilon = 0.5  # Starting epsilon
+        self.epsilon_min = 0.01  # Minimum epsilon value
+        self.epsilon_decay = 0.995  # Much faster decay rate
+        self.epsilon_decay_start = 1000  # Start decay after this many episodes
+        self.episode_count = 0  # Track episodes for decay
+        
         # Pre-allocate and retain large memory chunks
         if torch.cuda.is_available():
             # These tensors will be kept as class members to prevent memory release
@@ -437,6 +444,10 @@ class CNNAgent:
         """Store experience in replay buffer and update if enough samples"""
         self.store_experience(state, reward, next_state, terminal)
         
+        # Update epsilon with faster decay
+        if self.episode_count >= self.epsilon_decay_start:
+            self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
+        
         # Update more frequently when buffer is small
         if len(self.replay_buffer) < self.batch_size * 2:
             return self.update_batch(num_batches=1)  # Single batch when buffer is small
@@ -445,9 +456,24 @@ class CNNAgent:
         return 0.0
     
     def save(self, path):
-        """Save model weights"""
-        torch.save(self.model.state_dict(), path)
+        """Save model weights and training state"""
+        checkpoint = {
+            'model_state_dict': self.model.state_dict(),
+            'epsilon': self.epsilon,
+            'episode_count': self.episode_count,
+            'epsilon_decay': self.epsilon_decay,
+            'epsilon_min': self.epsilon_min,
+            'epsilon_decay_start': self.epsilon_decay_start
+        }
+        torch.save(checkpoint, path)
     
     def load(self, path):
-        """Load model weights"""
-        self.model.load_state_dict(torch.load(path, map_location=self.device)) 
+        """Load model weights and training state"""
+        checkpoint = torch.load(path, map_location=self.device)
+        self.model.load_state_dict(checkpoint['model_state_dict'])
+        # Load epsilon-related parameters if they exist in the checkpoint
+        self.epsilon = checkpoint.get('epsilon', self.epsilon)
+        self.episode_count = checkpoint.get('episode_count', 0)
+        self.epsilon_decay = checkpoint.get('epsilon_decay', self.epsilon_decay)
+        self.epsilon_min = checkpoint.get('epsilon_min', self.epsilon_min)
+        self.epsilon_decay_start = checkpoint.get('epsilon_decay_start', self.epsilon_decay_start) 
