@@ -285,3 +285,83 @@ class ParallelCNNAgent:
         self.model.load_state_dict(torch.load(path, map_location=self.device))
         # Update target network
         self.target_model.load_state_dict(self.model.state_dict())
+
+def select_actions(self, states, parallel_game=None, epsilon=0.1):
+    """
+    Select actions for a batch of states using epsilon-greedy policy
+    
+    Args:
+        states: Batch of states (numpy array)
+        parallel_game: The game environment for validation
+        epsilon: Exploration rate
+        
+    Returns:
+        Array of selected actions
+    """
+    batch_size = states.shape[0]
+    actions = np.zeros(batch_size, dtype=np.int32)
+    
+    # For each state, select an action
+    for i in range(batch_size):
+        # Skip states that are done
+        if parallel_game and parallel_game.done[i]:
+            continue
+            
+        # Epsilon-greedy exploration
+        if np.random.rand() < epsilon:
+            # Random action
+            if parallel_game:
+                valid_moves = parallel_game.get_valid_moves(i)
+                if valid_moves:
+                    actions[i] = np.random.choice(valid_moves)
+                else:
+                    actions[i] = np.random.randint(0, 4)
+            else:
+                actions[i] = np.random.randint(0, 4)
+        else:
+            # Greedy action selection
+            if parallel_game:
+                action_values = self.batch_evaluate_actions(states[np.newaxis, i], parallel_game)
+                if action_values and action_values[0]:
+                    # Find best action
+                    best_action, _, value = max(action_values[0], key=lambda x: x[2])
+                    actions[i] = best_action
+                else:
+                    # No valid moves, choose random
+                    actions[i] = np.random.randint(0, 4)
+            else:
+                # Without game environment, use model to directly predict values
+                with torch.no_grad():
+                    # Process the state
+                    state_tensor = self.preprocess_state(states[i])
+                    
+                    # Test all four actions
+                    best_action = 0
+                    best_value = float('-inf')
+                    
+                    for action in range(4):
+                        # Simulate the action
+                        board = torch.tensor(states[i], device=self.device).clone()
+                        rotated = torch.rot90(board, k=action)
+                        
+                        # Simple simulation
+                        changed = False
+                        for row_idx in range(4):
+                            row = rotated[row_idx]
+                            non_zero = row[row > 0]
+                            if len(non_zero) > 1:
+                                changed = True
+                                break
+                                
+                        if changed:
+                            with torch.cuda.amp.autocast():
+                                # Evaluate this action
+                                value = self.model(state_tensor.unsqueeze(0)).item()
+                                
+                            if value > best_value:
+                                best_value = value
+                                best_action = action
+                                
+                    actions[i] = best_action
+    
+    return actions
