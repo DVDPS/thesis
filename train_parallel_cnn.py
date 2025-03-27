@@ -42,6 +42,7 @@ def train_parallel_cnn_agent(
     num_envs=256,  # Increased from 64 to 256 for more parallelism
     batch_size=32768,  # Increased batch size for H100
     update_interval=32,  # More frequent updates
+    max_steps_per_episode=3000,  # Maximum steps per episode
     device=None
 ):
     """Train a CNN agent using parallel environments"""
@@ -56,6 +57,7 @@ def train_parallel_cnn_agent(
     logger.info(f"Starting Parallel CNN Training for H100...")
     logger.info(f"Using device: {device}")
     logger.info(f"Initial GPU memory usage: {get_gpu_memory_usage():.2f} GB")
+    logger.info(f"Maximum steps per episode: {max_steps_per_episode}")
     
     # Initialize parallel game environment
     logger.info(f"Initializing {num_envs} parallel environments...")
@@ -93,6 +95,13 @@ def train_parallel_cnn_agent(
         
         # Run episode
         while True:
+            # Check if we've reached max steps
+            if episode_step >= max_steps_per_episode:
+                logger.debug(f"Episode {episode}: Reached maximum steps ({max_steps_per_episode})")
+                # Mark all non-done environments as done
+                dones = np.ones(num_envs, dtype=bool)
+                break
+                
             # Select actions for active environments
             actions = np.zeros(num_envs, dtype=np.int32)
             for i in range(num_envs):
@@ -217,7 +226,8 @@ if __name__ == "__main__":
         num_episodes=100000,
         num_envs=256,           # Process 256 games in parallel
         batch_size=32768,       # Large batch size for H100
-        update_interval=32      # Update less frequently with larger batches
+        update_interval=32,     # Update less frequently with larger batches
+        max_steps_per_episode=3000  # Maximum steps per episode
     )
     
     logger.info("\nTraining complete and best model saved to 'best_parallel_cnn_model.pth'")
