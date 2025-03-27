@@ -4,9 +4,32 @@ import math
 from tqdm import tqdm
 import time
 import os
+import logging
+from datetime import datetime
 
 from src.thesis.environment.parallel_game2048 import ParallelGame2048
 from agents.parallel_cnn_agent import ParallelCNNAgent
+
+def setup_logging():
+    """Setup logging configuration"""
+    # Create logs directory if it doesn't exist
+    if not os.path.exists('logs'):
+        os.makedirs('logs')
+    
+    # Create timestamp for log filename
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    log_filename = f'logs/training_{timestamp}.log'
+    
+    # Configure logging
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler(log_filename),
+            logging.StreamHandler()
+        ]
+    )
+    return logging.getLogger(__name__)
 
 def get_gpu_memory_usage():
     """Get current GPU memory usage"""
@@ -22,24 +45,30 @@ def train_parallel_cnn_agent(
     device=None
 ):
     """Train a CNN agent using parallel environments"""
+    logger = setup_logging()
+    
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
     # Enable cuDNN benchmarking for better performance
     torch.backends.cudnn.benchmark = True
     
-    print(f"Starting Parallel CNN Training for H100...")
-    print(f"Using device: {device}")
+    logger.info(f"Starting Parallel CNN Training for H100...")
+    logger.info(f"Using device: {device}")
+    logger.info(f"Initial GPU memory usage: {get_gpu_memory_usage():.2f} GB")
     
     # Initialize parallel game environment
+    logger.info(f"Initializing {num_envs} parallel environments...")
     parallel_game = ParallelGame2048(num_envs=num_envs)
     
     # Initialize agent with larger buffer size for H100
+    logger.info("Initializing ParallelCNNAgent...")
     agent = ParallelCNNAgent(
         device=device,
         buffer_size=1000000,  # Increased buffer size
         batch_size=batch_size
     )
+    logger.info(f"Initial replay buffer size: {len(agent.replay_buffer)}")
     
     # Training loop
     episode_rewards = []
@@ -52,6 +81,7 @@ def train_parallel_cnn_agent(
     
     for episode in pbar:
         # Reset environments
+        logger.debug(f"Episode {episode}: Resetting environments...")
         states = parallel_game.reset_all()
         dones = np.zeros(num_envs, dtype=bool)
         
@@ -126,6 +156,8 @@ def train_parallel_cnn_agent(
             # Update network if enough experiences
             if len(agent.replay_buffer) >= batch_size:
                 loss = agent.update_batch(num_batches=1)
+                if episode % 100 == 0:  # Log loss every 100 episodes
+                    logger.info(f"Episode {episode}: Training loss = {loss:.4f}")
             
             # Update states and done flags
             states = next_states
@@ -144,6 +176,17 @@ def train_parallel_cnn_agent(
         # Decay epsilon
         agent.decay_epsilon()
         
+        # Log episode statistics
+        if episode % 10 == 0:  # Log every 10 episodes
+            logger.info(f"Episode {episode}:")
+            logger.info(f"  Average Reward: {episode_reward:.2f}")
+            logger.info(f"  Average Score: {episode_score:.2f}")
+            logger.info(f"  Steps: {episode_step}")
+            logger.info(f"  Max Tile: {episode_max_tile}")
+            logger.info(f"  Epsilon: {agent.epsilon:.3f}")
+            logger.info(f"  Replay Buffer Size: {len(agent.replay_buffer)}")
+            logger.info(f"  GPU Memory Usage: {get_gpu_memory_usage():.2f} GB")
+        
         # Update progress bar
         pbar.set_postfix({
             'reward': f"{episode_reward:.2f}",
@@ -155,13 +198,19 @@ def train_parallel_cnn_agent(
         
         # Save best model
         if episode > 0 and episode % 1000 == 0:
+            logger.info(f"Saving model checkpoint at episode {episode}")
             agent.save('best_parallel_cnn_model.pth')
+    
+    logger.info("Training completed!")
+    logger.info(f"Final replay buffer size: {len(agent.replay_buffer)}")
+    logger.info(f"Final GPU memory usage: {get_gpu_memory_usage():.2f} GB")
     
     return agent
 
 if __name__ == "__main__":
     os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:128"
-    print("Starting Parallel CNN Training for H100...")
+    logger = setup_logging()
+    logger.info("Starting Parallel CNN Training for H100...")
     
     # Adjust these based on your H100 performance
     trained_agent = train_parallel_cnn_agent(
@@ -171,4 +220,4 @@ if __name__ == "__main__":
         update_interval=32      # Update less frequently with larger batches
     )
     
-    print("\nTraining complete and best model saved to 'best_parallel_cnn_model.pth'")
+    logger.info("\nTraining complete and best model saved to 'best_parallel_cnn_model.pth'")
