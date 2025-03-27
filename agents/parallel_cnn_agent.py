@@ -115,6 +115,22 @@ class ParallelCNNAgent:
         
         return torch.tensor(onehot, dtype=torch.float32, device=self.device)
     
+    def preprocess_state(self, state):
+        """Convert a single board state to one-hot representation"""
+        if isinstance(state, torch.Tensor):
+            state = state.cpu().numpy()
+            
+        onehot = np.zeros((16, 4, 4), dtype=np.float32)
+        for i in range(4):
+            for j in range(4):
+                if state[i, j] > 0:
+                    power = int(np.log2(state[i, j]))
+                    if power < 16:
+                        onehot[power, i, j] = 1.0
+                else:
+                    onehot[0, i, j] = 1.0
+        return torch.tensor(onehot, dtype=torch.float32, device=self.device)
+    
     def batch_evaluate_actions(self, states, parallel_game):
         """Evaluate all possible actions in a single forward pass"""
         # Try to get from cache first
