@@ -120,12 +120,16 @@ def train_parallel_cnn_agent(
         episode_steps.append(episode_step)
         episode_max_tiles.append(episode_max_tile)
         
+        # Decay epsilon
+        agent.decay_epsilon()
+        
         # Update progress bar
         pbar.set_postfix({
             'reward': f"{episode_reward:.2f}",
             'score': f"{episode_score:.2f}",
             'steps': episode_step,
-            'max_tile': episode_max_tile
+            'max_tile': episode_max_tile,
+            'epsilon': f"{agent.epsilon:.3f}"
         })
         
         # Save best model

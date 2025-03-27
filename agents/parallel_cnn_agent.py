@@ -51,20 +51,19 @@ class LargeGame2048CNN(nn.Module):
         return x
 
 class ParallelCNNAgent:
-    def __init__(self, device=None, buffer_size=500000, batch_size=16384):
+    def __init__(self, device=None, buffer_size=1000000, batch_size=1024):
         self.device = device if device is not None else torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = LargeGame2048CNN().to(self.device)
         self.target_model = LargeGame2048CNN().to(self.device)
         self.target_model.load_state_dict(self.model.state_dict())
         
-        # Aggressive GPU memory allocation
+        # Force aggressive GPU memory allocation
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
-            print(f"Pre-allocating GPU memory...")
-            temp = torch.zeros((100000, 16, 4, 4), device=self.device)
-            del temp
-            torch.cuda.empty_cache()
-            print(f"Memory pre-allocation complete.")
+            # Request a larger chunk of memory upfront to avoid fragmentation
+            temp = torch.zeros((10000, 16, 4, 4), device=self.device)  # Allocate a large tensor
+            del temp  # Release the tensor but keep the memory allocation
+            torch.cuda.empty_cache()  # Clean up fragmented memory
         
         # Print model device and parameters
         print(f"Model device: {next(self.model.parameters()).device}")
@@ -87,13 +86,34 @@ class ParallelCNNAgent:
         # Priority weights for sampling
         self.priorities = np.ones(buffer_size)
         
+        # Pre-allocate tensors for batch processing
+        self.state_tensors = torch.zeros((batch_size, 16, 4, 4), dtype=torch.float32, device=self.device)
+        self.next_state_tensors = torch.zeros((batch_size, 16, 4, 4), dtype=torch.float32, device=self.device)
+        self.reward_tensors = torch.zeros(batch_size, dtype=torch.float32, device=self.device)
+        self.terminal_tensors = torch.zeros(batch_size, dtype=torch.float32, device=self.device)
+        
+        # Valid moves cache with size limit
+        self.valid_moves_cache = {}
+        self.max_cache_size = 10000
+        
         # Action evaluation cache
         self.eval_cache = {}
         self.max_eval_cache_size = 10000
         
         # Target network update counter
         self.update_counter = 0
-        self.target_update_frequency = 1000
+        self.target_update_frequency = 1000  # Update target network every 1000 steps
+        
+        # Exploration parameters
+        self.epsilon = 0.5  # Initial exploration rate
+        self.epsilon_decay = 0.9999  # Decay rate per episode
+        self.min_epsilon = 0.1  # Minimum exploration rate
+        self.episode_count = 0  # Track number of episodes for epsilon decay
+    
+    def decay_epsilon(self):
+        """Decay epsilon after each episode"""
+        self.epsilon = max(self.min_epsilon, self.epsilon * self.epsilon_decay)
+        self.episode_count += 1
     
     def preprocess_batch_states(self, states):
         """Process multiple states at once into one-hot encodings"""
