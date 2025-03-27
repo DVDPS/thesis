@@ -8,75 +8,107 @@ class Game2048CNN(nn.Module):
     def __init__(self):
         super(Game2048CNN, self).__init__()
         
-        # Input: 4x4x16 (one-hot encoded board)
-        # Use 'same' padding to maintain spatial dimensions
-        self.conv1 = nn.Conv2d(16, 128, kernel_size=2, padding='same')
-        self.conv2 = nn.Conv2d(128, 128, kernel_size=2, padding='same')
+        # First block - Further increased filters
+        self.conv1 = nn.Conv2d(16, 1024, kernel_size=3, padding=1)
+        self.bn1 = nn.BatchNorm2d(1024, track_running_stats=False)
+        self.conv2 = nn.Conv2d(1024, 1024, kernel_size=3, padding=1)
+        self.bn2 = nn.BatchNorm2d(1024, track_running_stats=False)
+        self.pool1 = nn.MaxPool2d(2)
         
-        # Add pooling to reduce spatial dimensions
-        self.pool = nn.MaxPool2d(2)
+        # Second block - Deeper with more filters
+        self.conv3 = nn.Conv2d(1024, 512, kernel_size=3, padding=1)
+        self.bn3 = nn.BatchNorm2d(512, track_running_stats=False)
+        self.conv4 = nn.Conv2d(512, 512, kernel_size=3, padding=1)
+        self.bn4 = nn.BatchNorm2d(512, track_running_stats=False)
         
-        # Additional convolutional layers for pattern recognition
-        self.conv3 = nn.Conv2d(128, 64, kernel_size=2, padding='same')
-        self.conv4 = nn.Conv2d(64, 32, kernel_size=2, padding='same')
+        # Third block
+        self.conv5 = nn.Conv2d(512, 256, kernel_size=3, padding=1)
+        self.bn5 = nn.BatchNorm2d(256, track_running_stats=False)
+        self.conv6 = nn.Conv2d(256, 256, kernel_size=3, padding=1)
+        self.bn6 = nn.BatchNorm2d(256, track_running_stats=False)
+        self.pool2 = nn.MaxPool2d(2)
         
-        # Fully connected layers
-        self.fc1 = nn.Linear(32 * 2 * 2, 256)  # Adjusted for pooling
-        self.fc2 = nn.Linear(256, 128)
-        self.fc3 = nn.Linear(128, 1)  # Output: single value for state evaluation
+        # Additional fourth block - Using layer norm for 1x1 convs
+        self.conv7 = nn.Conv2d(256, 128, kernel_size=1)
+        self.ln7 = nn.LayerNorm([128, 1, 1])  # Layer norm instead of instance norm
+        self.conv8 = nn.Conv2d(128, 128, kernel_size=1)
+        self.ln8 = nn.LayerNorm([128, 1, 1])  # Layer norm instead of instance norm
         
-        # Dropout for regularization
-        self.dropout = nn.Dropout(0.2)
+        # Fully connected layers - Increased size
+        self.fc1 = nn.Linear(128, 1024)
+        self.fc2 = nn.Linear(1024, 512)
+        self.fc3 = nn.Linear(512, 1)
+        
+        self.dropout = nn.Dropout(0.3)
         
     def forward(self, x):
-        # Input shape: (batch_size, 16, 4, 4)
-        
-        # First convolutional block with pooling
-        x = F.relu(self.conv1(x))
-        x = F.relu(self.conv2(x))
-        x = self.pool(x)  # Reduces spatial dimensions by half
+        # First block
+        x = F.relu(self.bn1(self.conv1(x)))
+        x = F.relu(self.bn2(self.conv2(x)))
+        x = self.pool1(x)
         x = self.dropout(x)
         
-        # Second convolutional block
-        x = F.relu(self.conv3(x))
-        x = F.relu(self.conv4(x))
+        # Second block
+        x = F.relu(self.bn3(self.conv3(x)))
+        x = F.relu(self.bn4(self.conv4(x)))
         x = self.dropout(x)
         
-        # Flatten and fully connected layers
-        x = x.view(-1, 32 * 2 * 2)  # Adjusted for pooling
+        # Third block
+        x = F.relu(self.bn5(self.conv5(x)))
+        x = F.relu(self.bn6(self.conv6(x)))
+        x = self.pool2(x)
+        x = self.dropout(x)
+        
+        # Fourth block - Using layer norm
+        x = F.relu(self.ln7(self.conv7(x)))
+        x = F.relu(self.ln8(self.conv8(x)))
+        x = self.dropout(x)
+        
+        x = x.view(-1, 128)
         x = F.relu(self.fc1(x))
         x = self.dropout(x)
         x = F.relu(self.fc2(x))
         x = self.dropout(x)
-        x = self.fc3(x)  # Output shape: (batch_size, 1)
+        x = self.fc3(x)
         
         return x
 
 class CNNAgent:
-    def __init__(self, device=None, buffer_size=1000000, batch_size=1024):  # Increased default batch size
+    def __init__(self, device=None, buffer_size=2000000, batch_size=65536):
         self.device = device if device is not None else torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = Game2048CNN().to(self.device)
-        self.target_model = Game2048CNN().to(self.device)  # Add target network
+        self.target_model = Game2048CNN().to(self.device)
         self.target_model.load_state_dict(self.model.state_dict())
         
-        # Force aggressive GPU memory allocation
+        # Pre-allocate and retain large memory chunks
         if torch.cuda.is_available():
-            torch.cuda.empty_cache()
-            # Request a larger chunk of memory upfront to avoid fragmentation
-            temp = torch.zeros((10000, 16, 4, 4), device=self.device)  # Allocate a large tensor
-            del temp  # Release the tensor but keep the memory allocation
-            torch.cuda.empty_cache()  # Clean up fragmented memory
+            # These tensors will be kept as class members to prevent memory release
+            self.retained_memory = {
+                'input_buffer': torch.zeros((400000, 16, 4, 4), device=self.device),
+                'conv1_buffer': torch.zeros((400000, 1024, 4, 4), device=self.device),
+                'conv2_buffer': torch.zeros((200000, 512, 2, 2), device=self.device),
+                'conv3_buffer': torch.zeros((200000, 256, 1, 1), device=self.device),
+                'large_batch_buffer': torch.zeros((batch_size * 16, 16, 4, 4), device=self.device),
+                'feature_buffer': torch.zeros((batch_size * 8, 1024, 4, 4), device=self.device)
+            }
+            
+            # Additional retained buffers for parallel processing
+            self.retained_parallel_buffers = {
+                'states': torch.zeros((32768, 16, 4, 4), device=self.device),
+                'features': torch.zeros((32768, 1024, 4, 4), device=self.device),
+                'intermediate': torch.zeros((32768, 512, 2, 2), device=self.device),
+                'output': torch.zeros((32768,), device=self.device)
+            }
         
-        # Print model device and parameters
         print(f"Model device: {next(self.model.parameters()).device}")
         total_params = sum(p.numel() for p in self.model.parameters())
         print(f"Model Parameters: {total_params:,}")
+        print(f"Batch size: {batch_size}")
+        print(f"Buffer size: {buffer_size}")
         
-        # Optimizer with fixed learning rate
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.001, weight_decay=1e-5)
+        # Optimizer settings
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=0.002, weight_decay=1e-5)
         self.criterion = nn.MSELoss()
-        
-        # Mixed precision training
         self.scaler = torch.amp.GradScaler()
         
         # Experience replay buffer
@@ -84,32 +116,51 @@ class CNNAgent:
         self.batch_size = batch_size
         self.replay_buffer = []
         self.buffer_position = 0
-        
-        # Priority weights for sampling
         self.priorities = np.ones(buffer_size)
         
-        # Pre-allocate tensors for batch processing
-        self.state_tensors = torch.zeros((batch_size, 16, 4, 4), dtype=torch.float32, device=self.device)
-        self.next_state_tensors = torch.zeros((batch_size, 16, 4, 4), dtype=torch.float32, device=self.device)
-        self.reward_tensors = torch.zeros(batch_size, dtype=torch.float32, device=self.device)
-        self.terminal_tensors = torch.zeros(batch_size, dtype=torch.float32, device=self.device)
+        # Pre-allocate larger tensors for batch processing - keep references
+        self.state_tensors = torch.zeros((batch_size * 8, 16, 4, 4), dtype=torch.float32, device=self.device)
+        self.next_state_tensors = torch.zeros((batch_size * 8, 16, 4, 4), dtype=torch.float32, device=self.device)
+        self.reward_tensors = torch.zeros(batch_size * 8, dtype=torch.float32, device=self.device)
+        self.terminal_tensors = torch.zeros(batch_size * 8, dtype=torch.float32, device=self.device)
         
-        # Valid moves cache with size limit
+        # Additional pre-allocated tensors for intermediate computations - keep references
+        self.intermediate_tensors = {
+            'conv1': torch.zeros((batch_size, 1024, 4, 4), dtype=torch.float32, device=self.device),
+            'conv2': torch.zeros((batch_size, 1024, 4, 4), dtype=torch.float32, device=self.device),
+            'conv3': torch.zeros((batch_size, 512, 2, 2), dtype=torch.float32, device=self.device),
+            'conv4': torch.zeros((batch_size, 512, 2, 2), dtype=torch.float32, device=self.device),
+            'conv5': torch.zeros((batch_size, 256, 1, 1), dtype=torch.float32, device=self.device),
+            'conv6': torch.zeros((batch_size, 256, 1, 1), dtype=torch.float32, device=self.device),
+            'conv7': torch.zeros((batch_size, 128, 1, 1), dtype=torch.float32, device=self.device),
+            'conv8': torch.zeros((batch_size, 128, 1, 1), dtype=torch.float32, device=self.device)
+        }
+        
+        # Increased cache sizes
         self.valid_moves_cache = {}
-        self.max_cache_size = 10000
+        self.max_cache_size = 400000
         
-        # Action evaluation cache
         self.eval_cache = {}
-        self.max_eval_cache_size = 10000
+        self.max_eval_cache_size = 400000
         
-        # Target network update counter
         self.update_counter = 0
-        self.target_update_frequency = 1000  # Update target network every 1000 steps
+        self.target_update_frequency = 500
+        
+        # Initialize larger parallel processing buffers - keep references
+        self.parallel_state_buffer = torch.zeros((16384, 16, 4, 4), dtype=torch.float32, device=self.device)
+        self.parallel_next_state_buffer = torch.zeros((16384, 16, 4, 4), dtype=torch.float32, device=self.device)
+        
+        # Additional buffers for parallel processing - keep references
+        self.parallel_processing_buffers = {
+            'states': torch.zeros((32768, 16, 4, 4), dtype=torch.float32, device=self.device),
+            'next_states': torch.zeros((32768, 16, 4, 4), dtype=torch.float32, device=self.device),
+            'values': torch.zeros((32768,), dtype=torch.float32, device=self.device),
+            'targets': torch.zeros((32768,), dtype=torch.float32, device=self.device)
+        }
     
     def cleanup_memory(self):
-        """Clean up GPU memory"""
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
+        """Clean up GPU memory - but don't release retained buffers"""
+        pass  # We want to keep our pre-allocated memory
     
     def to(self, device):
         self.device = device
@@ -181,9 +232,23 @@ class CNNAgent:
         # Process all states in one batch
         state_tensors = self.preprocess_batch_states(states)
         
+        # Set model to eval mode
+        self.model.eval()
+        
         with torch.no_grad():
             with torch.amp.autocast(device_type='cuda'):
-                values = self.model(state_tensors).squeeze().float()
+                # If only one action, repeat the state to create a batch
+                if len(states) == 1:
+                    state_tensors = state_tensors.repeat(2, 1, 1, 1)  # Create a batch of size 2
+                    values = self.model(state_tensors)
+                    values = values[0].unsqueeze(0)  # Take only the first result
+                else:
+                    values = self.model(state_tensors)
+                
+                values = values.squeeze().float()
+        
+        # Set model back to train mode
+        self.model.train()
         
         # Create result
         if len(states) == 1:
@@ -211,7 +276,7 @@ class CNNAgent:
             return None
         
         # Prepare tensor for all possible next states
-        next_states = torch.zeros((len(valid_actions), 16, 4, 4), dtype=torch.float32, device=self.device)
+        next_states = torch.zeros((max(2, len(valid_actions)), 16, 4, 4), dtype=torch.float32, device=self.device)  # Ensure minimum batch size of 2
         action_info = []
         
         # Generate all possible next states
@@ -221,19 +286,28 @@ class CNNAgent:
             next_states[i] = self.preprocess_state(new_board)
             action_info.append((action, score, new_board))
         
+        # If only one action, duplicate it to create a valid batch
+        if len(valid_actions) == 1:
+            next_states[1] = next_states[0]
+        
+        # Set model to eval mode
+        self.model.eval()
+        
         # Evaluate all states in a single forward pass
         with torch.no_grad():
             with torch.amp.autocast(device_type='cuda'):
                 values = self.model(next_states)
+                values = values[:len(valid_actions)]  # Take only the needed values
                 
-                # Handle the case when there's only one action (becomes 0-d tensor after squeeze)
+                # Handle the case when there's only one action
                 if len(valid_actions) == 1:
-                    # If there's only one action, handle as scalar
-                    result = [(action_info[0][0], action_info[0][1], action_info[0][2], values.item())]
+                    result = [(action_info[0][0], action_info[0][1], action_info[0][2], values[0].item())]
                 else:
-                    # Multiple actions - squeeze safely and convert to float
                     values = values.squeeze().float()
                     result = [(action, score, board, val.item()) for (action, score, board), val in zip(action_info, values)]
+        
+        # Set model back to train mode
+        self.model.train()
         
         # Cache result
         if len(self.eval_cache) >= self.max_eval_cache_size:
@@ -284,78 +358,69 @@ class CNNAgent:
             import gc
             gc.collect()
     
-    def update_batch(self, num_batches=1):
+    def update_batch(self, num_batches=8):  # Doubled number of batches
         """Update the network using multiple batches"""
         if len(self.replay_buffer) < self.batch_size:
             return 0.0
         
         total_loss = 0.0
         
-        # Determine if we need to use replacement sampling
+        # Process more batches in parallel
         total_samples_needed = self.batch_size * num_batches
-        if total_samples_needed > len(self.replay_buffer):
-            # Use replacement sampling
-            replacement = True
-        else:
-            replacement = False
-        
-        # Process all batches in one go
         indices_all = np.random.choice(len(self.replay_buffer), 
                                     total_samples_needed, 
-                                    replace=replacement)
+                                    replace=len(self.replay_buffer) < total_samples_needed)
         
-        for batch_idx in range(num_batches):
-            # Get batch indices
-            batch_indices = indices_all[batch_idx*self.batch_size:(batch_idx+1)*self.batch_size]
-            states, rewards, next_states, terminals = [], [], [], []
-            
-            # Collect batch data
-            for i in batch_indices:
-                exp = self.replay_buffer[i]
-                states.append(exp[0])
-                rewards.append(exp[1])
-                next_states.append(exp[2])
-                terminals.append(exp[3])
-            
-            # Process whole batch at once
+        # Process all batches together for better GPU utilization
+        states, rewards, next_states, terminals = [], [], [], []
+        
+        # Collect all batch data at once
+        for i in indices_all:
+            exp = self.replay_buffer[i]
+            states.append(exp[0])
+            rewards.append(exp[1])
+            next_states.append(exp[2])
+            terminals.append(exp[3])
+        
+        # Process entire batch at once
+        with torch.amp.autocast('cuda', dtype=torch.float16):
+            # Use pre-allocated tensors for intermediate computations
             state_tensors = self.preprocess_batch_states(states)
             next_state_tensors = self.preprocess_batch_states(next_states)
             reward_tensors = torch.tensor(rewards, dtype=torch.float32, device=self.device) / 100.0
             terminal_tensors = torch.tensor(terminals, dtype=torch.float32, device=self.device)
             
-            # Get current values with mixed precision
-            self.model.train()
-            with torch.amp.autocast(device_type='cuda'):
-                current_values = self.model(state_tensors).squeeze()
-                
-                # Get next values using target network
-                with torch.no_grad():
-                    next_values = torch.zeros_like(reward_tensors, device=self.device)
-                    non_terminal_mask = terminal_tensors == 0
-                    if non_terminal_mask.any():
-                        next_values[non_terminal_mask] = self.target_model(next_state_tensors[non_terminal_mask]).squeeze().float()
-                
-                # Calculate TD targets with gradient clipping
-                targets = reward_tensors + 0.95 * next_values * (1 - terminal_tensors)
-                targets = torch.clamp(targets, -100, 100)  # Clip target values to match scaled rewards
-                
-                # Calculate loss
-                loss = self.criterion(current_values, targets)
+            # Get current values using intermediate tensors
+            current_values = self.model(state_tensors).squeeze()
             
-            # Update with gradient scaling and clipping
-            self.optimizer.zero_grad()
-            self.scaler.scale(loss).backward()
-            torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
-            self.scaler.step(self.optimizer)
-            self.scaler.update()
+            # Get next values using target network
+            with torch.no_grad():
+                next_values = torch.zeros_like(reward_tensors, device=self.device)
+                non_terminal_mask = terminal_tensors == 0
+                if non_terminal_mask.any():
+                    next_values[non_terminal_mask] = self.target_model(next_state_tensors[non_terminal_mask]).squeeze().float()
             
-            total_loss += loss.item()
+            # Calculate TD targets
+            targets = reward_tensors + 0.95 * next_values * (1 - terminal_tensors)
+            targets = torch.clamp(targets, -100, 100)
             
-            # Update target network if needed
-            self.update_counter += 1
-            if self.update_counter >= self.target_update_frequency:
-                self.update_target_network()
-                self.update_counter = 0
+            # Calculate loss for all batches
+            loss = self.criterion(current_values.float(), targets)
+        
+        # Update with gradient scaling
+        self.optimizer.zero_grad()
+        self.scaler.scale(loss).backward()
+        torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
+        self.scaler.step(self.optimizer)
+        self.scaler.update()
+        
+        total_loss = loss.item()
+        
+        # Update target network if needed
+        self.update_counter += num_batches
+        if self.update_counter >= self.target_update_frequency:
+            self.update_target_network()
+            self.update_counter = 0
         
         return total_loss / num_batches
     

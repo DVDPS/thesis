@@ -43,7 +43,8 @@ def train_parallel_cnn_agent(
     batch_size=32768,  # Increased batch size for H100
     update_interval=32,  # More frequent updates
     max_steps_per_episode=3000,  # Maximum steps per episode
-    device=None
+    device=None,
+    resume_from=None  # Path to model to resume from
 ):
     """Train a CNN agent using parallel environments"""
     logger = setup_logging()
@@ -70,6 +71,15 @@ def train_parallel_cnn_agent(
         buffer_size=1000000,  # Increased buffer size
         batch_size=batch_size
     )
+    
+    # Load saved model if provided
+    if resume_from and os.path.exists(resume_from):
+        logger.info(f"Loading model from {resume_from}")
+        agent.load(resume_from)
+        logger.info("Model loaded successfully")
+    else:
+        logger.info("Starting with fresh model")
+    
     logger.info(f"Initial replay buffer size: {len(agent.replay_buffer)}")
     
     # Training loop
@@ -78,8 +88,16 @@ def train_parallel_cnn_agent(
     episode_steps = []
     episode_max_tiles = []
     
+    # Start from the correct episode if resuming
+    start_episode = agent.episode_count if resume_from else 0
+    logger.info(f"Starting from episode {start_episode}")
+    logger.info(f"Current epsilon: {agent.epsilon:.3f}")
+    logger.info(f"Best score so far: {agent.best_score}")
+    logger.info(f"Best max tile so far: {agent.best_max_tile}")
+    logger.info(f"Max tile counts: {agent.max_tile_counts}")
+    
     # Progress bar
-    pbar = tqdm(range(num_episodes), desc="Training")
+    pbar = tqdm(range(start_episode, num_episodes), desc="Training")
     
     for episode in pbar:
         # Reset environments
@@ -221,13 +239,17 @@ if __name__ == "__main__":
     logger = setup_logging()
     logger.info("Starting Parallel CNN Training for H100...")
     
+    # Check if we should resume from a saved model
+    resume_from = 'best_parallel_cnn_model.pth' if os.path.exists('best_parallel_cnn_model.pth') else None
+    
     # Adjust these based on your H100 performance
     trained_agent = train_parallel_cnn_agent(
         num_episodes=100000,
         num_envs=256,           # Process 256 games in parallel
         batch_size=32768,       # Large batch size for H100
         update_interval=32,     # Update less frequently with larger batches
-        max_steps_per_episode=3000  # Maximum steps per episode
+        max_steps_per_episode=3000,  # Maximum steps per episode
+        resume_from=resume_from  # Resume from saved model if it exists
     )
     
     logger.info("\nTraining complete and best model saved to 'best_parallel_cnn_model.pth'")

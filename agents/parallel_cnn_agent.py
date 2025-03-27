@@ -323,14 +323,46 @@ class ParallelCNNAgent:
         return total_loss / num_batches
     
     def save(self, path):
-        """Save model weights"""
-        torch.save(self.model.state_dict(), path)
+        """Save model weights and training parameters"""
+        save_dict = {
+            'model_state_dict': self.model.state_dict(),
+            'target_model_state_dict': self.target_model.state_dict(),
+            'optimizer_state_dict': self.optimizer.state_dict(),
+            'scaler_state_dict': self.scaler.state_dict(),
+            'epsilon': self.epsilon,
+            'episode_count': self.episode_count,
+            'replay_buffer': self.replay_buffer,
+            'buffer_position': self.buffer_position,
+            'priorities': self.priorities,
+            'update_counter': self.update_counter,
+            'best_score': self.best_score,
+            'best_max_tile': self.best_max_tile,
+            'max_tile_counts': self.max_tile_counts
+        }
+        torch.save(save_dict, path)
     
     def load(self, path):
-        """Load model weights"""
-        self.model.load_state_dict(torch.load(path, map_location=self.device))
-        # Update target network
-        self.target_model.load_state_dict(self.model.state_dict())
+        """Load model weights and training parameters"""
+        checkpoint = torch.load(path, map_location=self.device)
+        
+        # Load model weights
+        self.model.load_state_dict(checkpoint['model_state_dict'])
+        self.target_model.load_state_dict(checkpoint['target_model_state_dict'])
+        
+        # Load optimizer and scaler states
+        self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        self.scaler.load_state_dict(checkpoint['scaler_state_dict'])
+        
+        # Load training parameters
+        self.epsilon = checkpoint['epsilon']
+        self.episode_count = checkpoint['episode_count']
+        self.replay_buffer = checkpoint['replay_buffer']
+        self.buffer_position = checkpoint['buffer_position']
+        self.priorities = checkpoint['priorities']
+        self.update_counter = checkpoint['update_counter']
+        self.best_score = checkpoint['best_score']
+        self.best_max_tile = checkpoint['best_max_tile']
+        self.max_tile_counts = checkpoint['max_tile_counts']
 
     def select_actions(self, states, parallel_game=None, epsilon=0.1):
         """
