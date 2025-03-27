@@ -115,6 +115,10 @@ class ParallelGame2048:
     
     def step(self, actions):
         """Execute actions for all environments"""
+        # Convert actions to tensor if needed
+        if not torch.is_tensor(actions):
+            actions = torch.tensor(actions, dtype=torch.int64, device=self.device)
+            
         # Get active environments
         active_mask = ~self.done
         if not torch.any(active_mask):
@@ -131,18 +135,21 @@ class ParallelGame2048:
         self.boards[active_mask] = new_boards
         self.scores[active_mask] += rewards
         
+        # Create full changed mask
+        full_changed_mask = torch.zeros_like(self.done)
+        full_changed_mask[active_mask] = changed
+        
         # Add new tiles to changed boards
-        changed_mask = changed & active_mask
-        if torch.any(changed_mask):
-            self.add_random_tiles(changed_mask)
+        if torch.any(full_changed_mask):
+            self.add_random_tiles_mask(full_changed_mask)
         
         # Check for game over
-        self.check_game_over()
+        self.update_done()
         
         # Prepare info dictionary
         info = {
             'scores': self.scores.clone(),
-            'changed': changed
+            'changed': full_changed_mask
         }
         
         return self.boards, self.scores, self.done, info

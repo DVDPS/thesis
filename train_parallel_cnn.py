@@ -79,7 +79,7 @@ def train_parallel_cnn_agent(
                         continue
                 else:
                     # Greedy action selection
-                    action_values = agent.batch_evaluate_actions(states[np.newaxis, i], parallel_game)
+                    action_values = agent.batch_evaluate_actions(states[np.newaxis, i], parallel_game, env_idx=i)
                     if action_values is not None and len(action_values) > 0 and len(action_values[0]) > 0:
                         try:
                             # Find best action based on value
