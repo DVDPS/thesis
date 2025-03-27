@@ -65,15 +65,14 @@ class ParallelGame2048:
                 
             # Get the boards for these environments
             action_boards = boards[action_mask]
-            action_size = action_boards.size(0)
             
             # Rotate boards based on action
             rotated = torch.rot90(action_boards, k=action)
             
-            # Process each row in the rotated boards
-            for i in range(4):
-                # Create a new row by merging
-                for env_idx in range(action_size):
+            # Process each environment's board separately
+            for env_idx in range(len(action_boards)):
+                # Process each row in this environment's board
+                for i in range(4):
                     row = rotated[env_idx, i].clone()
                     
                     # Skip empty rows
