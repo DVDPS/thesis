@@ -119,23 +119,86 @@ class ExpectimaxAgent:
     
     def _evaluate_state(self, state: np.ndarray) -> float:
         """
-        Evaluate state using the loaded TD model if available, otherwise use heuristic.
+        Evaluate state using the trained model and enhanced heuristics
         """
-        state_1d = state.flatten()
-        stage = self._determine_stage(state)
-        if stage in self.stage_models and self.n_tuples is not None:
-            weights = self.stage_models[stage]
-            value = 0
-            for n_tuple in self.n_tuples:
-                features = [state_1d[i] for i in n_tuple]
-                key = tuple(features)
-                if key in weights:
-                    value += weights[key]
-            return value
-        # Fallback to heuristic evaluation
-        state_tensor = torch.tensor(state, dtype=torch.float32, device=self.device)
-        corner_score = torch.sum(state_tensor * self.corner_weight_matrix)
-        return corner_score.item()
+        # Apply tile downgrading if needed
+        state = apply_tile_downgrading(state)
+        
+        # Get the model's evaluation
+        model_value = self.value_model.evaluate(state)
+        
+        # Add heuristic bonuses for good board properties
+        heuristic_value = 0
+        
+        # 1. Corner strategy (weighted more heavily)
+        corners = [state[0,0], state[0,3], state[3,0], state[3,3]]
+        max_corner = max(corners)
+        if max_corner > 0:
+            heuristic_value += max_corner * 0.3  # Increased weight for corners
+        
+        # 2. Monotonic rows/columns (weighted more heavily)
+        for i in range(4):
+            row = state[i,:]
+            col = state[:,i]
+            # Check for strictly decreasing (preferred for snake pattern)
+            if all(row[j] >= row[j+1] for j in range(3)):
+                heuristic_value += sum(row) * 0.25  # Increased weight for monotonicity
+            if all(col[j] >= col[j+1] for j in range(3)):
+                heuristic_value += sum(col) * 0.25  # Increased weight for monotonicity
+        
+        # 3. Smoothness (penalize large differences between adjacent tiles)
+        smoothness = 0
+        for i in range(4):
+            for j in range(4):
+                if i < 3:
+                    smoothness -= abs(state[i,j] - state[i+1,j])
+                if j < 3:
+                    smoothness -= abs(state[i,j] - state[i,j+1])
+        heuristic_value += smoothness * 0.15  # Increased weight for smoothness
+        
+        # 4. Empty cells bonus (encourage keeping space for merging)
+        empty_cells = np.sum(state == 0)
+        heuristic_value += empty_cells * 150  # Increased weight for empty cells
+        
+        # 5. Merge potential (bonus for adjacent equal tiles)
+        merge_potential = 0
+        for i in range(4):
+            for j in range(4):
+                if i < 3 and state[i,j] == state[i+1,j] and state[i,j] > 0:
+                    merge_potential += state[i,j] * 3  # Increased weight for merge potential
+                if j < 3 and state[i,j] == state[i,j+1] and state[i,j] > 0:
+                    merge_potential += state[i,j] * 3  # Increased weight for merge potential
+        heuristic_value += merge_potential * 0.15
+        
+        # 6. High-value tile positioning
+        max_tile = np.max(state)
+        if max_tile >= 512:  # Special handling for high-value tiles
+            max_tile_pos = np.where(state == max_tile)
+            if len(max_tile_pos[0]) > 0:
+                i, j = max_tile_pos[0][0], max_tile_pos[1][0]
+                # Bonus for high-value tiles in corners or edges
+                if (i == 0 or i == 3) and (j == 0 or j == 3):
+                    heuristic_value += max_tile * 0.4
+                elif (i == 0 or i == 3) or (j == 0 or j == 3):
+                    heuristic_value += max_tile * 0.2
+        
+        # 7. Snake pattern bonus (increased weight)
+        snake_score = 0
+        for i in range(4):
+            for j in range(4):
+                if state[i,j] > 0:
+                    if i % 2 == 0:
+                        if j == 0 or state[i,j] >= state[i,j-1]:
+                            snake_score += state[i,j]
+                    else:
+                        if j == 3 or state[i,j] >= state[i,j+1]:
+                            snake_score += state[i,j]
+        heuristic_value += snake_score * 0.2  # Increased weight for snake pattern
+        
+        # Combine model value with heuristic bonuses
+        # Scale the model value to be more comparable with heuristics
+        scaled_model_value = model_value * 0.15  # Adjusted scaling
+        return scaled_model_value + heuristic_value
     
     def _calculate_monotonicity(self, state: torch.Tensor) -> torch.Tensor:
         monotonicity_score = torch.tensor(0.0, device=self.device)

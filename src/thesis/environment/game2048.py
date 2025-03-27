@@ -2,107 +2,188 @@ import numpy as np
 import random
 import math
 from typing import Tuple, List, Optional
+import torch
 
 def compute_monotonicity(board):
     """
-    Computes a basic monotonicity score by summing the negative differences
-    between adjacent tiles (in log2 space) along rows and columns.
-    Higher scores (less negative) indicate a more monotonic board.
-    This came from the paper 
+    Computes an enhanced monotonicity score that considers:
+    1. Basic monotonicity along rows and columns
+    2. Snake pattern monotonicity
+    3. Corner strategy
     """
     board = board.astype(np.float32)
-    # Avoid log(0) by setting zeros to a small positive value.
+    # Avoid log(0) by setting zeros to a small positive value
     safe_board = np.where(board > 0, board, 1)
     log_board = np.log2(safe_board)
     mono_score = 0.0
-    # rows
+    
+    # 1. Basic monotonicity (rows and columns)
     for row in log_board:
         mono_score -= np.sum(np.abs(np.diff(row)))
-    # columns
     for col in log_board.T:
         mono_score -= np.sum(np.abs(np.diff(col)))
-    return mono_score
+    
+    # 2. Snake pattern monotonicity
+    snake_score = 0
+    for i in range(4):
+        if i % 2 == 0:
+            # Left to right
+            for j in range(3):
+                if log_board[i,j] >= log_board[i,j+1]:
+                    snake_score += 1
+        else:
+            # Right to left
+            for j in range(3):
+                if log_board[i,j] <= log_board[i,j+1]:
+                    snake_score += 1
+    
+    # 3. Corner strategy
+    corner_score = 0
+    corners = [(0,0), (0,3), (3,0), (3,3)]
+    max_tile = np.max(log_board)
+    for corner in corners:
+        if log_board[corner] == max_tile:
+            corner_score += 2
+        elif log_board[corner] >= max_tile - 1:
+            corner_score += 1
+    
+    # Combine scores with weights
+    return mono_score + 0.5 * snake_score + 0.3 * corner_score
 
 class Game2048:
-    def __init__(self, size: int = 4, seed: Optional[int] = None):
-        self.size = size
-        self.seed = seed
-        self.rng = np.random.RandomState(seed)  # Create a dedicated RNG instance
-        self.reset()
-        self.previous_max_tile = 0
-        # Factor for the corner and border heuristic bonus
-        self.corner_factor = 0.1  # Increased from 0.05 to give more weight to positioning
-        # Enhanced weight matrix that favors both corners and edges
-        self.corner_weights = np.array([
-            [3.0, 2.0, 2.0, 3.0],
-            [2.0, 1.0, 1.0, 2.0],
-            [2.0, 1.0, 1.0, 2.0],
-            [3.0, 2.0, 2.0, 3.0]
-        ])
-
-    def reset(self):
-        self.board = np.zeros((self.size, self.size), dtype=np.int32)
+    def __init__(self, seed=None):
+        self.reset(seed)
+    
+    def reset(self, seed=None):
+        """Reset the game with optional seed"""
+        if seed is not None:
+            np.random.seed(seed)
+            torch.manual_seed(seed)
+        
+        # Initialize board as tensor
+        self.board = torch.zeros((4, 4), dtype=torch.float32)
         self.score = 0
-        # If a seed was provided, create a new random sequence
-        if self.seed is not None:
-            self.rng = np.random.RandomState(self.seed)
-        # Add initial tiles
         self.add_random_tile()
         self.add_random_tile()
-        return self.board.copy()
-
-    def add_random_tile(self) -> None:
-        empty_cells = list(zip(*np.where(self.board == 0)))
-        if empty_cells:
-            index = self.rng.randint(0, len(empty_cells))
-            cell = empty_cells[index]
-            self.board[cell] = 2 if self.rng.random() < 0.8 else 4
-
-    def get_possible_moves(self) -> List[int]:
-        moves = []
-        for action in range(4):
-            temp_board = self.board.copy()
-            _, _, changed = self._move(temp_board, action, test_only=True)
-            if changed:
-                moves.append(action)
-        return moves
-
-    def _merge_row(self, row):
-        """Merge a single row; returns new row, score gained, and a flag if changed."""
-        filtered = row[row != 0]
-        merged = []
-        score = 0
-        i = 0
-        while i < len(filtered):
-            if i + 1 < len(filtered) and filtered[i] == filtered[i+1]:
-                merged_val = filtered[i] * 2
-                merged.append(merged_val)
-                score += merged_val
-                i += 2
-            else:
-                merged.append(filtered[i])
-                i += 1
-        new_row = np.array(merged, dtype=np.int32)
-        new_row = np.pad(new_row, (0, self.size - len(new_row)), 'constant')
-        changed = not np.array_equal(new_row, row)
-        return new_row, score, changed
-
-    def _move(self, board, action, test_only = False):
-        """
-        Executes a move on a given board. action: 0=up, 1=right, 2=down, 3=left.
-        Returns new board, score gained, and a flag whether the board changed.
-        """
-        rotated = np.rot90(board.copy(), k=action)
-        total_score = 0
-        changed = False
-        for i in range(self.size):
-            new_row, score, row_changed = self._merge_row(rotated[i])
-            if row_changed:
-                changed = True
+        return self.board.cpu().numpy()
+    
+    def add_random_tile(self):
+        """Add a random tile (2 or 4) to an empty cell"""
+        # Convert board to tensor if it's numpy array
+        if isinstance(self.board, np.ndarray):
+            self.board = torch.from_numpy(self.board).float()
+            
+        empty_cells = torch.where(self.board == 0)
+        if len(empty_cells[0]) > 0:
+            idx = torch.randint(0, len(empty_cells[0]), (1,))
+            row, col = empty_cells[0][idx], empty_cells[1][idx]
+            self.board[row, col] = 2 if torch.rand(1) < 0.9 else 4
+    
+    def _move_gpu(self, board, action):
+        """Move tiles in the specified direction using GPU operations"""
+        # Ensure board is a tensor
+        if isinstance(board, np.ndarray):
+            board = torch.from_numpy(board).float()
+            
+        # Store original board for comparison
+        original = board.clone()
+        board = board.clone()  # Work with a copy
+        score_gain = 0
+        
+        # Rotate board based on action (0: left, 1: up, 2: right, 3: down)
+        rotated = torch.rot90(board, k=action)
+        
+        for i in range(4):
+            # Extract row and remove zeros
+            row = rotated[i]
+            filtered = row[row != 0]
+            
+            # No need to merge if 0 or 1 tile
+            if len(filtered) <= 1:
+                # Just put non-zero values at the beginning
+                new_row = torch.zeros(4, device=board.device)
+                new_row[:len(filtered)] = filtered
+                rotated[i] = new_row
+                continue
+                
+            # Create new row by merging
+            merged = []
+            skip = False
+            
+            for j in range(len(filtered) - 1):
+                if skip:
+                    skip = False
+                    continue
+                    
+                if filtered[j] == filtered[j + 1]:
+                    merged_val = filtered[j] * 2
+                    merged.append(merged_val)
+                    score_gain += int(merged_val)
+                    skip = True
+                else:
+                    merged.append(filtered[j])
+                    
+            # Add the last tile if not merged
+            if not skip and len(filtered) > 0:
+                merged.append(filtered[-1])
+                
+            # Pad with zeros and update row
+            new_row = torch.zeros(4, device=board.device)
+            new_row[:len(merged)] = torch.tensor(merged, device=board.device)
             rotated[i] = new_row
-            total_score += score
-        new_board = np.rot90(rotated, k=-action)
-        return new_board, total_score, changed
+        
+        # Rotate back
+        result = torch.rot90(rotated, k=-action)
+        
+        # Check if board changed
+        changed = not torch.all(result == original)
+        
+        return result.cpu().numpy(), score_gain, changed
+    
+    def _move(self, board, action):
+        """Wrapper for GPU move operation"""
+        return self._move_gpu(board, action)
+    
+    def is_game_over(self):
+        """Check if the game is over"""
+        # Ensure board is a tensor
+        if isinstance(self.board, np.ndarray):
+            self.board = torch.from_numpy(self.board).float()
+            
+        # Check for empty cells
+        if torch.any(self.board == 0):
+            return False
+        
+        # Check for possible merges
+        for i in range(4):
+            for j in range(4):
+                current = self.board[i, j]
+                # Check right
+                if j < 3 and current == self.board[i, j + 1]:
+                    return False
+                # Check down
+                if i < 3 and current == self.board[i + 1, j]:
+                    return False
+        return True
+    
+    def get_valid_moves(self):
+        """Get list of valid moves"""
+        valid_moves = []
+        for action in range(4):
+            _, _, changed = self._move(self.board, action)
+            if changed:
+                valid_moves.append(action)
+        return valid_moves
+    
+    def get_state(self):
+        """Get current game state"""
+        if isinstance(self.board, np.ndarray):
+            return self.board
+        return self.board.cpu().numpy()
+    
+    def get_score(self):
+        """Get current score"""
+        return self.score
 
     def corner_heuristic(self) -> float:
         """
@@ -198,9 +279,6 @@ class Game2048:
                             score += match_value
         return score
 
-    def is_game_over(self) -> bool:
-        return len(self.get_possible_moves()) == 0
-
     def render(self):
         """
         Render the game board to the console.
@@ -219,7 +297,7 @@ class Game2048:
 
     def check_adjacent_512_tiles(self):
         """Check for adjacent 512 tiles and provide a substantial reward bonus"""
-        board = self.board
+        board = self.board.copy()
         bonus = 0
         tile_512_positions = np.where(board == 512)
         tile_512_coords = list(zip(tile_512_positions[0], tile_512_positions[1]))
@@ -280,21 +358,44 @@ class Game2048:
         return new_board, total_score, changed
 
 def preprocess_state(state):
-    """Convert board state to log2 scale; zeros remain zeros."""
+    """Enhanced state preprocessing that includes strategic features"""
     state = state.astype(np.float32)
     mask = state > 0
     state[mask] = np.log2(state[mask])
-    return state 
+    
+    # Add strategic features
+    strategic_features = np.zeros_like(state)
+    
+    # 1. Corner importance
+    corners = [(0,0), (0,3), (3,0), (3,3)]
+    for corner in corners:
+        if state[corner] > 0:
+            strategic_features[corner] += 0.5
+    
+    # 2. Edge importance
+    edges = [(0,1), (0,2), (1,0), (2,0), (3,1), (3,2), (1,3), (2,3)]
+    for edge in edges:
+        if state[edge] > 0:
+            strategic_features[edge] += 0.3
+    
+    # 3. High-value tile importance
+    max_tile = np.max(state)
+    if max_tile > 0:
+        high_value_mask = state >= max_tile - 1
+        strategic_features[high_value_mask] += 0.4
+    
+    # Combine base state with strategic features
+    return state + strategic_features
 
 def preprocess_state_onehot(state):
     """
-    Converts the 4x4 board into a one-hot representation with 16 channels.
-    Channel 0 represents an empty tile (0).
-    Channels 1-15 represent tiles with values 2^1 through 2^15.
+    Enhanced one-hot representation that includes strategic features
     """
     board = state.astype(np.int32)
     channels = 16
     onehot = np.zeros((channels, board.shape[0], board.shape[1]), dtype=np.float32)
+    
+    # Basic one-hot encoding
     for i in range(board.shape[0]):
         for j in range(board.shape[1]):
             if board[i, j] > 0:
@@ -303,4 +404,24 @@ def preprocess_state_onehot(state):
                     onehot[power, i, j] = 1.0
             else:
                 onehot[0, i, j] = 1.0
+    
+    # Add strategic features
+    max_tile = np.max(board)
+    if max_tile > 0:
+        # Corner importance
+        corners = [(0,0), (0,3), (3,0), (3,3)]
+        for corner in corners:
+            if board[corner] > 0:
+                onehot[:, corner[0], corner[1]] *= 1.5
+        
+        # Edge importance
+        edges = [(0,1), (0,2), (1,0), (2,0), (3,1), (3,2), (1,3), (2,3)]
+        for edge in edges:
+            if board[edge] > 0:
+                onehot[:, edge[0], edge[1]] *= 1.3
+        
+        # High-value tile importance
+        high_value_mask = board >= max_tile - 1
+        onehot[:, high_value_mask] *= 1.4
+    
     return onehot
