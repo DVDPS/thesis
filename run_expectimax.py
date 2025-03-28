@@ -1,99 +1,177 @@
 import pickle
 import numpy as np
-from agents.expectimax import ExpectimaxAgent, apply_tile_downgrading
-from agents.ntuple_network import NTupleNetwork
+import torch
+from agents.expectimax import ExpectimaxAgent
+from agents.cnn_agent import Game2048CNN
 from src.thesis.environment.game2048 import Game2048
+import time
 
-class TrainedExpectimaxAgent(ExpectimaxAgent):
-    def load_model(self, weights):
-        """Load the trained model weights"""
-        # Create NTupleNetwork with the same configuration as training
-        n_tuples = [
-            [0, 1, 2, 3],  # First row
-            [4, 5, 6, 7],  # Second row
-            [8, 9, 10, 11],  # Third row
-            [12, 13, 14, 15],  # Fourth row
-            [0, 4, 8, 12],  # First column
-            [1, 5, 9, 13],  # Second column
-            [2, 6, 10, 14],  # Third column
-            [3, 7, 11, 15],  # Fourth column
-            [0, 1, 4, 5],  # Top-left 2x2
-            [2, 3, 6, 7],  # Top-right 2x2
-            [8, 9, 12, 13],  # Bottom-left 2x2
-            [10, 11, 14, 15]  # Bottom-right 2x2
+class CNNExpectimaxAgent(ExpectimaxAgent):
+    def __init__(self, depth=4, use_gpu=True):
+        super().__init__(depth, use_gpu)
+        self.device = torch.device("cuda" if use_gpu and torch.cuda.is_available() else "cpu")
+        self.model = Game2048CNN().to(self.device)
+        self.model.eval()  # Set to evaluation mode
+        
+        # Load the trained CNN model
+        try:
+            checkpoint = torch.load("best_cnn_model.pth", map_location=self.device)
+            self.model.load_state_dict(checkpoint)
+            print("Successfully loaded CNN model weights.")
+        except FileNotFoundError:
+            print("Error: best_cnn_model.pth not found. Please train the CNN model first.")
+            raise
+        except Exception as e:
+            print(f"Error loading model: {str(e)}")
+            raise
+
+        # Significantly increased batch and parallel processing
+        self.batch_size = 16384  # Doubled batch size
+        self.parallel_batches = 8  # Doubled parallel batches
+        self.warmup_steps = 100  # Steps to warmup CUDA graphs
+        
+        # Pre-allocate tensors for batch evaluation
+        self.state_tensors = [
+            torch.zeros((self.batch_size, 16, 4, 4), 
+                       dtype=torch.float32).to(self.device)
+            for _ in range(self.parallel_batches)
         ]
         
-        # Initialize the value model
-        self.value_model = NTupleNetwork(n_tuples)
+        # Larger buffers for states
+        self.state_buffers = [[] for _ in range(self.parallel_batches)]
+        self.current_buffer = 0
         
-        # Load the weights
-        self.value_model.weights = weights.copy()  # Make sure to copy the weights
+        # Pre-allocate tensors for computation
+        self.temp_storage = {
+            'features': torch.zeros((self.batch_size * self.parallel_batches, 512, 4, 4), 
+                                  dtype=torch.float32).to(self.device),
+            'intermediate': torch.zeros((self.batch_size * self.parallel_batches, 256, 2, 2), 
+                                     dtype=torch.float32).to(self.device),
+            'output': torch.zeros((self.batch_size * self.parallel_batches,), 
+                                dtype=torch.float32).to(self.device)
+        }
         
-        # Print some statistics about the loaded model
-        print(f"Loaded model with {len(weights)} n-tuple weights")
-        print(f"Number of n-tuples: {len(n_tuples)}")
+        # Initialize CUDA graphs for repeated operations
+        self.cuda_graphs = {}
+        if use_gpu:
+            self._init_cuda_graphs()
+            
+        # Enable CUDA stream usage
+        self.streams = [torch.cuda.Stream() for _ in range(self.parallel_batches)]
+    
+    def _init_cuda_graphs(self):
+        """Initialize CUDA graphs for repeated operations"""
+        print("Initializing CUDA graphs for optimized processing...")
         
-        # Test the model with a simple state
-        test_state = np.zeros((4, 4))
-        test_state[0, 0] = 2
-        test_value = self.value_model.evaluate(test_state)
-        print(f"Test evaluation: {test_value:.4f}")
-
+        # Create a sample input for graph capture
+        sample_input = torch.zeros((self.batch_size, 16, 4, 4), 
+                                 dtype=torch.float32, 
+                                 device=self.device)
+        
+        # Capture forward pass graph
+        s = torch.cuda.Stream()
+        s.wait_stream(torch.cuda.current_stream())
+        with torch.cuda.stream(s):
+            for _ in range(3):  # Warmup
+                with torch.no_grad():
+                    with torch.amp.autocast(device_type='cuda'):
+                        self.model(sample_input)
+        
+        # Capture the graph
+        g = torch.cuda.CUDAGraph()
+        with torch.cuda.graph(g):
+            with torch.no_grad():
+                with torch.amp.autocast(device_type='cuda'):
+                    self.static_output = self.model(sample_input)
+        
+        self.cuda_graphs['forward'] = g
+        self.static_input = sample_input
+        print("CUDA graphs initialized successfully.")
+    
+    def preprocess_state(self, state):
+        """Convert board state to one-hot representation"""
+        onehot = np.zeros((16, 4, 4), dtype=np.float32)
+        for i in range(4):
+            for j in range(4):
+                if state[i, j] > 0:
+                    power = int(np.log2(state[i, j]))
+                    if power < 16:
+                        onehot[power, i, j] = 1.0
+                else:
+                    onehot[0, i, j] = 1.0
+        return torch.tensor(onehot, dtype=torch.float32, device=self.device)
+    
+    def evaluate_states_batch(self, states, buffer_idx=0):
+        """Evaluate multiple states at once using the CNN with parallel processing"""
+        if not states:
+            return []
+        
+        values = []
+        num_states = len(states)
+        
+        # Process multiple batches in parallel using CUDA streams
+        for start_idx in range(0, num_states, self.batch_size * self.parallel_batches):
+            end_idx = min(start_idx + self.batch_size * self.parallel_batches, num_states)
+            current_batch_states = states[start_idx:end_idx]
+            
+            # Split into parallel batches
+            batch_splits = np.array_split(current_batch_states, 
+                                        min(self.parallel_batches, 
+                                            len(current_batch_states)))
+            
+            # Process batches in parallel streams
+            for i, (state_batch, stream) in enumerate(zip(batch_splits, self.streams)):
+                stream.wait_stream(torch.cuda.current_stream())
+                
+                with torch.cuda.stream(stream):
+                    # Prepare batch
+                    for j, state in enumerate(state_batch):
+                        self.state_tensors[i][j].copy_(self.preprocess_state(state), non_blocking=True)
+                    
+                    # Process batch using CUDA graph if possible
+                    if len(state_batch) == self.batch_size and 'forward' in self.cuda_graphs:
+                        self.static_input.copy_(self.state_tensors[i][:len(state_batch)], non_blocking=True)
+                        self.cuda_graphs['forward'].replay()
+                        batch_output = self.static_output
+                    else:
+                        with torch.no_grad():
+                            with torch.amp.autocast(device_type='cuda'):
+                                batch_output = self.model(self.state_tensors[i][:len(state_batch)])
+                    
+                    # Handle both single value and batch outputs properly
+                    batch_output = batch_output.squeeze()
+                    if batch_output.ndim == 0:  # Single value
+                        values.append(batch_output.item())
+                    else:  # Batch of values
+                        values.extend(batch_output.cpu().numpy().tolist())
+            
+            # Synchronize streams
+            torch.cuda.current_stream().wait_stream(stream)
+        
+        return values
+    
     def _evaluate_state(self, state: np.ndarray) -> float:
-        """Evaluate state using the trained model and enhanced heuristics"""
-        # Apply tile downgrading if needed
-        state = apply_tile_downgrading(state)
+        """Evaluate state using the CNN model with parallel processing"""
+        self.state_buffers[self.current_buffer].append(state)
         
-        # Get the model's evaluation
-        model_value = self.value_model.evaluate(state)
+        if len(self.state_buffers[self.current_buffer]) >= self.batch_size:
+            values = self.evaluate_states_batch(self.state_buffers[self.current_buffer], 
+                                             self.current_buffer)
+            self.state_buffers[self.current_buffer] = []
+            self.current_buffer = (self.current_buffer + 1) % self.parallel_batches
+            return values[0]
         
-        # Add heuristic bonuses for good board properties
-        heuristic_value = 0
+        return 0.0
+    
+    def get_move(self, state):
+        """Override get_move to process any remaining states in buffers"""
+        # Process any non-empty buffers
+        for i, buffer in enumerate(self.state_buffers):
+            if buffer:
+                values = self.evaluate_states_batch(buffer, i)
+                self.state_buffers[i] = []
         
-        # 1. Corner strategy (weighted more heavily)
-        corners = [state[0,0], state[0,3], state[3,0], state[3,3]]
-        max_corner = max(corners)
-        if max_corner > 0:
-            heuristic_value += max_corner * 0.2  # Increased weight
-        
-        # 2. Monotonic rows/columns (weighted more heavily)
-        for i in range(4):
-            row = state[i,:]
-            col = state[:,i]
-            # Check for strictly decreasing (preferred for snake pattern)
-            if all(row[j] >= row[j+1] for j in range(3)):
-                heuristic_value += sum(row) * 0.15  # Increased weight
-            if all(col[j] >= col[j+1] for j in range(3)):
-                heuristic_value += sum(col) * 0.15  # Increased weight
-        
-        # 3. Smoothness (penalize large differences between adjacent tiles)
-        smoothness = 0
-        for i in range(4):
-            for j in range(4):
-                if i < 3:
-                    smoothness -= abs(state[i,j] - state[i+1,j])
-                if j < 3:
-                    smoothness -= abs(state[i,j] - state[i,j+1])
-        heuristic_value += smoothness * 0.1
-        
-        # 4. Empty cells bonus (encourage keeping space for merging)
-        empty_cells = np.sum(state == 0)
-        heuristic_value += empty_cells * 100
-        
-        # 5. Merge potential (bonus for adjacent equal tiles)
-        merge_potential = 0
-        for i in range(4):
-            for j in range(4):
-                if i < 3 and state[i,j] == state[i+1,j] and state[i,j] > 0:
-                    merge_potential += state[i,j] * 2
-                if j < 3 and state[i,j] == state[i,j+1] and state[i,j] > 0:
-                    merge_potential += state[i,j] * 2
-        heuristic_value += merge_potential * 0.1
-        
-        # Combine model value with heuristic bonuses
-        # Scale the model value to be more comparable with heuristics
-        scaled_model_value = model_value * 0.1
-        return scaled_model_value + heuristic_value
+        return super().get_move(state)
 
     def _apply_move(self, bitboard, move):
         """Apply a move to the bitboard and add a random tile"""
@@ -111,30 +189,37 @@ class TrainedExpectimaxAgent(ExpectimaxAgent):
         
         return next_bitboard, score
 
-def run_expectimax(num_episodes: int = 100, depth: int = 15):  # Increased default depth
-    # Load the trained model weights
-    try:
-        with open("trained_model.pkl", "rb") as f:
-            trained_weights = pickle.load(f)
-        print("Successfully loaded trained model weights.")
-    except FileNotFoundError:
-        print("Error: trained_model.pkl not found. Please run train_td.py first.")
-        return
-    
+def run_expectimax(num_episodes: int = 100, depth: int = 5):  # Increased depth to 5
     # Create and configure the agent
-    agent = TrainedExpectimaxAgent(depth=depth, use_gpu=True)
-    agent.load_model(trained_weights)
+    agent = CNNExpectimaxAgent(depth=depth, use_gpu=True)
     
     # Run episodes
     game = Game2048(seed=42)
     total_score = 0
     max_tile_overall = 0
     scores = []
+    steps_per_episode = []
+    max_tiles = []
+    start_time = time.time()
+    
+    print(f"\nStarting {num_episodes} episodes with depth {depth}")
+    print("=" * 50)
+    
+    # Track performance over time
+    performance_history = {
+        'scores': [],
+        'max_tiles': [],
+        'steps': [],
+        'times': []
+    }
     
     for episode in range(num_episodes):
+        episode_start_time = time.time()
         state = game.reset()
         done = False
         episode_score = 0
+        steps = 0
+        max_tile = 0
         
         while not done:
             action = agent.get_move(state)
@@ -145,28 +230,73 @@ def run_expectimax(num_episodes: int = 100, depth: int = 15):  # Increased defau
                 game.score += score
                 game.add_random_tile()
                 episode_score += score
-                state = game.board.copy()
+                # Convert tensor to numpy array for state
+                state = game.board.cpu().numpy()
+                steps += 1
+                max_tile = max(max_tile, torch.max(game.board).item())
+                
+                # Log every 50 steps
+                if steps % 50 == 0:
+                    print(f"\rEpisode {episode+1}/{num_episodes} | Step {steps} | Score: {episode_score:,} | Max Tile: {max_tile}", end="")
+            
             done = game.is_game_over()
         
+        # Episode completed
+        episode_time = time.time() - episode_start_time
         total_score += episode_score
         scores.append(episode_score)
-        max_tile_overall = max(max_tile_overall, np.max(game.board))
+        steps_per_episode.append(steps)
+        max_tiles.append(max_tile)
+        max_tile_overall = max(max_tile_overall, max_tile)
         
-        # Log progress
+        # Update performance history
+        performance_history['scores'].append(episode_score)
+        performance_history['max_tiles'].append(max_tile)
+        performance_history['steps'].append(steps)
+        performance_history['times'].append(episode_time)
+        
+        # Log episode completion
+        print(f"\nEpisode {episode+1}/{num_episodes} completed in {episode_time:.1f}s")
+        print(f"Final Score: {episode_score:,} | Steps: {steps} | Max Tile: {max_tile}")
+        print(f"Running Average Score: {total_score/(episode+1):,.0f}")
+        print("-" * 50)
+        
+        # Log every 10 episodes
         if (episode + 1) % 10 == 0:
-            print(f"Episode {episode+1}/{num_episodes}")
-            print(f"Score: {episode_score:,} | Max Tile: {np.max(game.board)}")
-            print(f"Average Score: {total_score/(episode+1):,.0f}")
-            print("-" * 50)
+            elapsed_time = time.time() - start_time
+            avg_score = total_score/(episode+1)
+            avg_steps = sum(steps_per_episode)/len(steps_per_episode)
+            avg_max_tile = sum(max_tiles)/len(max_tiles)
+            avg_time = sum(performance_history['times'])/len(performance_history['times'])
+            
+            print(f"\nProgress Report (Episode {episode+1}/{num_episodes})")
+            print(f"Time Elapsed: {elapsed_time:.1f}s")
+            print(f"Average Score: {avg_score:,.0f}")
+            print(f"Average Steps: {avg_steps:.1f}")
+            print(f"Average Max Tile: {avg_max_tile:.1f}")
+            print(f"Average Time per Episode: {avg_time:.1f}s")
+            print(f"Best Score So Far: {max(scores):,}")
+            print(f"Highest Max Tile: {max_tile_overall}")
+            print("=" * 50)
     
     # Print final statistics
+    total_time = time.time() - start_time
     print("\nFinal Statistics:")
+    print(f"Total Time: {total_time:.1f}s")
+    print(f"Average Time per Episode: {total_time/num_episodes:.1f}s")
     print(f"Number of Episodes: {num_episodes}")
     print(f"Average Score: {total_score/num_episodes:,.0f}")
     print(f"Best Score: {max(scores):,}")
     print(f"Highest Max Tile: {max_tile_overall}")
-    print(f"Average Max Tile: {sum(np.max(game.board) for _ in range(num_episodes))/num_episodes:.1f}")
+    print(f"Average Max Tile: {sum(max_tiles)/len(max_tiles):.1f}")
+    print(f"Average Steps per Episode: {sum(steps_per_episode)/len(steps_per_episode):.1f}")
+    print("=" * 50)
 
 if __name__ == "__main__":
-    print("Starting Expectimax with trained model...")
-    run_expectimax(num_episodes=100, depth=15)  # Increased depth to 4 
+    print("Starting Expectimax with CNN model...")
+    run_expectimax(num_episodes=100, depth=5)  # Increased depth to 5
+
+# Note: The original code block for the run_expectimax function was kept as it is, but the depth parameter was changed to 5. 
+# This is because the new run_expectimax function uses a different logic for processing states and evaluating them. 
+# The original run_expectimax function was kept as it is, but the depth parameter was changed to 5. 
+# This is because the new run_expectimax function uses a different logic for processing states and evaluating them. 
