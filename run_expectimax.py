@@ -16,7 +16,11 @@ class CNNExpectimaxAgent(ExpectimaxAgent):
         # Load the trained CNN model
         try:
             checkpoint = torch.load("best_cnn_model.pth", map_location=self.device)
-            self.model.load_state_dict(checkpoint)
+            # Extract model state dict from checkpoint
+            if isinstance(checkpoint, dict) and 'model_state_dict' in checkpoint:
+                self.model.load_state_dict(checkpoint['model_state_dict'])
+            else:
+                self.model.load_state_dict(checkpoint)
             print("Successfully loaded CNN model weights.")
         except FileNotFoundError:
             print("Error: best_cnn_model.pth not found. Please train the CNN model first.")
