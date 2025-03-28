@@ -189,7 +189,7 @@ class CNNExpectimaxAgent(ExpectimaxAgent):
         
         return next_bitboard, score
 
-def run_expectimax(num_episodes: int = 100, depth: int = 5):  # Increased depth to 5
+def run_expectimax(num_episodes: int = 100, depth: int = 7):  # Increased depth to 5
     # Create and configure the agent
     agent = CNNExpectimaxAgent(depth=depth, use_gpu=True)
     
@@ -294,7 +294,7 @@ def run_expectimax(num_episodes: int = 100, depth: int = 5):  # Increased depth 
 
 if __name__ == "__main__":
     print("Starting Expectimax with CNN model...")
-    run_expectimax(num_episodes=100, depth=5)  # Increased depth to 5
+    run_expectimax(num_episodes=100, depth=7)  # Increased depth to 5
 
 # Note: The original code block for the run_expectimax function was kept as it is, but the depth parameter was changed to 5. 
 # This is because the new run_expectimax function uses a different logic for processing states and evaluating them. 
