@@ -8,40 +8,42 @@ import logging
 from datetime import datetime
 
 def setup_logging():
+    """Setup logging to both file and console"""
+    # Create a timestamp for the log file
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     log_filename = f"training_{timestamp}.log"
+    
+    # Configure logging
     logging.basicConfig(
         level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s',
+        format='%(message)s',
         handlers=[
             logging.FileHandler(log_filename),
-            logging.StreamHandler()
+            logging.StreamHandler()  # This will also print to console
         ]
     )
-    tqdm_handler = logging.StreamHandler()
-    tqdm_handler.terminator = ""
-    tqdm.pandas(desc="Processing", bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]', file=tqdm_handler)
-
     return logging.getLogger()
 
 def get_gpu_memory_usage():
+    """Get current GPU memory usage"""
     if torch.cuda.is_available():
-        allocated = torch.cuda.memory_allocated() / 1024**3
-        reserved = torch.cuda.memory_reserved() / 1024**3
-        return allocated, reserved
-    return 0, 0
+        return torch.cuda.memory_allocated() / 1024**3  # Convert to GB
+    return 0
 
 def train_cnn_agent(num_episodes: int = 10000, epsilon: float = 0.5, batch_size: int = 512, update_frequency: int = 1):
+    # Setup logging
     logger = setup_logging()
     
+    # Check if CUDA is available
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger.info(f"Using device: {device}")
     
+    # Initialize agent with smaller batch size
     agent = CNNAgent(device, buffer_size=100000, batch_size=batch_size)
     game = Game2048(seed=42)
     
-    mem_alloc, mem_reserved = get_gpu_memory_usage()
-    logger.info(f"Initial GPU Memory Usage: Allocated={mem_alloc:.2f} GB, Reserved={mem_reserved:.2f} GB")
+    # Print initial GPU memory usage and model info
+    logger.info(f"Initial GPU Memory Usage: {get_gpu_memory_usage():.2f} GB")
     logger.info(f"Initial replay buffer size: {len(agent.replay_buffer)}")
     
     best_score = 0
@@ -49,214 +51,254 @@ def train_cnn_agent(num_episodes: int = 10000, epsilon: float = 0.5, batch_size:
     best_max_tile = 0
     best_board_state = None
     
+    # Training statistics
     episode_rewards = []
     episode_scores = []
     episode_max_tiles = []
     episode_steps = []
     episode_losses = []
     
-    max_tile_history = []
-    max_tile_reached = 0
-    max_tile_count = {}
+    # Track maximum tile statistics
+    max_tile_history = []  # Track max tile for each episode
+    max_tile_reached = 0   # Track highest tile ever reached
+    max_tile_count = {}    # Count occurrences of each max tile
     
-    initial_update_freq = 50
-    final_update_freq = 500
+    # Progressive training parameters
+    initial_update_freq = 50   # More frequent updates initially
+    final_update_freq = 500    # Less frequent updates later
+    update_freq_decay = 0.98   # Slower decay for update frequency
     
-    min_experiences = 500
-    update_interval = 25
-    max_batches_per_update = 16
-
-    epsilon_start = epsilon
-    epsilon_decay_episodes = 100000
-    min_epsilon = 0.3
+    # Experience collection parameters
+    min_experiences = 500     # Lower minimum experiences to start learning earlier
+    update_interval = 25      # Update more frequently
+    max_batches = 16         # Process more batches per update
     
+    # Slower epsilon decay for better exploration
+    epsilon_decay_episodes = 100000  # Decay over full training period
+    min_epsilon = 0.3  # Higher minimum epsilon for continued exploration
+    
+    # Enhanced milestone rewards for better high-tile achievement
     milestone_rewards = {
-        512: 50, 1024: 150, 2048: 400, 4096: 1000, 8192: 2500
+        512: 50,     # Increased from 20
+        1024: 150,   # Increased from 50
+        2048: 400,   # Increased from 120
+        4096: 1000,  # Increased from 300
+        8192: 2500   # Increased from 800
     }
     
-    total_steps_accumulated = 0
-    max_steps_per_episode = 10000
+    total_steps = 0
+    max_steps_per_episode = 10000  # Prevent infinite episodes
     
-    for episode in tqdm(range(num_episodes), desc="Training Progress"):
-        if episode < 100:
+    # Training loop with progress bar
+    for episode in tqdm(range(num_episodes), desc="Training"):
+        # Slower epsilon decay
+        current_epsilon = max(min_epsilon, epsilon - (episode / epsilon_decay_episodes))
+        
+        # Smooth transition between update frequencies
+        if episode < 10:
             agent.target_update_frequency = initial_update_freq
         else:
-            progress = min(1.0, (episode - 100) / (num_episodes * 0.1))
+            # Smooth transition between frequencies
+            progress = min(1.0, (episode - 10) / 90)  # 0 to 1 over 100 episodes
             agent.target_update_frequency = int(initial_update_freq + progress * (final_update_freq - initial_update_freq))
-
-        state = game.reset()
-        if isinstance(state, torch.Tensor):
-             state = state.cpu().numpy()
-        done = False
-        episode_reward_sum = 0
-        previous_max_tile_in_episode = 0
-        steps_this_episode = 0
-        episode_loss_sum = 0.0
-        num_updates_this_episode = 0
-        consecutive_invalid_moves = 0
         
-        while not done and steps_this_episode < max_steps_per_episode:
-            steps_this_episode += 1
-            prev_board = state.copy()
-
-            current_epsilon = agent.epsilon
-
+        state = game.reset()
+        done = False
+        episode_reward = 0
+        previous_max_tile = 0
+        steps = 0
+        episode_loss = 0
+        num_updates = 0
+        consecutive_invalid_moves = 0  # Track stuck states
+        
+        while not done and steps < max_steps_per_episode:
+            steps += 1
+            # Store previous board state (convert to numpy for storage)
+            prev_board = state.copy() if isinstance(state, np.ndarray) else state.cpu().numpy()
+            
+            # Epsilon-greedy policy with dynamic exploration
             if np.random.rand() < current_epsilon:
                 action = np.random.choice([0, 1, 2, 3])
-                is_random_move = True
             else:
-                is_random_move = False
+                # Use the new evaluate_all_actions method for better efficiency
                 action_values = agent.evaluate_all_actions(state, game)
                 if action_values:
-                    best_action_info = max(action_values, key=lambda x: x[1] + 0.95 * x[2])
-                    action = best_action_info[0]
+                    # Find best action based on value + reward
+                    best_action, best_score, value = max(
+                        action_values, 
+                        key=lambda x: x[1] + 0.95 * x[2]  # score + discount * value
+                    )[:3]
+                    action = best_action
                 else:
+                    # No valid moves
                     action = np.random.choice([0, 1, 2, 3])
-            if isinstance(game.board, np.ndarray):
-                 board_tensor = torch.from_numpy(game.board).float().to(device)
-            else:
-                 board_tensor = game.board.to(device)
-
-            new_board_tensor, score_gain, changed = game._move(board_tensor, action)
-
-            if changed:
-                consecutive_invalid_moves = 0
-                game.board = new_board_tensor
-                game.score += score_gain
-                game.add_random_tile()
-                
-                next_state = game.board.cpu().numpy()
-                current_max_tile_value = np.max(next_state)
-                
-                max_tile_history.append(current_max_tile_value)
-                if current_max_tile_value > max_tile_reached:
-                    max_tile_reached = current_max_tile_value
-                
-                game_is_over = game.is_game_over()
-                if game_is_over:
-                     max_tile_count[current_max_tile_value] = max_tile_count.get(current_max_tile_value, 0) + 1
-
-                step_reward = 0
-                if current_max_tile_value in milestone_rewards:
-                    step_reward += milestone_rewards[current_max_tile_value]
-                
-                if current_max_tile_value > previous_max_tile_in_episode:
-                    base_log = math.log2(previous_max_tile_in_episode) if previous_max_tile_in_episode > 0 else 0
-                    level_up_bonus = math.log2(current_max_tile_value) - base_log
-                    step_reward += 3 * level_up_bonus * math.log2(current_max_tile_value)
-                    previous_max_tile_in_episode = current_max_tile_value
-                
-                if current_max_tile_value >= 512:
-                    step_reward += current_max_tile_value * 0.05
-                
-                step_reward += score_gain / 25.0
-                
-                if current_max_tile_value >= 32:
-                    corner_bonus = 0
-                    corners = [next_state[0, 0], next_state[0, 3], next_state[3, 0], next_state[3, 3]]
-                    if current_max_tile_value in corners:
-                         corner_bonus = current_max_tile_value * 0.1
-                    step_reward += corner_bonus
-                episode_reward_sum += step_reward
-                agent.store_experience(prev_board, step_reward, next_state, game_is_over)
-                total_steps_accumulated += 1
-                if total_steps_accumulated % update_interval == 0 and len(agent.replay_buffer) >= min_experiences:
-                    num_batches_to_run = min(max_batches_per_update, max(1, len(agent.replay_buffer) // agent.batch_size))
-                    batch_loss = agent.update_batch(num_batches=num_batches_to_run)
-                
-                    if batch_loss is not None:
-                         episode_loss_sum += batch_loss * num_batches_to_run
-                         num_updates_this_episode += num_batches_to_run
-
-                state = next_state
             
+            new_board, score, changed = game._move(game.board, action)
+            
+            if changed:
+                # Board changed - process normally
+                consecutive_invalid_moves = 0
+                game.board = new_board
+                game.score += score
+                game.add_random_tile()
+                state = game.board.copy() if isinstance(game.board, np.ndarray) else game.board.cpu().numpy()
+                
+                # Enhanced reward calculation with scaled rewards
+                current_max_tile = np.max(game.board.cpu().numpy() if isinstance(game.board, torch.Tensor) else game.board)
+                
+                # Track max tile statistics
+                max_tile_history.append(current_max_tile)
+                if current_max_tile > max_tile_reached:
+                    max_tile_reached = current_max_tile
+                # Only update max_tile_count when the episode ends
+                if game.is_game_over():
+                    max_tile_count[current_max_tile] = max_tile_count.get(current_max_tile, 0) + 1
+                
+                # Add milestone rewards (already scaled)
+                if current_max_tile in milestone_rewards:
+                    episode_reward += milestone_rewards[current_max_tile]
+                
+                # Add bonus for reaching new max tile (with proper zero handling)
+                if current_max_tile > previous_max_tile:
+                    if previous_max_tile == 0:
+                        # Special handling for first non-zero tile
+                        level_up = math.log2(current_max_tile)
+                    else:
+                        level_up = math.log2(current_max_tile) - math.log2(previous_max_tile)
+                    episode_reward += 3 * level_up * math.log2(current_max_tile)  # Scaled down from 300
+                    previous_max_tile = current_max_tile
+                
+                # Add bonus for maintaining high-value tiles (increased weight)
+                if current_max_tile >= 512:
+                    episode_reward += current_max_tile * 0.05  # Increased from 0.01
+                
+                # Add base score (scaled)
+                episode_reward += score / 25.0  # Increased from 50.0 to give more weight to immediate rewards
+                
+                # Add bonus for keeping high tiles in corners
+                if current_max_tile >= 32:
+                    corner_bonus = 0
+                    if game.board[0, 0] == current_max_tile or game.board[0, 3] == current_max_tile or \
+                       game.board[3, 0] == current_max_tile or game.board[3, 3] == current_max_tile:
+                        corner_bonus = current_max_tile * 0.1
+                    episode_reward += corner_bonus
+                
+                # Store experience every step
+                agent.store_experience(prev_board, score, state, game.is_game_over())
+                total_steps += 1
+                
+                # Update less frequently but with more batches
+                if total_steps % update_interval == 0 and len(agent.replay_buffer) >= min_experiences:
+                    batch_loss = 0
+                    # Calculate number of batches based on buffer size
+                    num_batches = min(max_batches, max(1, len(agent.replay_buffer) // agent.batch_size))
+                    
+                    # Process all batches in one go
+                    for _ in range(num_batches):
+                        loss = agent.update_batch(num_batches=1)  # Process one batch at a time
+                        batch_loss += loss
+                    
+                    episode_loss += batch_loss / num_batches
+                    num_updates += 1
+                    
+                    # Clean up GPU memory after batch processing
+                    agent.optimize_memory()
             else:
+                # Track consecutive invalid moves to detect stuck states
                 consecutive_invalid_moves += 1
-                if consecutive_invalid_moves >= 4 and not is_random_move:
-                     logger.debug(f"Episode {episode+1}: Stuck state detected after {consecutive_invalid_moves} invalid non-random moves.")
-                     done = True 
-                     game_is_over = True
-
-            if not done:
-                 game_is_over = game.is_game_over()
-                 if game_is_over:
-                      done = True
-                      final_max_tile = np.max(game.board.cpu().numpy())
-                      max_tile_count[final_max_tile] = max_tile_count.get(final_max_tile, 0) + 1
-
-            current_score = game.score
-            current_max_tile_on_board = np.max(game.board.cpu().numpy())
-            if current_score > best_board_score or \
-               (current_score == best_board_score and current_max_tile_on_board > best_max_tile):
-                best_board_score = current_score
-                best_max_tile = current_max_tile_on_board
-                best_board_state = game.board.cpu().numpy().copy()
+                if consecutive_invalid_moves >= 10:
+                    # Game is stuck
+                    done = True
+                    logger.info(f"Episode {episode+1} terminated due to being stuck")
+            
+            # Check game termination conditions more aggressively
+            if game.is_game_over() or np.count_nonzero(state == 0) == 0:
+                done = True
+            
+            # Calculate info for logging
+            info = {
+                'score': game.score,
+                'max_tile': np.max(game.board.cpu().numpy() if isinstance(game.board, torch.Tensor) else game.board)
+            }
+            
+            # Save best model based on board score and max tile
+            if info['score'] > best_board_score or (info['score'] == best_board_score and info['max_tile'] > best_max_tile):
+                best_board_score = info['score']
+                best_max_tile = info['max_tile']
+                best_board_state = state.copy() if isinstance(state, np.ndarray) else state.cpu().numpy()
                 agent.save("best_cnn_model.pth")
         
-        # End of episode
-        agent.episode_count += 1 # Increment agent's episode counter for epsilon decay
-
-        episode_rewards.append(episode_reward_sum)
+        # Record episode statistics
+        episode_rewards.append(episode_reward)
         episode_scores.append(game.score)
-        final_max_tile = np.max(game.board.cpu().numpy())
-        episode_max_tiles.append(final_max_tile)
-        episode_steps.append(steps_this_episode)
-        avg_episode_loss = episode_loss_sum / num_updates_this_episode if num_updates_this_episode > 0 else 0
-        episode_losses.append(avg_episode_loss)
+        episode_max_tiles.append(info['max_tile'])
+        episode_steps.append(steps)
+        episode_losses.append(episode_loss / num_updates if num_updates > 0 else 0)
         
-        if (episode + 1) % 50 == 0:
-            last_10_episodes = -50 
-            recent_rewards = episode_rewards[last_10_episodes:]
-            recent_scores = episode_scores[last_10_episodes:]
-            recent_steps = episode_steps[last_10_episodes:]
-            recent_losses = episode_losses[last_10_episodes:]
-            recent_max_tiles_ep = episode_max_tiles[last_10_episodes:]
+        # Log progress more frequently (every 10 episodes)
+        if (episode + 1) % 10 == 0:
+            # Calculate statistics for last 10 episodes
+            recent_rewards = episode_rewards[-10:]
+            recent_scores = episode_scores[-10:]
+            recent_steps = episode_steps[-10:]
+            recent_losses = episode_losses[-10:]
             
-            max_tile_last_log = max(recent_max_tiles_ep) if recent_max_tiles_ep else 0
+            # Calculate max tile statistics
+            recent_max_tiles = max_tile_history[-10:] if len(max_tile_history) >= 10 else max_tile_history
+            max_tile_last_10 = max(recent_max_tiles) if recent_max_tiles else 0
+            
+            # Sort max tile counts for display
             sorted_tile_counts = sorted(max_tile_count.items(), key=lambda x: x[0], reverse=True)
             
-            logger.info(f"\n--- Episode {episode+1}/{num_episodes} Report ---")
-            logger.info(f"Recent {abs(last_10_episodes)} Episodes Stats:")
-            logger.info(f"  Avg Reward: {np.mean(recent_rewards):,.1f}")
-            logger.info(f"  Avg Score: {np.mean(recent_scores):,.1f}")
-            logger.info(f"  Avg Steps: {np.mean(recent_steps):.1f}")
-            logger.info(f"  Avg Loss: {np.mean(recent_losses):.4f}")
-            logger.info(f"  Max Tile (Last {abs(last_10_episodes)}): {int(max_tile_last_log)}")
-            logger.info(f"Overall Stats:")
-            logger.info(f"  Highest Tile Ever: {int(max_tile_reached)}")
-            logger.info(f"  Best Score Seen: {best_board_score:,}")
-            logger.info(f"  Best Max Tile Seen: {int(best_max_tile)}")
-            logger.info(f"Max Tile Distribution (Overall):")
-            for tile, count in sorted_tile_counts[:5]:
-                logger.info(f"  {int(tile)}: {count} times")
-            logger.info(f"Training Info:")
-            logger.info(f"  Buffer Size: {len(agent.replay_buffer)}/{agent.buffer_size}")
-            logger.info(f"  Epsilon: {agent.epsilon:.4f}")
-            mem_alloc, mem_reserved = get_gpu_memory_usage()
-            logger.info(f"  GPU Memory: Allocated={mem_alloc:.2f} GB, Reserved={mem_reserved:.2f} GB")
+            logger.info(f"\nEpisode {episode+1}/{num_episodes}")
+            logger.info(f"Last 10 Episodes Statistics:")
+            logger.info(f"  Average Reward: {np.mean(recent_rewards):,.0f}")
+            logger.info(f"  Average Score: {np.mean(recent_scores):,.0f}")
+            logger.info(f"  Average Steps: {np.mean(recent_steps):.1f}")
+            logger.info(f"  Average Loss: {np.mean(recent_losses):.4f}")
+            logger.info(f"  Max Tile Reached: {max_tile_last_10}")
+            logger.info(f"\nOverall Statistics:")
+            logger.info(f"  Highest Tile Ever: {max_tile_reached}")
+            logger.info(f"  Best Score: {best_board_score:,.0f}")
+            logger.info(f"  Best Max Tile: {best_max_tile}")
+            logger.info(f"\nMax Tile Distribution:")
+            for tile, count in sorted_tile_counts[:5]:  # Show top 5 most common max tiles
+                logger.info(f"  {tile}: {count} times")
+            logger.info(f"\nTraining Info:")
+            logger.info(f"  Buffer Size: {len(agent.replay_buffer)}")
+            logger.info(f"  Epsilon: {current_epsilon:.3f}")
+            logger.info(f"  GPU Memory Usage: {get_gpu_memory_usage():.2f} GB")
             logger.info(f"  Learning Rate: {agent.optimizer.param_groups[0]['lr']:.6f}")
-            logger.info(f"  Target Net Update Freq: {agent.target_update_frequency}")
+            logger.info(f"  Valid Moves: {len(agent.get_valid_moves(state, game))}")
+            # Fix empty cells counting
+            board_array = game.board.cpu().numpy() if isinstance(game.board, torch.Tensor) else game.board
+            empty_cells = np.sum(board_array == 0)
+            logger.info(f"  Empty Cells: {empty_cells}")
+            logger.info(f"  Updates This Episode: {num_updates}")
+            logger.info(f"  Target Network Update Frequency: {agent.target_update_frequency}")
             logger.info("-" * 50)
             
+            # Clean up GPU memory after logging
             agent.optimize_memory()
     
-    logger.info("\n--- Training Complete ---")
-    logger.info("Final Statistics (Averages over all episodes):")
-    logger.info(f"Average Reward: {np.mean(episode_rewards):,.1f}")
-    logger.info(f"Average Score: {np.mean(episode_scores):,.1f}")
+    # Print final training statistics
+    logger.info("\nTraining Complete!")
+    logger.info("\nFinal Statistics:")
+    logger.info(f"Average Reward: {np.mean(episode_rewards):,.0f}")
+    logger.info(f"Average Score: {np.mean(episode_scores):,.0f}")
     logger.info(f"Average Steps: {np.mean(episode_steps):.1f}")
     logger.info(f"Average Loss: {np.mean(episode_losses):.4f}")
-    logger.info("Best Performance Recorded:")
-    logger.info(f"Best Score: {best_board_score:,}")
-    logger.info(f"Best Max Tile: {int(best_max_tile)}")
-    logger.info(f"Highest Tile Ever Reached During Training: {int(max_tile_reached)}")
-    logger.info("Overall Max Tile Distribution:")
-    sorted_tile_counts = sorted(max_tile_count.items(), key=lambda x: x[0], reverse=True)
-    for tile, count in sorted_tile_counts:
-        logger.info(f"  {int(tile)}: {count} times")
-    logger.info("Best Board State Saved:")
+    logger.info(f"\nBest Performance:")
+    logger.info(f"Best Score: {best_board_score:,.0f}")
+    logger.info(f"Best Max Tile: {best_max_tile}")
+    logger.info(f"Highest Tile Ever: {max_tile_reached}")
+    logger.info(f"\nMax Tile Distribution:")
+    for tile, count in sorted(max_tile_count.items(), key=lambda x: x[0], reverse=True)[:5]:
+        logger.info(f"  {tile}: {count} times")
+    logger.info("\nBest Board State:")
     logger.info(best_board_state)
     
+    # Final cleanup
     agent.optimize_memory()
     
     return agent, best_board_state, best_max_tile, best_board_score
@@ -264,21 +306,16 @@ def train_cnn_agent(num_episodes: int = 10000, epsilon: float = 0.5, batch_size:
 if __name__ == "__main__":
     logger = setup_logging()
     logger.info("Starting CNN training...")
-    
-    num_train_episodes = 100000
-    start_epsilon = 0.5       
-    train_batch_size = 512     
-    
-    trained_agent, best_state, best_tile, best_score_val = train_cnn_agent(
-        num_episodes=num_train_episodes,
-        epsilon=start_epsilon,
-        batch_size=train_batch_size,
-        update_frequency=1
+    trained_agent, best_board_state, best_max_tile, best_board_score = train_cnn_agent(
+        num_episodes=100000,
+        epsilon=0.5,
+        batch_size=512,  # Reduced batch size
+        update_frequency=1  # Update more frequently
     )
     
-    logger.info("\n--- Training complete and best model saved (best_cnn_model.pth) ---")
-    logger.info("Best Performance Statistics Achieved During Training:")
-    logger.info(f"Best Max Tile: {int(best_tile)}")
-    logger.info(f"Best Board Score: {best_score_val:,}")
-    logger.info("Corresponding Best Board State:")
-    logger.info(best_state)
+    logger.info("\nTraining complete and best model saved.")
+    logger.info("\nBest Performance Statistics:")
+    logger.info(f"Best Max Tile: {best_max_tile}")
+    logger.info(f"Best Board Score: {best_board_score:,.0f}")
+    logger.info("\nBest Board State:")
+    logger.info(best_board_state) 
