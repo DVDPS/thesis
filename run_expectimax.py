@@ -30,7 +30,7 @@ class CNNExpectimaxAgent(ExpectimaxAgent):
             raise
 
         # Significantly increased batch and parallel processing
-        self.batch_size = 2048  # Doubled batch size
+        self.batch_size = 8192  # Doubled batch size
         self.parallel_batches = 4  # Doubled parallel batches
         self.warmup_steps = 100  # Steps to warmup CUDA graphs
         
