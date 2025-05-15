@@ -1,0 +1,2 @@
+Algorithm,Episodes,Mean_Score,Median_Score,StdDev_Score,Min_Score,Max_Score,Mean_Steps,Median_Steps,StdDev_Steps,Mean_Time,Total_Time,Max_Tile_Reached,2048_Tiles,1024_Tiles,512_Tiles,256_Tiles
+Beam Search,25,12713.12,14356,4094.959587916182,3196,16432,760.92,834,212.0585453752493,113.328,2833.2000000000007,1024.0,0,20,23,25

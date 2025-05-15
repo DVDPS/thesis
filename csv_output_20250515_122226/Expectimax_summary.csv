@@ -1,0 +1,2 @@
+Algorithm,Episodes,Mean_Score,Median_Score,StdDev_Score,Min_Score,Max_Score,Mean_Steps,Median_Steps,StdDev_Steps,Mean_Time,Total_Time,Max_Tile_Reached,2048_Tiles,1024_Tiles,512_Tiles,256_Tiles
+Expectimax,78,11602.102564102564,12122.0,4712.707848156011,3076,23476,698.9102564102565,717.5,228.78329710950717,520.7141025641025,40615.70000000002,2048.0,4,49,75,78

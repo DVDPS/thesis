@@ -1,0 +1,2 @@
+Algorithm,Episodes,Mean_Score,Median_Score,StdDev_Score,Min_Score,Max_Score,Mean_Steps,Median_Steps,StdDev_Steps,Mean_Time,Total_Time,Max_Tile_Reached,2048_Tiles,1024_Tiles,512_Tiles,256_Tiles
+Hybrid Beam Search,100,6972.68,6954.0,3266.699322285757,1008,15556,462.15,472.5,168.67165970570986,342.399,34239.9,1024.0,0,19,73,92

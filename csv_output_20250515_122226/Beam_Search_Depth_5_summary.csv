@@ -1,0 +1,2 @@
+Algorithm,Episodes,Mean_Score,Median_Score,StdDev_Score,Min_Score,Max_Score,Mean_Steps,Median_Steps,StdDev_Steps,Mean_Time,Total_Time,Max_Tile_Reached,2048_Tiles,1024_Tiles,512_Tiles,256_Tiles
+Beam Search Depth 5,99,15803.070707070707,15844,6382.156575654814,3368,35820,903.5757575757576,927,294.35006546450956,190.1969696969697,18829.5,2048.0,18,84,98,99
