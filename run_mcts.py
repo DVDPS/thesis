@@ -5,11 +5,9 @@ from agents.cnn_mcts import CNNMCTSAgent
 from src.thesis.environment.game2048 import Game2048
 
 def run_mcts(num_episodes: int = 100, num_simulations: int = 200):
-    """Run the MCTS agent for multiple episodes"""
     agent = CNNMCTSAgent(num_simulations=num_simulations, use_gpu=True)
     game = Game2048(seed=42)
     
-    # Statistics tracking
     total_score = 0
     max_tile_overall = 0
     scores = []
@@ -49,7 +47,7 @@ def run_mcts(num_episodes: int = 100, num_simulations: int = 200):
                 
                 current_max_tile = max(current_max_tile, torch.max(game.board).item())
                 
-                if steps % 10 == 0:  # More frequent updates due to slower processing
+                if steps % 10 == 0:
                     print(f"\rEpisode {episode+1}/{num_episodes} | Step {steps} | Score: {episode_score:,} | Max Tile: {int(current_max_tile)}", end="")
             
             done = game.is_game_over()
@@ -57,7 +55,6 @@ def run_mcts(num_episodes: int = 100, num_simulations: int = 200):
         episode_time = time.time() - episode_start_time
         final_max_tile = torch.max(game.board).item()
         
-        # Update statistics
         total_score += episode_score
         scores.append(episode_score)
         steps_per_episode.append(steps)

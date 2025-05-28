@@ -29,25 +29,21 @@ class CNNBeamSearchAgent:
             print(f"Error loading model: {str(e)}")
             raise
 
-        # GPU optimization settings
         self.batch_size = 8192
         self.parallel_batches = 4
         
-        # Pre-allocate tensors for batch evaluation
         self.state_tensors = [
             torch.zeros((self.batch_size, 16, 4, 4),
                        dtype=torch.float32).to(self.device)
             for _ in range(self.parallel_batches)
         ]
         
-        # Initialize CUDA graphs and streams
         self.cuda_graphs = {}
         if use_gpu and torch.cuda.is_available():
             self._init_cuda_graphs()
         self.streams = [torch.cuda.Stream() for _ in range(self.parallel_batches)] if use_gpu and torch.cuda.is_available() else []
 
     def _init_cuda_graphs(self):
-        """Initialize CUDA graphs for repeated operations"""
         print("Initializing CUDA graphs for optimized processing...")
         sample_input = torch.zeros((self.batch_size, 16, 4, 4),
                                  dtype=torch.float32,
@@ -73,7 +69,6 @@ class CNNBeamSearchAgent:
         print("CUDA graphs initialized successfully.")
 
     def preprocess_state(self, state: np.ndarray) -> torch.Tensor:
-        """Convert board state to one-hot representation"""
         onehot = np.zeros((16, 4, 4), dtype=np.float32)
         for i in range(4):
             for j in range(4):
@@ -87,7 +82,6 @@ class CNNBeamSearchAgent:
         return torch.tensor(onehot, dtype=torch.float32, device=self.device)
 
     def evaluate_states_batch(self, states: List[np.ndarray]) -> List[float]:
-        """Evaluate multiple states in a batch using parallel processing"""
         if not states:
             return []
         
@@ -134,7 +128,6 @@ class CNNBeamSearchAgent:
         return values
 
     def get_next_states(self, state: np.ndarray) -> List[Tuple[np.ndarray, int, float]]:
-        """Get all possible next states from current state"""
         game = Game2048()
         game.board = torch.tensor(state, dtype=torch.float32)
         next_states = []
@@ -151,19 +144,16 @@ class CNNBeamSearchAgent:
         return next_states
 
     def beam_search(self, state: np.ndarray) -> List[int]:
-        """Perform beam search to find the best action sequence"""
         initial_beam = [BeamState(state, 0, [])]
         
         for depth in range(self.search_depth):
             candidates = []
             states_to_evaluate = []
-            state_map = {}  # Map evaluated state index to its candidate info
+            state_map = {}
             
-            # Generate candidates
             for beam_state in initial_beam:
                 next_states = self.get_next_states(beam_state.board)
                 for new_state, action, reward in next_states:
-                    # Add random tile
                     game = Game2048()
                     game.board = torch.tensor(new_state, dtype=torch.float32)
                     game.add_random_tile()
@@ -179,29 +169,24 @@ class CNNBeamSearchAgent:
             if not states_to_evaluate:
                 break
             
-            # Batch evaluate all states
             values = self.evaluate_states_batch(states_to_evaluate)
             
-            # Create new candidates with evaluated scores
             for idx, value in enumerate(values):
                 new_state, score, action_sequence = state_map[idx]
                 candidates.append(BeamState(
                     new_state,
-                    score + value,  # Combine immediate reward with future value
+                    score + value,
                     action_sequence
                 ))
             
-            # Select top-k candidates
             candidates.sort(key=lambda x: x.score, reverse=True)
             initial_beam = candidates[:self.beam_width]
         
         if not initial_beam:
             return 0
         
-        # Return the first action of the best sequence
         best_sequence = max(initial_beam, key=lambda x: x.score).action_sequence
         return best_sequence[0] if best_sequence else 0
 
     def get_move(self, state: np.ndarray) -> int:
-        """Get the best move for the current state"""
         return self.beam_search(state) 
